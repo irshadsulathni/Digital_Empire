@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!-- Coding by CodingLab || www.codinglabweb.com -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification Form</title>
+    <link rel="stylesheet" href="/otpAssets/css/style.css" />
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <i class="bx bxs-check-shield"></i>
+        </header>
+        <h4>Enter OTP Code</h4>
+        <form>
+            <div class="input-field">
+                <input type="number" id="otp-digit-1" name="otp1" minlength="1" />
+                <input type="number" id="otp-digit-2" name="otp1" minlength="1" />
+                <input type="number" id="otp-digit-3" name="otp1" minlength="1" />
+                <input type="number" id="otp-digit-4" name="otp1" minlength="1" />
+            </div>
+            <button id="submit" onclick="validate()" type="button">Verify OTP</button>
+        </form>
+        <div id="timer-container">
+            <span id="timer"></span>
+        </div>
+        <div id="text-container">
+            <p style="color: red;" id="text"></p>
+        </div>
+        <div id="button" style="display: none;">
+            <a href="/resend-otp">Resend otp</a>
+        </div>
+    </div>
+
+    <script>
+
+        let countdown = 60; // Initial countdown value
+
+        // Function to update countdown and show resend button
+        function updateCountdown() {
+            if (countdown > 0) {
+                countdown--; // Decrement countdown
+                setTimeout(updateCountdown, 1000); // Update countdown every second
+            } else {
+                // Show resend button when countdown reaches 0
+                document.getElementById('button').style.display = 'block';
+            }
+        }
+
+        // Start the countdown
+        updateCountdown();
+        const otpInputs = document.querySelectorAll('#otp-digit-1, #otp-digit-2, #otp-digit-3, #otp-digit-4');
+        const form = document.getElementById('form');
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('keyup', (event) => {
+                if (event.key !== 'Backspace' && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+        });
+
+        // Focus on the first input on page load
+        otpInputs[0].focus();
+
+        function timer() {
+            let button = document.getElementById('button');
+            let timerElement = document.getElementById('timer');
+            let textElement = document.getElementById('text');
+            let timerValue = 60;
+            let countdown; // Variable to store the interval
+
+            // Function to start the timer
+            const startTimer = () => {
+                countdown = setInterval(() => {
+                    timerValue--;
+                    timerElement.textContent = `Time remaining: ${timerValue} seconds`;
+
+                    if (timerValue === 0) {
+                        clearInterval(countdown);
+                        textElement.textContent = 'Time has expired';
+                    }
+                }, 1000);
+            };
+
+            // Call the startTimer function to initiate the timer
+            startTimer();
+
+            // Event listener for the button click to resend OTP
+            button.addEventListener('click', () => {
+                clearInterval(countdown); // Clear the previous timer
+                timerValue = 60; // Reset timer value
+                textElement.textContent = ''; // Clear any previous messages
+                startTimer(); // Start a new timer
+            });
+        }
+
+        // Call the timer function when the OTP page loads
+        window.addEventListener('load', timer);
+        function validate() {
+            const otp1 = document.getElementById('otp-digit-1').value
+            const otp2 = document.getElementById('otp-digit-2').value
+            const otp3 = document.getElementById('otp-digit-3').value
+            const otp4 = document.getElementById('otp-digit-4').value
+            const data = {
+                otp1: otp1,
+                otp2: otp2,
+                otp3: otp3,
+                otp4: otp4,
+            }
+            fetch('/otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify the content type if sending JSON data
+                    // Add any other headers as needed
+                },
+                body: JSON.stringify(data) // JSON.stringify() converts a JavaScript object or value to a JSON string
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const message = encodeURIComponent('Registered successfully, Please Login here');
+                        const redirectUrl = `/signUp?message=${message}`;
+                        window.location.href = redirectUrl;
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Otp is Incorrect",
+                            text: `${data.message}`,
+                        });
+                    }
+                })
+
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Request Failed",
+                        text: 'An error occurred while verifying the OTP. Please try again.',
+                    });
+                });
+
+        }
+
+    </script>
+    <script src="/otpAssets/css/script.js"></script>
+</body>
+
+</html>

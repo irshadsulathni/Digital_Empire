@@ -1,0 +1,123 @@
+<%- include('../layouts/registerHeader') %>
+    <!-- Sing in  Form -->
+    <section class="sign-in">
+        <div class="container-fluid">
+            <div class="signin-content">
+                <div class="signin-image">
+                    <figure><img src="/userLoginAssets/images/signin-image.jpg" alt="sing up image"></figure>
+                    <a href="/signIn" class="signup-image-link">Create an account</a>
+                </div>
+
+                <div class="signin-form">
+                    <% if (typeof message !=='undefined' ) { %>
+                        <p style="color: green;" class="d-inline-flex p-2 ">
+                            <%= message %>*
+                        </p>
+                        <% } %>
+                            <h2 class="form-title">Sign In</h2>
+                            <form method="POST" class="register-form" id="login-form" action="/signUp">
+                                <div class="form-group">
+                                    <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                    <input type="text" name="email" id="your_name" placeholder="Your Name" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                                    <input type="password" name="password" id="your_pass" placeholder="Password" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
+                                    <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember
+                                        me</label>
+                                        <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
+                                </div>
+                                <div class="form-group form-button">
+                                    <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
+                                </div>
+                            </form>
+                            <div class="social-login">
+                                <span class="social-label">Or login with</span>
+                                <ul class="socials">
+                                    <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                                    <li><a href="#"><i class="display-flex-center zmdi zmdi-apple"></i></a></li>
+                                    <li><a href="/auth/google"><i class="display-flex-center zmdi zmdi-google"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+
+            if (message) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Registration Complete",
+                    text: decodeURIComponent(message),
+                });
+            }
+        });
+    document.getElementById('login-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.status === 200) {
+                // Login successful, redirect to home page
+                window.location.href = '/';
+            } else if (response.status === 403 && result.blocked) {
+                // User is blocked
+                Swal.fire({
+                    title: 'Blocked!',
+                    text: result.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    }
+                });
+            } else {
+                // Other errors
+                Swal.fire({
+                    title: 'Error!',
+                    text: result.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'An error occurred during login. Please try again later.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'custom-swal-background'
+                }
+            });
+        }
+    });
+</script>
+
+    <%- include('../layouts/registerFooter') %>

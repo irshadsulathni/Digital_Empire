@@ -1,0 +1,79 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const name = document.getElementById('name')
+        const email = document.getElementById('email')
+        const mobile = document.getElementById('mobile')
+        const password = document.getElementById('pass')
+        const re_password = document.getElementById('re_pass');
+        const nameALert = document.getElementById('nameALert')
+        const emailAlert = document.getElementById('emailAlert')
+        const mobileAlert = document.getElementById('mobileAlert')
+        const passwordAlert = document.getElementById('passwordAlert')
+        const repassAlert = document.getElementById('repassAlert')
+
+
+        name.addEventListener('blur', function (event) {
+            console.log(event.target.value)
+            const value = event.target.value;
+            if (value.trim().length < 3) {
+                console.log('invalid name')
+                if (nameALert.hasAttribute('hidden')) {
+                    nameALert.removeAttribute('hidden');
+                }
+            } else {
+                nameALert.setAttribute('hidden', '');
+            }
+        })
+
+        email.addEventListener('blur', function (event) {
+            const value = event.target.value;
+            if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(value)) {
+                emailAlert.removeAttribute('hidden');
+
+            } else {
+                emailAlert.setAttribute('hidden', '');
+
+            }
+        })
+        function sameNumbers(value) {
+            for (let i = 0; i < value.length - 1; i++) {
+                if (value[i] != value[i + 1]) {
+                    return false
+                }
+            }
+            return true;
+        }
+
+        mobile.addEventListener('blur', function (event) {
+            const value = event.target.value;
+            if (!/^(?:(?:\+?[\s-]?91)|(?:\+?[\s-]?0091)|.0)?[789]\d{9}$/.test(value) || sameNumbers(value)) {
+                mobileAlert.removeAttribute('hidden');
+            }
+            else {
+                mobileAlert.setAttribute('hidden', '');
+            }
+        })
+        password.addEventListener('blur', function (event) {
+            const value = event.target.value;
+            if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@!$%*?&]{8,}$/.test(value)) {
+                passwordAlert.removeAttribute('hidden');
+            }
+            else {
+                passwordAlert.setAttribute('hidden', '');
+            }
+        })
+        re_password.addEventListener('blur', function(event){
+            const value = event.target.value;
+            console.log(password.value);
+            console.log(re_password.value);
+            if( password.value !== re_password.value ){
+                repassAlert.removeAttribute('hidden');
+            }
+            else{
+                repassAlert.setAttribute('hidden', '');
+            }
+        })
+
+
+    })
+</script>

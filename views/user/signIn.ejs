@@ -1,0 +1,86 @@
+<%- include('../layouts/registerHeader') %>
+
+    <div class="main">
+
+        <!-- Sign up form -->
+        <section class="signup">
+            <div class="container-fluid">
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">User Register</h2>
+                        <% if (typeof message !=='undefined' ) { %>
+                            <p style="color: red;" class="d-inline-flex p-2 ">
+                                <%= message %>*
+                            </p>
+                            <% } %>
+                                <form method="POST" class="register-form" id="register-form">
+                                    <div class="form-group">
+                                        <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                        <input type="text" name="name" id="name" placeholder="Your Name" required />
+                                        <div id="nameALert" hidden style="color: red;">Name should be atleast 3
+                                            charactors</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email"><i class="zmdi zmdi-email"></i></label>
+                                        <input type="email" name="email" id="email" placeholder="Your Email" required />
+                                        <div id="emailAlert" hidden style="color: red;">enter a valid mail adress</div>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mobile"><i class="zmdi zmdi-email"></i></label>
+                                        <input type="number" name="mobile" id="mobile" placeholder="Your Mobile Number"
+                                            required />
+                                        <div id="mobileAlert" hidden style="color: red;">Enter a Valid Mobile Number
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                                        <input type="password" name="password" id="pass" placeholder="Password"
+                                            required />
+                                        <div id="passwordAlert" hidden style="color: red;">Password Want
+                                            OneLowercase,OneUppercase,OneSpecialCharacter,OneNumber
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                                        <input type="password" name="re_password" id="re_pass"
+                                            placeholder="Repeat your password" required />
+                                        <div id="repassAlert" hidden style="color: red;">Password not Match
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+                                        <label for="agree-term" class="label-agree-term"><span><span></span></span>I
+                                            agree all statements in <a href="#" class="term-service">Terms of
+                                                service</a></label>
+
+                                    </div>
+                                    <div class="form-group form-button">
+                                        <input type="submit" name="signup" id="signup" class="form-submit"
+                                            value="Register" />
+                                        <div class="social-login">
+                                            <span class="social-label">Or login with</span>
+                                            <ul class="socials">
+                                                <li><a href="#"><i
+                                                            class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                                                <li><a href="#"><i class="display-flex-center zmdi zmdi-apple"></i></a>
+                                                </li>
+                                                <li><a href="/auth/google"><i
+                                                            class="display-flex-center zmdi zmdi-google"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </form>
+                    </div>
+                    <div class="signup-image">
+                        <figure><img src="/userLoginAssets/images/signup-image.jpg" alt="sing up image"></figure>
+                        <a href="/signUp" class="signup-image-link">I am already member</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../layouts/userValidation') %>
+
+    <%- include('../layouts/registerFooter') %>

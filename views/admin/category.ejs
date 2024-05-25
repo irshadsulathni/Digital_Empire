@@ -60,33 +60,10 @@
                                     class="material-icons md-cast"></i></a>
                         </li>
                         <li class="dropdown nav-item">
-                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-                                aria-expanded="false"><i class="material-icons md-public"></i></a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                                <a class="dropdown-item text-brand" href="#"><img
-                                        src="/adminAssets/imgs/theme/flag-us.png" alt="English" />English</a>
-                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-fr.png"
-                                        alt="Français" />Français</a>
-                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-jp.png"
-                                        alt="Français" />日本語</a>
-                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-cn.png"
-                                        alt="Français" />中国人</a>
-                            </div>
-                        </li>
-                        <li class="dropdown nav-item">
                             <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
                                 aria-expanded="false"> <img class="img-xs rounded-circle"
                                     src="/adminAssets/imgs/people/avatar-2.png" alt="User" /></a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
-                                    Profile</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
-                                    Settings</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
-                                    center</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-danger" href="#"><i
                                         class="material-icons md-exit_to_app"></i>Logout</a>
@@ -99,7 +76,7 @@
                 <div class="content-header">
                     <div>
                         <h2 class="content-title card-title">Categories</h2>
-                        <p>Add, edit or delete a category</p>
+                        <p>Add & edit category</p>
                     </div>
                     <!-- <div>
                         <input type="text" placeholder="Search Categories" class="form-control bg-white" />
@@ -118,13 +95,13 @@
                                             <div class="mb-4">
                                                 <label for="product_name" class="form-label">Name</label>
                                                 <input type="text" placeholder="Type here" class="form-control"
-                                                    name="categoryName" id="product_name" />
+                                                    name="categoryName" id="product_name" required />
                                             </div>
 
                                             <div class="mb-4">
                                                 <label class="form-label">Description</label>
                                                 <textarea placeholder="Type here" class="form-control"
-                                                    name="categoryDescription"></textarea>
+                                                    name="categoryDescription" required></textarea>
                                             </div>
                                             <div class="d-grid">
                                                 <button class="btn btn-primary">Create category</button>
@@ -139,7 +116,7 @@
                                                 <th>Sl No</th>
                                                 <th>Name</th>
                                                 <th>Description</th>
-                                                <th>Registered</th>
+                                                <!-- <th>Registered</th> -->
                                                 <th>status</th>
                                                 <th class="text-end">Action</th>
                                             </tr>
@@ -160,11 +137,11 @@
                                                 <td>
                                                     <%= categoryData[i].discription %>
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <%= categoryData[i].createdAt.getDate() %> -
                                                         <%= categoryData[i].createdAt.getMonth()+1 %> -
                                                             <%= categoryData[i].createdAt.getFullYear() %>
-                                                </td>
+                                                </td> -->
                                                 <td>
                                                     <% if (!categoryData[i].list) { %>
                                                         <span class="r-150 badge rounded-pill alert-success">
@@ -196,7 +173,7 @@
                             
                                                                 
                                                                 id="edit"
-                                                                href="/admin/editCategory/<%= categoryData[i]._id %>" >
+                                                                href="/admin/editCategory?categoryId=<%= categoryData[i]._id %>" >
                                                                 Edit Category </a>
                                                             <a class="dropdown-item text-danger" href="#">Delete</a>
                                                         </div>
@@ -247,10 +224,8 @@
                     console.error('Error:', error);
                 }
             }
-
-            document.getElementById('edit').addEventListener('click',function(){
-                console.log('edit clicked')
-            })
+            
+            
         </script>
 </body>
 

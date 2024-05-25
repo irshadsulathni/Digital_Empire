@@ -4,7 +4,7 @@ const isLogin = async (req, res, next) => {
     try {
         
         if (!req.session.user_id) {
-            res.redirect('/signUp');
+            res.render('user/signUp.ejs');
         }
          else {
             const user = await User.findById(req.session.user_id)

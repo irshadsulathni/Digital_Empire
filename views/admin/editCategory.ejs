@@ -115,17 +115,17 @@
                                         <%= message %>*
                                     </p>
                                     <% } %>
-                                        <form method="">
+                                        <form method="post">
                                             <div class="mb-5">
                                                 <label for="product_name" class="form-label">Name</label>
-                                                <input type="text" placeholder="Type here" class="form-control"
+                                                <input type="text" placeholder="Type here" value="<%= category.name %> " class="form-control"
                                                     name="categoryName" id="product_name" />
                                             </div>
 
                                             <div class="mb-5">
                                                 <label class="form-label">Description</label>
-                                                <textarea placeholder="Type here" class="form-control"
-                                                    name="categoryDescription"></textarea>
+                                                <input placeholder="Type here" value=" <%= category.discription %> " class="form-control"
+                                                    name="categoryDescription"/>
                                             </div>
                                             <div class="d-grid" href="/admin/category">
                                                 <button class="btn btn-primary">Update category</button>

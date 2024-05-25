@@ -13,8 +13,8 @@ user_route.use(passport.session());
 
 //user signIn & SignUp
 
-user_route.get('/signUp', userController.loadSignUp);
-user_route.post('/signIn', userController.addUser);
+user_route.get('/signUp', auth.isLogin, userController.loadSignUp);
+user_route.post('/signIn', auth.isLogin, userController.addUser);
 user_route.post('/signUp', userController.verifyLogin);
 
 // user home page things

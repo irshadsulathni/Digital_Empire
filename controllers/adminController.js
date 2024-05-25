@@ -61,6 +61,7 @@ const loadUserList = async (req,res)=>{
 const blockOrUnblockUser = async (req, res) => {
     try {
         const userId = req.body.userId;
+        
 
         // Validate and convert userId to ObjectId if necessary
         if (!mongo.Types.ObjectId.isValid(userId)) {

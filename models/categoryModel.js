@@ -12,6 +12,10 @@ const categorySchema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now()
+    },
+    list:{
+        type:Boolean,
+        default:false
     }
 })
 

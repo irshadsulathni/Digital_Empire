@@ -3698,9 +3698,8 @@ body.offcanvas-active {
 }
 
 .navbar-aside .aside-top .logo {
-  max-width: 120px;
-  margin-top: 5px;
-  min-width: 120px;
+  margin-left: 25px;
+  min-width: 170px;
 }
 
 .main-header {
@@ -4189,7 +4188,7 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
     transition: visibility .2s ease-in-out, transform .2s ease-in-out, -webkit-transform .2s ease-in-out;
   }
   .navbar-aside .aside-top .logo {
-    height: 40px;
+    height: 20px;
   }
   .navbar-aside.show {
     visibility: visible;

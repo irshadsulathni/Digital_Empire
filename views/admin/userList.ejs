@@ -23,322 +23,271 @@
     // for side nav bar
 
     <%- include('../layouts/adminSide') %>
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products"></option>
-                        <option value="New orders"></option>
-                        <option value="Apple iphone"></option>
-                        <option value="Ahmed Hassan"></option>
-                    </datalist>
-                </form>
-            </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
-                        class="material-icons md-apps"></i></button>
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications animation-shake"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i
-                                class="material-icons md-cast"></i></a>
-                    </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-                            aria-expanded="false"><i class="material-icons md-public"></i></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/adminAssets/imgs/theme/flag-us.png"
-                                    alt="English" />English</a>
-                            <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-fr.png"
-                                    alt="Français" />Français</a>
-                            <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-jp.png"
-                                    alt="Français" />日本語</a>
-                            <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-cn.png"
-                                    alt="Français" />中国人</a>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
                         </div>
-                    </li>
-                    <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
-                            aria-expanded="false"> <img class="img-xs rounded-circle"
-                                src="/adminAssets/imgs/people/avatar-2.png" alt="User" /></a>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
-                                Profile</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
-                                Settings</a>
-                            <a class="dropdown-item" href="#"><i
-                                    class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
-                                center</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i
-                                    class="material-icons md-exit_to_app"></i>Logout</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </header>
-        <section class="content-main">
-            <div class="content-header">
-                <h2 class="content-title">Users list</h2>
-            </div>
-            <div class="card mb-4">
-                <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control" />
-                        </div>
-                        <div class="col-lg-2 col-md-3 col-6">
-                            <select class="form-select">
-                                <option>Active</option>
-                                <option>Deactive</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-3 col-6">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
-                            </select>
-                        </div>
-                    </div>
-                </header>
-                <!-- card-header end// -->
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Sl No</th>
-                                    <th class="pl-25">User</th>
-                                    <th>Email</th>
-                                    <th class="">Status</th>
-                                    <th>Verified</th>
-                                    <th>Registered</th>
-                                    <th class="pl-75">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for(let i=0; i<users.length; i++){ %>
-                                    <tr>
-                                        <td>
-                                            <%= [i+1] %>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="itemside">
-                                                <!-- <div class="left">
-                                                        <img src="/adminAssets/imgs/people/avatar-1.png" class="img-sm img-avatar" alt="Userpic" />
-                                                    </div> -->
-                                                <div class="info pl-3">
-                                                    <h6 class="mb-0 title">
-                                                        <%= users[i].name %>
-                                                    </h6>
-                                                    <!-- <small class="text-muted">Seller ID: #439</small> -->
-                                                </div>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <%= users[i].email %>
-                                        </td>
-                                        <td>
-                                            <% if (users[i].is_blocked==0) { %>
-                                                <span class="r-150 badge rounded-pill alert-success">
-                                                    Active
-                                                </span>
-                                                <% } else { %>
-                                                    <span class="badge rounded-pill alert-danger">
-                                                        Deactive
-                                                    </span>
-                                                    <% } %>
-                                        </td>
-                                        <td>
-                                            <% if (users[i].is_verified) { %>
-                                                <span class="badge bg-success">Verified</span>
-                                                <% } else { %>
-                                                    <span class="badge bg-secondary">Not Verified</span>
-                                                    <% } %>
-                                        </td>
-
-
-                                        <td>
-                                            <%= users[i].registerDate.getDate() %> -
-                                                <%= users[i].registerDate.getMonth()+1 %> -
-                                                    <%= users[i].registerDate.getFullYear() %>
-                                        </td>
-                                        <td class="pl-50">
-                                            <% if (users[i].is_blocked==0) { %>
-                                                <button onclick="blockOrUnblockUser('<%= users[i]._id %>',false)"
-                                                    class="btn btn-sm rounded font-sm mt-15 btn-danger">
-                                                    Block User
-                                                </button>
-                                                <% } else { %>
-                                                    <button onclick="blockOrUnblockUser('<%= users[i]._id %>',true)"
-                                                        class="btn btn-sm rounded font-sm mt-15 btn-success">
-                                                        Unblock User
-                                                    </button>
-                                                    <% } %>
-                                        </td>
-
-                                    </tr>
-                                    <% } %>
-
-                            </tbody>
-                        </table>
-                        <!-- table-responsive.// -->
-                    </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
                 </div>
-                <!-- card-body end// -->
-            </div>
-            <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                                aria-expanded="false"><i class="material-icons md-public"></i></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                                <a class="dropdown-item text-brand" href="#"><img
+                                        src="/adminAssets/imgs/theme/flag-us.png" alt="English" />English</a>
+                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-fr.png"
+                                        alt="Français" />Français</a>
+                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-jp.png"
+                                        alt="Français" />日本語</a>
+                                <a class="dropdown-item" href="#"><img src="/adminAssets/imgs/theme/flag-cn.png"
+                                        alt="Français" />中国人</a>
+                            </div>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false"> <img class="img-xs rounded-circle"
+                                    src="/adminAssets/imgs/people/avatar-2.png" alt="User" /></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                    Profile</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                    Settings</a>
+                                <a class="dropdown-item" href="#"><i
+                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    center</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i
+                                        class="material-icons md-exit_to_app"></i>Logout</a>
+                            </div>
                         </li>
                     </ul>
-                </nav>
-            </div>
-        </section>
-        <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                        document.write(new Date().getFullYear());
-                    </script>
-                    &copy; Nest - HTML Ecommerce Template .
                 </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">All rights reserved</div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <h2 class="content-title">Users list</h2>
                 </div>
-            </div>
-        </footer>
-    </main>
-    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/adminAssets/js/vendors/select2.min.js"></script>
-    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
-    <!-- Main Script -->
-    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
-    <script>
-        //     function blockOrActive(userId) {
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-6">
+                                <select class="form-select">
+                                    <option>Active</option>
+                                    <option>Deactive</option>
+                                    <option>Show all</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-6">
+                                <select class="form-select">
+                                    <option>Show 20</option>
+                                    <option>Show 30</option>
+                                    <option>Show 40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sl No</th>
+                                        <th class="pl-25">User</th>
+                                        <th>Email</th>
+                                        <th class="">Status</th>
+                                        <th>Verified</th>
+                                        <th>Registered</th>
+                                        <th class="pl-75">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(let i=0; i<users.length; i++){ %>
+                                        <tr>
+                                            <td>
+                                                <%= [i+1] %>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="itemside">
+                                                    <!-- <div class="left">
+                                                        <img src="/adminAssets/imgs/people/avatar-1.png" class="img-sm img-avatar" alt="Userpic" />
+                                                    </div> -->
+                                                    <div class="info pl-3">
+                                                        <h6 class="mb-0 title">
+                                                            <%= users[i].name %>
+                                                        </h6>
+                                                        <!-- <small class="text-muted">Seller ID: #439</small> -->
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <%= users[i].email %>
+                                            </td>
+                                            <td>
+                                                <% if (users[i].is_blocked==0) { %>
+                                                    <span class="r-150 badge rounded-pill alert-success">
+                                                        Active
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span class="badge rounded-pill alert-danger">
+                                                            Deactive
+                                                        </span>
+                                                        <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (users[i].is_verified) { %>
+                                                    <span class="badge bg-success">Verified</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-secondary">Not Verified</span>
+                                                        <% } %>
+                                            </td>
 
-        //     fetch('/admin/userList', { // Corrected URL to include userId in the route
-        //         method: 'post',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ userId: userId }),
-        //     })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('Network response was not ok');
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         if(data.message == 'Failed') {
-        //             console.log('user Not Found')
-        //         } else {
-        //             window.location.reload();
-        //         };
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //     });
-        // };
-        async function blockOrUnblockUser(userId, is_blocked) {
-            const action = is_blocked ? 'unblock' : 'block';
-            const confirmationText = `Are you sure you want to ${action} this user?`;
 
-            // Show SweetAlert confirmation dialog
-            const result = await Swal.fire({
-                title: 'Confirm Action',
-                text: confirmationText,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: `Yes, ${action} them!`,
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true,
-                customClass: {
-                    popup: 'custom-swal-background'
-                }
-            });
+                                            <td>
+                                                <%= users[i].registerDate.getDate() %> -
+                                                    <%= users[i].registerDate.getMonth()+1 %> -
+                                                        <%= users[i].registerDate.getFullYear() %>
+                                            </td>
+                                            <td class="pl-50">
+                                                <% if (users[i].is_blocked==0) { %>
+                                                    <button onclick="blockOrUnblockUser('<%= users[i]._id %>',false)"
+                                                        class="btn btn-sm rounded font-sm mt-15 btn-danger">
+                                                        Block User
+                                                    </button>
+                                                    <% } else { %>
+                                                        <button onclick="blockOrUnblockUser('<%= users[i]._id %>',true)"
+                                                            class="btn btn-sm rounded font-sm mt-15 btn-success">
+                                                            Unblock User
+                                                        </button>
+                                                        <% } %>
+                                            </td>
 
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch('/admin/userList', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ userId })
-                    });
+                                        </tr>
+                                        <% } %>
 
-                    const data = await response.json();
+                                </tbody>
+                            </table>
+                            <!-- table-responsive.// -->
+                        </div>
+                    </div>
+                    <!-- card-body end// -->
+                </div>
+                <!-- card end// -->
+                <div class="pagination-area mt-15 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+        <script>
+            async function blockOrUnblockUser(userId, is_blocked) {
+                console.log('fgsfhrthdfgvsdfh' + userId);
+                const action = is_blocked ? 'unblock' : 'block';
+                const confirmationText = `Are you sure you want to ${action} this user?`;
 
-                    if (response.ok) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: `User successfully ${is_blocked ? 'unblocked' : 'blocked'}`,
-                            icon: 'success',
-                            customClass: {
-                                popup: 'custom-swal-background'
-                            }
-                        });
-
-                        // Update button text and onclick handler
-                        const button = document.getElementById(`toggle-block-${userId}`);
-                        // button.innerText = is_blocked ? 'Block User' : 'Unblock User';
-                        // button.setAttribute('onclick', `blockOrUnblockUser('${userId}', ${!is_blocked})`);
-                        window.location.reload();
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: data.message,
-                            icon: 'error',
-                            customClass: {
-                                popup: 'custom-swal-background'
-                            }
-                        });
+                // Show SweetAlert confirmation dialog
+                const result = await Swal.fire({
+                    title: 'Confirm Action',
+                    text: confirmationText,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: `Yes, ${action} them!`,
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'custom-swal-background'
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    // Swal.fire({
-                    //     title: 'Error',
-                    //     text: 'An error occurred while trying to toggle the user status',
-                    //     icon: 'error',
-                    //     customClass: {
-                    //         popup: 'custom-swal-background'
-                    //     }
-                    // });
+                });
+
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('/admin/userList', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ userId })
+                        });
+
+                        const data = await response.json();
+
+                        if (data) {
+                            location.reload()
+                        }
+
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
                 }
             }
-        }
-    </script>
+        </script>
 </body>
 
 </html>

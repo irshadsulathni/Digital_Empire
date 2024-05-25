@@ -105,110 +105,34 @@
                         <input type="text" placeholder="Search Categories" class="form-control bg-white" />
                     </div> -->
                 </div>
-                <div class="card">
+                <div class="card ">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+
+                            <div class="col-md-3 " style="width: 100%;">
                                 <% if (typeof message !=='undefined' ) { %>
                                     <p style="color: red;" class="d-inline-flex p-2 ">
                                         <%= message %>*
                                     </p>
                                     <% } %>
-                                        <form method="post">
-                                            <div class="mb-4">
+                                        <form method="">
+                                            <div class="mb-5">
                                                 <label for="product_name" class="form-label">Name</label>
                                                 <input type="text" placeholder="Type here" class="form-control"
                                                     name="categoryName" id="product_name" />
                                             </div>
 
-                                            <div class="mb-4">
+                                            <div class="mb-5">
                                                 <label class="form-label">Description</label>
                                                 <textarea placeholder="Type here" class="form-control"
                                                     name="categoryDescription"></textarea>
                                             </div>
-                                            <div class="d-grid">
-                                                <button class="btn btn-primary">Create category</button>
+                                            <div class="d-grid" href="/admin/category">
+                                                <button class="btn btn-primary">Update category</button>
                                             </div>
                                         </form>
                             </div>
-                            <div class="col-md-9">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Sl No</th>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Registered</th>
-                                                <th>status</th>
-                                                <th class="text-end">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% for(let i=0 ; i<categoryData.length;i++){ %>
-                                                <!-- <td class="text-center">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="" />
-                                                    </div>
-                                                </td> -->
-                                                <td>
-                                                    <%= i+1 %>
-                                                </td>
-                                                <td>
-                                                    <%= categoryData[i].name %>
-                                                </td>
-                                                <td>
-                                                    <%= categoryData[i].discription %>
-                                                </td>
-                                                <td>
-                                                    <%= categoryData[i].createdAt.getDate() %> -
-                                                        <%= categoryData[i].createdAt.getMonth()+1 %> -
-                                                            <%= categoryData[i].createdAt.getFullYear() %>
-                                                </td>
-                                                <td>
-                                                    <% if (!categoryData[i].list) { %>
-                                                        <span class="r-150 badge rounded-pill alert-success">
-                                                            Active
-                                                        </span>
-                                                        <% } else { %>
-                                                            <span class="badge rounded-pill alert-danger">
-                                                                Deactive
-                                                            </span>
-                                                            <% } %>
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="">
-                                                        <a href="#" data-bs-toggle="dropdown"
-                                                            class="btn btn-light rounded btn-sm font-sm"> <i
-                                                                class="material-icons md-more_horiz"></i> </a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">View detail</a>
-                                                            <div class="">
-                                                                <% if (categoryData[i].list) { %>
-                                                                    <a class="dropdown-item"
-                                                                        onclick="listOrUnlist('<%= categoryData[i]._id %>', true)">List</a>
-                                                                    <% } else { %>
-                                                                        <a class="dropdown-item"
-                                                                            onclick="listOrUnlist('<%= categoryData[i]._id %>', false)">UnList</a>
-                                                                        <% } %>
-                                                            </div>
-                                                            <a class="dropdown-item"
-                            
-                                                                
-                                                                id="edit"
-                                                                href="/admin/editCategory/<%= categoryData[i]._id %>" >
-                                                                Edit Category </a>
-                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
-                                                        </div>
-                                                    </div>
-                                                    <!-- dropdown //end -->
-                                                </td>
-                                                </tr>
-                                                <% } %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+
                             <!-- .col// -->
                         </div>
                         <!-- .row // -->
@@ -229,28 +153,7 @@
         <!-- Main Script -->
         <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
         <script>
-            async function listOrUnlist(categoryId, list) {
-                try {
-                    const response = await fetch('/admin/category/list', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ categoryId, list })
-                    });
-                    const data = await response.json();
-                    if (data) {
-                        location.reload();
-                    }
 
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
-
-            document.getElementById('edit').addEventListener('click',function(){
-                console.log('edit clicked')
-            })
         </script>
 </body>
 

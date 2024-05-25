@@ -8,9 +8,9 @@ const loadCategories = async (req, res) => {
         const categoryData = await Category.find({})
         res.render('admin/category', { categoryData, activeCategeryMessage: 'active' })
     } catch (error) {
-
+        console.log(error.message);
     }
-}
+};
 // for adding categery
 // const addCategories = async (req, res) => {
 //     try {
@@ -48,17 +48,15 @@ const loadCategories = async (req, res) => {
 const addCategories = async (req, res) => {
     try {
         const name = req.body.categoryName.trim();
-        const description = req.body.categoryDescription.trim();
+        const discription = req.body.categoryDescription.trim();
 
-        // Fetch all categories
         const categoryData = await Category.find({});
 
-        // Validate inputs
         if (!name) {
             return res.render('admin/category', { categoryData, message: 'Invalid Name' });
         }
 
-        if (!description) {
+        if (!discription) {
             return res.render('admin/category', { categoryData, message: 'Enter Description' });
         }
 
@@ -72,7 +70,7 @@ const addCategories = async (req, res) => {
         // Create and save new category
         const category = new Category({
             name,
-            description
+            discription
         });
 
         await category.save();
@@ -81,7 +79,7 @@ const addCategories = async (req, res) => {
         const updatedCategoryData = await Category.find({});
 
         // Redirect to the category page after saving
-        res.render('admin/category', { categoryData: updatedCategoryData, message: 'Category added successfully' });
+        res.render('admin/category', { categoryData: updatedCategoryData });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -94,7 +92,7 @@ const listOrUnlist = async (req, res) => {
         let cat;
         const categery = await Category.findById(categoryId);
         if (categery) {
-            cat = await Category.updateOne({ _id: categoryId }, { $set: { list: !categery.list } })
+            cat = await Category.updateOne({ _id: categoryId }, { $set: { list: !categery.list } });
         }
         res.status(200).json({ success: true });
     } catch (error) {
@@ -105,10 +103,10 @@ const listOrUnlist = async (req, res) => {
 const loadEditcategory = async (req, res) => {
     try {
         const categoryId = req.query.categoryId;
-        const categoryDatas = await Category.findOne({ _id: categoryId })
+        const categoryDatas = await Category.findOne({ _id: categoryId });
 
         if (categoryDatas) {
-            res.render('admin/editCategory', { activeCategeryMessage: 'active', category: categoryDatas })
+            res.render('admin/editCategory', { activeCategeryMessage: 'active', category: categoryDatas });
         }
     } catch (error) {
         console.log(error.message);
@@ -121,17 +119,17 @@ const updateCategory = async (req, res) => {
 
         const name = req.body.categoryName
         const discription = req.body.categoryDescription
-        const categoryData = await Category.find({})
+        const categoryData = await Category.find({});
 
-        const categoryDatas = await Category.findOne({ _id: categoryId })
+        const categoryDatas = await Category.findOne({ _id: categoryId });
         if (name.trim() == '') {
-            res.render('admin/editCategory', { categoryData, message: 'invalid Name', category: categoryDatas })
+            res.render('admin/editCategory', { categoryData, message: 'invalid Name', category: categoryDatas });
         }
         else if (discription.trim() == '') {
-            res.render('admin/editCategory', { categoryData, message: 'Enter Discription', category: categoryDatas })
+            res.render('admin/editCategory', { categoryData, message: 'Enter Discription', category: categoryDatas });
         }
         else if (name[0] == '') {
-            res.render('admin/editCategory', { categoryData, message: 'Name is invalid', category: categoryDatas })
+            res.render('admin/editCategory', { categoryData, message: 'Name is invalid', category: categoryDatas });
         }
         else {
             const categoryDatas = await Category.findOneAndUpdate({ _id: categoryId }, {
@@ -139,13 +137,23 @@ const updateCategory = async (req, res) => {
                     name: name,
                     discription: discription
                 }
-            })
+            });
 
-            res.render('admin/category', { categoryData, activeCategeryMessage: 'active' })
+            res.redirect('/admin/category');
         }
 
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+    }
+};
+
+const deletCategory = async (req,res) =>{
+    try {
+        const categoryId =  req.query.categoryId;
+        await Category.deleteOne({_id:categoryId});
+        res.redirect('/admin/category')
+    } catch (error) {
+        console.log(error.message);
     }
 }
 module.exports = {
@@ -153,5 +161,6 @@ module.exports = {
     addCategories,
     listOrUnlist,
     loadEditcategory,
-    updateCategory
-}
+    updateCategory,
+    deletCategory
+};

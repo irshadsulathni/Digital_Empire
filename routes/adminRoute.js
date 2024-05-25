@@ -13,12 +13,16 @@ admin_route.get('/userList',  adminController.loadUserList)
 admin_route.get('/category', categoryController.loadCategories)
 admin_route.get('/category/list', categoryController.listOrUnlist)
 admin_route.get('/editCategory', categoryController.loadEditcategory)
+admin_route.get('/category/deleteCategory', auth.isLogin, categoryController.deletCategory)
+admin_route.get('/product', auth.isLogin, adminController.loadProduct)
+admin_route.get('/adminLogout',auth.isLogin, adminController.adminLogout)
 
 admin_route.post('/adminLogin',adminController.verifyLogin);
 admin_route.post('/userList', adminController.blockOrUnblockUser)
 admin_route.post('/category', categoryController.addCategories)
 admin_route.post('/category/list', categoryController.listOrUnlist)
 admin_route.post('/editCategory' , categoryController.updateCategory)
+
 
 
 module.exports = admin_route; 

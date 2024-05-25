@@ -175,7 +175,7 @@
                                                                 id="edit"
                                                                 href="/admin/editCategory?categoryId=<%= categoryData[i]._id %>" >
                                                                 Edit Category </a>
-                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                            <a class="dropdown-item text-danger" href="/admin/category/deleteCategory?categoryId=<%= categoryData[i]._id %>">Delete</a>
                                                         </div>
                                                     </div>
                                                     <!-- dropdown //end -->
@@ -224,7 +224,6 @@
                     console.error('Error:', error);
                 }
             }
-            
             
         </script>
 </body>

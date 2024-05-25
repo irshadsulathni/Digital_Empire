@@ -33,7 +33,7 @@ const verifyLogin = async (req, res) => {
             if (password == adminData.password) {
 
                 req.session.admin_id = adminData._id;
-                res.redirect('adminHome')
+                res.redirect('/admin/adminHome')
             } else {
                 res.render('admin/adminLogin', { message: 'Email and Password is incorrect' })
             }
@@ -45,6 +45,19 @@ const verifyLogin = async (req, res) => {
         console.log(error)
     }
 }
+
+const adminLogout = async (req, res) => {
+    console.log('a');
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            // Optionally, handle the error (e.g., send an error response)
+            return res.status(500).send('Internal Server Error');
+        }
+        res.status(200).json({ message: 'Logout successful' });
+    });
+}
+
 
 // for load user list in admin side
 
@@ -87,6 +100,13 @@ const blockOrUnblockUser = async (req, res) => {
     }
 };
 
+const loadProduct = async (req,res) => {
+    try {
+        res.render('admin/product')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 module.exports = {
@@ -94,5 +114,7 @@ module.exports = {
     loadLogin,
     verifyLogin,
     loadUserList,
-    blockOrUnblockUser
+    blockOrUnblockUser,
+    loadProduct,
+    adminLogout
 }

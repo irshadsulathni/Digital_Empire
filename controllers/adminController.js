@@ -106,13 +106,6 @@ const blockOrUnblockUser = async (req, res) => {
     }
 };
 
-const loadProduct = async (req,res) => {
-    try {
-        res.render('admin/product')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 
 
 module.exports = {
@@ -121,6 +114,5 @@ module.exports = {
     verifyLogin,
     loadUserList,
     blockOrUnblockUser,
-    loadProduct,
     adminLogout
 }

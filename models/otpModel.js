@@ -16,6 +16,23 @@ const otpSchema = new mongoose.Schema({
     }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const OTP = mongoose.model('OTP', otpSchema);
 
 // Function to delete OTP documents older than two minutes

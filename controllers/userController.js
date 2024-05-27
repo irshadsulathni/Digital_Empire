@@ -1,6 +1,6 @@
 const User = require('../models/userModel')
 const Otp = require('../controllers/otpController')
-const OTP = require('../models/otp')
+const OTP = require('../models/otpModel')
 
 const bcrypt = require('bcrypt')
 const { name } = require('ejs')
@@ -250,9 +250,6 @@ const resendOtp = async (req, res) => {
             req.session.otp = newOtp
             otpdata.otp = newOtp
             await otpdata.save();
-            console.log(email);
-            console.log(otpdata);
-            console.log('things are getting here');
             res.render('user/otpVerify');
           } else {
             // Handle the case where session or email is missing

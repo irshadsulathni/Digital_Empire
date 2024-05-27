@@ -35,7 +35,14 @@
                     <span class="text">Users</span>
                 </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item <%
+            if(typeof activeProductMessage !== 'undefined' ){
+            %>
+            <%= activeProductMessage %>
+            <%
+            }
+
+            %> ">
                 <a class="menu-link" href="/admin/product">
                     <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products</span>

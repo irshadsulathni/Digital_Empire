@@ -1,6 +1,7 @@
 const Admin = require('../models/adminModel')
 const  mongo  = require('mongoose')
 const User = require('../models/userModel')
+const bcrypt = require('bcrypt')
 
 // Admin Home page load
 const loadAdminHome = async (req, res) => {
@@ -24,34 +25,39 @@ const loadLogin = async (req, res) => {
 // Admin Login Deatiles Verifying
 const verifyLogin = async (req, res) => {
     try {
-        const email = req.body.email;
-        const password = req.body.password;
-
-        const adminData = await Admin.findOne({ email: email })
+        const { email, password } = req.body;
+        
+        // Find admin data by email
+        const adminData = await Admin.findOne({ email: email });
 
         if (adminData) {
-            if (password == adminData.password) {
+            // Compare passwords securely using bcrypt
+            const passwordMatch = bcrypt.compare(password, adminData.password);
 
+            if (passwordMatch) {
+                // Set session admin_id if password matches
                 req.session.admin_id = adminData._id;
-                res.redirect('/admin/adminHome')
+                res.redirect('/admin/adminHome');
             } else {
-                res.render('admin/adminLogin', { message: 'Email and Password is incorrect' })
+                // Render login page with error message if password is incorrect
+                res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
             }
         } else {
-            res.render('admin/adminLogin', { message: 'Email and Password is incorrect' })
+            // Render login page with error message if no admin data found
+            res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
         }
 
     } catch (error) {
-        console.log(error)
+        // Log the error and render the login page with a generic error message
+        console.error(error);
+        res.render('admin/adminLogin', { message: 'An error occurred. Please try again.' });
     }
-}
+};
 
 const adminLogout = async (req, res) => {
-    console.log('a');
-    req.session.destroy(err => {
+    req.session.destroy(error => {
         if (err) {
-            console.error('Error destroying session:', err);
-            // Optionally, handle the error (e.g., send an error response)
+            console.error('Error destroying session:', error);
             return res.status(500).send('Internal Server Error');
         }
         res.status(200).json({ message: 'Logout successful' });

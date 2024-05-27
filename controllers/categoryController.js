@@ -12,38 +12,6 @@ const loadCategories = async (req, res) => {
     }
 };
 // for adding categery
-// const addCategories = async (req, res) => {
-//     try {
-
-//         const name = req.body.categoryName;
-//         const discription = req.body.categoryDescription;
-//         const categoryData = await Category.find({})
-//         if (name.trim() == '') {
-//             res.render('admin/category', { categoryData, message: 'invalid Name' })
-//         }
-//         else if (discription.trim() == '') {
-//             res.render('admin/category', { categoryData, message: 'Enter Discription' })
-//         }
-        
-//         else if (name[0] == '') {
-//             res.render('admin/category', { categoryData, message: 'Name is invalid' })
-//         }
-//         else if (existCategory) {
-//             res.render('admin/category', { categoryData, message: 'Category is already existed' })
-//         }
-//         else {
-//             const category = new Category({
-//                 name: req.body.categoryName,
-//                 discription: req.body.categoryDescription
-//             })
-//             await category.save()
-
-//             res.redirect('/admin/category')
-//         }
-//     } catch (error) {
-
-//     }
-// }
 
 const addCategories = async (req, res) => {
     try {

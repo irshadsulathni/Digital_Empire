@@ -13,15 +13,15 @@ user_route.use(passport.session());
 
 //user signIn & SignUp
 
-user_route.get('/signUp', auth.isLogin, userController.loadSignUp);
-user_route.post('/signIn', auth.isLogin, userController.addUser);
+user_route.get('/signUp', auth.isLogout, userController.loadSignUp);
+user_route.post('/signIn', auth.isLogout, userController.addUser);
 user_route.post('/signUp', userController.verifyLogin);
 
 // user home page things
-user_route.get('/dashboard' , auth.isLogin,userController.loadDashBoard);
+user_route.get('/dashboard' , userController.loadDashBoard);
 user_route.get('/',userController.loadHome);
-user_route.get('/about',auth.isLogin, userController.loadAbout);
-user_route.get('/faq', auth.isLogin, userController.loadFAQ);
+user_route.get('/about', userController.loadAbout);
+user_route.get('/faq',  userController.loadFAQ);
 user_route.get('/signIn', auth.isLogout,userController.loadsignIn);
 
 //user error

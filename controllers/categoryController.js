@@ -5,7 +5,7 @@ const { options } = require('../routes/userRoute');
 
 const loadCategories = async (req, res) => {
     try {
-        const categoryData = await Category.find({})
+        const categoryData = await Category.find({});
         res.render('admin/category', { categoryData, activeCategeryMessage: 'active' })
     } catch (error) {
         console.log(error.message);

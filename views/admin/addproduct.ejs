@@ -92,7 +92,7 @@
                                     <div class="mb-4">
                                         <label class="form-label"> Description</label>
                                         <textarea placeholder="Type here" class="form-control" rows="4"
-                                            name="productDiscriprion"></textarea>
+                                            name="productDiscription"></textarea>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4">
@@ -190,14 +190,14 @@
                             <div class="card-body">
                                 <div class="row gx-2">
                                     <div class="col-sm-6 mb-3">
-                                        <label class="form-label" name="productCategory">Category</label>
-                                        <select class="form-select">
-                                            <!-- <option>Automobiles</option>
-                                            <option>Home items</option>
-                                            <option>Electronics</option>
-                                            <option>Smartphones</option>
-                                            <option>Sport items</option>
-                                            <option>Baby and Tous</option> -->
+                                        <label class="form-label" >Category</label>
+                                        <select class="form-select" name="productCategory">
+                                            <% if(typeof category !== "undefined"){ %>
+                                            <% category.forEach((value) => { %>
+                                                <option> <%= value.name %></option>
+                                           <% }) %>
+                                            <% } %>
+                                            
                                         </select>
                                     </div>
                                     <!-- <div class="col-sm-6 mb-3">
@@ -223,7 +223,7 @@
                 </div>
             </section>
             <!-- content-main end// -->
-            <footer class="main-footer font-xs">
+            <!-- <footer class="main-footer font-xs">
                 <div class="row pb-30 pt-15">
                     <div class="col-sm-6">
                         <script>
@@ -235,7 +235,7 @@
                         <div class="text-sm-end">All rights reserved</div>
                     </div>
                 </div>
-            </footer>
+            </footer> -->
         </main>
         <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -244,6 +244,8 @@
         <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
         <!-- Main Script -->
         <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+        
 </body>
 
 </html>

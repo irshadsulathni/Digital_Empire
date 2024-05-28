@@ -56,7 +56,7 @@ const verifyLogin = async (req, res) => {
 
 const adminLogout = async (req, res) => {
     req.session.destroy(error => {
-        if (err) {
+        if (error) {
             console.error('Error destroying session:', error);
             return res.status(500).send('Internal Server Error');
         }

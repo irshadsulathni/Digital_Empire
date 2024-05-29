@@ -8,8 +8,15 @@ const loadVarient = async (req, res) => {
 
         const productData = await Product.findOne({ _id: productId });
         
-        console.log(productId);
         res.render('admin/varient',{productId, activeProductMessage: 'active', product:productData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addVarient = async (req, res) => {
+    try {
+        
     } catch (error) {
         console.log(error.message);
     }
@@ -19,5 +26,6 @@ const loadVarient = async (req, res) => {
 
 
 module.exports = {
-    loadVarient
+    loadVarient,
+    addVarient
 }

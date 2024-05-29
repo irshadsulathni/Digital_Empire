@@ -66,6 +66,7 @@ admin_route.post('/editCategory', auth.isLogin, categoryController.updateCategor
 admin_route.post('/addProduct', auth.isLogin, upload.array('productImages', 10), productController.addProduct);
 admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
 admin_route.post('/editProduct', auth.isLogin, productController.updateProduct)
+admin_route.post('varient', auth.isLogin , varientController.addVarient)
 
 
 

@@ -15,6 +15,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 </head>
 
 <body class="dark">
@@ -212,6 +214,61 @@
             }
             
         </script>
+        <script>
+            async function listOrUnlist(categoryId, list) {
+                // Confirm the action with SweetAlert
+                const confirmation = await swal({
+                    title: list ? "List Category" : "Unlist Category",
+                    text: list ? "Are you sure you want to list this Category?" : "Are you sure you want to unlist this Category?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: "Cancel",
+                        confirm: {
+                            text: "Yes",
+                            value: true,
+                            visible: true,
+                            className: "btn-confirm",
+                            closeModal: true
+                        }
+                    }
+                });
+        
+                if (confirmation) {
+                    try {
+                        const response = await fetch('/admin/category/list', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ categoryId, list })
+                        });
+                        const data = await response.json()
+                        if (data) {
+                            if (list) {
+                                // Show success message for listing
+                                swal("Category Listed!", "Your category has been successfully listed.", "success")
+                                    .then(() => {
+                                        // Reload the page after the success message is closed
+                                        location.reload();
+                                    });
+                            } else {
+                                // Show success message for unlisting
+                                swal("Category Unlisted!", "Your category has been successfully unlisted.", "success")
+                                    .then(() => {
+                                        // Reload the page after the success message is closed
+                                        location.reload();
+                                    });
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Show error message
+                        swal("Oops!", "Something went wrong. Please try again later.", "error");
+                    }
+                }
+            }
+        </script>
+        
 </body>
 
 </html>

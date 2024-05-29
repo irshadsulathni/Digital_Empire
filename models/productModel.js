@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const Category = require('../models/categoryModel')
 const productSchema = new mongoose.Schema({
 
     productName: {
@@ -11,19 +11,16 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     productCategory:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Category',
         required: true
-    },
-    productPrice:{
-        type:Number,
-        required:true
     },
     productImage:{
         type:Array,
         required:true
     },
-    productQuantity:{
-        type:Number,
+    productBrand:{
+        type:String,
         required:true
     },
     createdAt:{

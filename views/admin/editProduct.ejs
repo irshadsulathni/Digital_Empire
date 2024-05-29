@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Nest Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+    // for aside
+
+    <%- include('../layouts/adminSide') %>
+
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Edit Product</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <% if (typeof message !=='undefined' ) { %>
+                                    <p style="color: red;" class="d-inline-flex p-2 ">
+                                        <%= message %>*
+                                    </p>
+                                    <% } %>
+                                        <form method="post">
+                                            <div class="mb-4">
+                                                <label for="product_title" class="form-label">Product Name</label>
+                                                <input type="text"  class="form-control"
+                                                    id="product_title" value="<%= product.productName %>" />
+                                            </div>
+                                            <div class="row gx-3">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="product_sku" class="form-label">Stock</label>
+                                                    <input type="text" value="<%= product.productQuantity %>" class="form-control"
+                                                        id="product_sku" />
+                                                </div>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="product_brand" class="form-label">Brand</label>
+                                                <input type="text"  class="form-control"
+                                                    id="product_brand" value="<%= product.productBrand %>" />
+                                            </div>
+                            </div>
+                        </div>
+                        <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div>
+                                    <label class="form-label">
+                                        Product Discription
+                                    </label>
+                                    <textarea class="form-control"
+                                        rows="4"><%= product.productDiscription %></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- card end// -->
+                        <div class="card-body">
+                            <!-- Display Existing Images -->
+                            <% if (product && product.productImage && product.productImage.length> 0) { %>
+                                <div class="mb-3">
+                                    <label class="form-label">Existing Images</label>
+                                    <div class="product-images">
+                                        <% product.productImage.forEach((image, index)=> { %>
+                                            <div class="image-wrapper"
+                                                style="display: inline-block; position: relative; margin-right: 10px;">
+                                                <img src="<%= image %>" alt="Product Image" class="img-fluid"
+                                                    style="width: 400px; height: 200px;" />
+                                                <button type="button" class="btn btn-danger btn-sm remove-image-btn"
+                                                    data-image="<%= image %>">Remove</button>
+                                            </div>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <!-- Input field for uploading new images -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload New Image</label>
+                                        <input type="file" class="form-control" name="newProductImages" multiple />
+                                    </div>
+                                    <!-- Display New Images Preview -->
+                                    <div class="mb-3" id="newImagesPreview">
+                                        <label class="form-label">New Images Preview</label>
+                                        <!-- This div will be populated with new image previews using JavaScript -->
+                                    </div>
+                        </div>
+
+
+                        <!-- card end// -->
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label class="form-label">Price</label>
+                                    <input type="text" class="form-control"
+                                        value="<%= product.productPrice %>" />
+                                </div>
+
+
+                                <h5 class="mb-3">Categories</h5>
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="productCategory">
+                                        <% if(typeof categoryData !=="undefined" ){ %>
+                                            <% categoryData.forEach((value)=> { %>
+                                                <option>
+                                                    <%= value.name %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+                                    </select>
+                                </div>
+                                <div class="d-grid" href="admin/product" >
+                                    <button  class="btn btn-md rounded font-sm hover-up">Update</button>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <!-- card end// -->
+                    </div>
+                </div>
+            </section>
+            </form>
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            document.querySelector('input[name="newProductImages"]').addEventListener('change', function (event) {
+                const previewContainer = document.getElementById('newImagesPreview');
+                previewContainer.innerHTML = '';
+
+                const files = event.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        // Create an image element for the preview
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('img-fluid');
+                        img.style.width = '400px';
+                        img.style.height = '200px';
+                        img.style.wordSpacing = '1000px';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file); // Read the file as a data URL
+                }
+            });
+            // Function to handle remove image button click event
+            document.querySelectorAll('.remove-image-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const imageSrc = this.getAttribute('data-image');
+                    // Remove the image preview
+                    const imageWrapper = this.parentElement;
+                    imageWrapper.parentNode.removeChild(imageWrapper);
+                });
+            });
+
+        </script>
+
+
+</body>
+
+</html>

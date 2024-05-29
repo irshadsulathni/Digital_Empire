@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Digital Empire</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+
+    <!-- for aside Items EJS -->
+    <%- include('../layouts/adminSide') %>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products"></option>
+                        <option value="New orders"></option>
+                        <option value="Apple iphone"></option>
+                        <option value="Ahmed Hassan"></option>
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                        class="material-icons md-apps"></i></button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-12">
+                    <div class="content-header">
+                        <h2 class="content-title">Add Variant of the Product</h2>
+                    </div>
+                </div>
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <% if (typeof message !=='undefined' ) { %>
+                            <p style="color: red;" class="d-inline-flex p-2">
+                                <%= message %>*
+                            </p>
+                        <% } %>
+                        <div class="card-body">
+                            <form action="/admin/addProduct" method="POST">
+                                <div class="row">
+                                        <input type="text" placeholder="<%= product._id %>" class="form-control" name="productId" hidden />
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">Price</label>
+                                        <input placeholder="₹" type="text" class="form-control" name="variantPrice" />
+                                    </div>
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">Processor</label>
+                                        <input placeholder="Processor" type="text" class="form-control" name="variantProcessor" />
+                                    </div>
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">RAM</label>
+                                        <input placeholder="RAM" type="text" class="form-control" name="variantRAM" />
+                                    </div>
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">OS</label>
+                                        <input placeholder="OS" type="text" class="form-control" name="variantOS" />
+                                    </div>
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">Color</label>
+                                        <input placeholder="Color" type="text" class="form-control" name="variantColor" />
+                                    </div>
+                                    <div class="col-lg-6 mb-4">
+                                        <label class="form-label">Stock</label>
+                                        <input placeholder="💻" type="text" class="form-control" name="productStock" />
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" class="btn btn-md btn-primary rounded font-sm hover-up">Publish</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+</body>
+
+</html>

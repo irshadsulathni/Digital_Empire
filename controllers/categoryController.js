@@ -22,37 +22,37 @@ const addCategories = async (req, res) => {
 
         if (!name) {
             return res.render('admin/category', { categoryData, message: 'Invalid Name' });
-        }
-
-        if (!discription) {
+        } else if (name.length <= 4) {
+            return res.render('admin/category', { categoryData, message: 'Name must be at least 4 letters' });
+        } else if (!discription) {
             return res.render('admin/category', { categoryData, message: 'Enter Description' });
+        } else {
+            // Check if category already exists
+            const existCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
+            if (existCategory) {
+                return res.render('admin/category', { categoryData, message: 'Category already exists' });
+            } else {
+                // Create and save new category
+                const category = new Category({
+                    name,
+                    discription
+                });
+
+                await category.save();
+
+                // Fetch updated categories
+                const updatedCategoryData = await Category.find({});
+
+                // Redirect to the category page after saving
+                return res.render('admin/category', { categoryData: updatedCategoryData });
+            }
         }
-
-        // Check if category already exists
-        const existCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
-
-        if (existCategory) {
-            return res.render('admin/category', { categoryData, message: 'Category already exists' });
-        }
-
-        // Create and save new category
-        const category = new Category({
-            name,
-            discription
-        });
-
-        await category.save();
-
-        // Fetch updated categories
-        const updatedCategoryData = await Category.find({});
-
-        // Redirect to the category page after saving
-        res.render('admin/category', { categoryData: updatedCategoryData });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 };
+
 // for list and unlisting the category like soft delete
 const listOrUnlist = async (req, res) => {
     try {
@@ -115,10 +115,10 @@ const updateCategory = async (req, res) => {
     }
 };
 
-const deletCategory = async (req,res) =>{
+const deletCategory = async (req, res) => {
     try {
-        const categoryId =  req.query.categoryId;
-        await Category.deleteOne({_id:categoryId});
+        const categoryId = req.query.categoryId;
+        await Category.deleteOne({ _id: categoryId });
         res.redirect('/admin/category')
     } catch (error) {
         console.log(error.message);

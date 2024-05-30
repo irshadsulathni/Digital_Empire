@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
-const Product = require('../models/productModel')
-const Category = require('../models/categoryModel')
+const Product = require('../models/productModel');
+const Category = require('../models/categoryModel');
+const Variant = require('../models/varientModel')
 /*********************************************
  * 
  * 
@@ -24,8 +25,9 @@ const Category = require('../models/categoryModel')
 
 const loadProduct = async (req, res) => {
     try {
+        const variantData = await Variant.find({})
         const productData = await Product.find({})
-        res.render('admin/product', { productData, activeProductMessage: 'active' })
+        res.render('admin/product', {variantData, productData, activeProductMessage: 'active' })
 
     } catch (error) {
         console.log(error.message);
@@ -46,16 +48,15 @@ const addProduct = async (req, res) => {
         const category = await Category.find({})
         const productData = await Product.find({})
         const { productName, productDiscription, productCategory,productBrand } = req.body;
-        // Validate product name
         if (!productName || productName.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Name' });
         }
-
-        // Validate product description
         if (!productDiscription || productDiscription.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Description' });
         }
-        // image adding the product
+        if (!productBrand || productBrand.trim() === '') {
+            return res.render('admin/addProduct', {category, productData, message: 'Invalid Brand' });
+        }
         const productImage = req.files.map(file => `/publicImages/${file.filename}`);
 
         if (productImage.length !== 4) {
@@ -70,9 +71,7 @@ const addProduct = async (req, res) => {
         else {
             
             const categeryData = await Category.findOne({name:productCategory})
-            console.log(categeryData);
 
-            console.log(categeryData._id);
             const category = await Category.find({})
             if(!categeryData){
                 res.render('admin/addProduct',{ category, message:'Category not get'})
@@ -86,13 +85,12 @@ const addProduct = async (req, res) => {
                     productBrand:productBrand
                 });
               const savedProduct =  await product.save()
-    
+                req.session.productId = savedProduct._id
               const productId = savedProduct._id;
     
                 res.redirect(`/admin/varient?productId=${productId}`);
             }
         }
-
 
     } catch (error) {
         console.log(error.message);
@@ -121,7 +119,7 @@ const loadEditProduct = async (req, res) => {
         const productId = req.query.productId;
         
         const productData = await Product.findOne({ _id: productId });
-        
+
         if(productData){
             res.render('admin/editProduct', {categoryData, activeProductMessage:'active', product:productData})
         }
@@ -132,19 +130,61 @@ const loadEditProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
+        const categeryData = await Category.find({});
         const productId = req.query.productId;
+        console.log('prodrv     igf    '+productId);
+        const productData = await Product.findOne({ _id: productId });
+        const { productName, productDiscription, productCategory } = req.body;
 
-        const {productName, productDiscription, productPrice, productQuantity,productCategory} = req.body;
+        console.log('req.body' + req.body);
 
-        if(productName.trim()==''){
-            res.render('admin/editCategory',{message:'Invalid Name'})
+        if (!productName || productName.trim() === '') {
+            return res.render('admin/addProduct', { categeryData, message: 'Invalid Name', product: productData });
+        }
+        if (!productDiscription || productDiscription.trim() === '') {
+            return res.render('admin/addProduct', { categeryData, message: 'Invalid Description', product: productData });
         }
 
-        res.redirect('admin/product')
+        const productImage = req.files.map(file => `/publicImages/${file.filename}`);
+
+        if (productImage.length !== 4) {
+            return res.render('admin/addProduct', { categeryData, message: 'You must upload exactly 4 images', product: productData });
+        }
+
+        const category = await Category.findOne({name:productCategory})
+        console.log('here also getting');
+        console.log(category);
+        if (!category) {
+            return res.render('admin/addProduct', { categeryData, message: 'Category not found', product: productData });
+        }
+
+        // Update the product
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: productId }, // Query
+            {
+                $set: {
+                    productName: productName,
+                    productDiscription: productDiscription,
+                    productCategory: category._id, // Use the category's _id
+                    productImage: productImage,
+                }
+            },
+            { new: true } // Return the updated document
+        );
+
+        console.log(updatedProduct);
+
+        if (!updatedProduct) {
+            return res.render('admin/addProduct', { categeryData, message: 'Failed to update product', product: productData });
+        }
+
+        res.redirect('/admin/product');
     } catch (error) {
-        
+        console.log(error.message);
+        res.status(500).send('Internal Server Error'); // Send a generic error response
     }
-}
+};
+
 
 
 /*********************************************

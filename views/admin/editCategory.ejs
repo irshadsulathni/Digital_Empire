@@ -30,7 +30,8 @@
                     <form class="searchform">
                         <div class="input-group">
                             <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                            <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
                         </div>
                         <datalist id="search_terms">
                             <option value="Products"></option>
@@ -41,7 +42,8 @@
                     </form>
                 </div>
                 <div class="col-nav">
-                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link btn-icon" href="#">
@@ -50,10 +52,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -61,8 +65,7 @@
             <section class="content-main">
                 <div class="content-header">
                     <div>
-                        <h2 class="content-title card-title">Categories</h2>
-                        <p>Add, edit or delete a category</p>
+                        <h2 class="content-title card-title">Edit Categories</h2>
                     </div>
                     <!-- <div>
                         <input type="text" placeholder="Search Categories" class="form-control bg-white" />
@@ -81,14 +84,14 @@
                                         <form method="post">
                                             <div class="mb-5">
                                                 <label for="product_name" class="form-label">Name</label>
-                                                <input type="text" placeholder="Type here" value="<%= category.name %> " class="form-control"
-                                                    name="categoryName" id="product_name" />
+                                                <input type="text" placeholder="Type here" value="<%= category.name %> "
+                                                    class="form-control" name="categoryName" id="product_name" />
                                             </div>
 
                                             <div class="mb-5">
                                                 <label class="form-label">Description</label>
-                                                <input placeholder="Type here" value=" <%= category.discription %> " class="form-control"
-                                                    name="categoryDescription"/>
+                                                <input placeholder="Type here" value=" <%= category.discription %> "
+                                                    class="form-control" name="categoryDescription" />
                                             </div>
                                             <div class="d-grid" href="/admin/category">
                                                 <button class="btn btn-primary">Update category</button>

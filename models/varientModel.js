@@ -27,7 +27,7 @@ const variantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    variantOS: {
+    variantGPU: {
         type: String,
         required: true
     },

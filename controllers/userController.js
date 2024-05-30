@@ -88,9 +88,6 @@ const addUser = async (req, res) => {
             else if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(req.body.email)) {
                 res.render('user/signIn', { message: 'Invalid Email, Only lowercase letters are allowed' });
             }
-            // else if (!/[a-z]/.test(req.body.password)) {
-            //     res.render('user/signIn', { message: 'Name is Invalid, Please give correct Name' });
-            // }
             else if (req.body.name.length <= 3) {
                 res.render('user/signIn', { message: 'Name want at least 4 Letter' })
             }
@@ -154,8 +151,7 @@ const addUser = async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error)
-        res.render('user/404')
+        console.log(error.message)
     }
 }
 

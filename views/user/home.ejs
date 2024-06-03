@@ -146,10 +146,10 @@
             <div class="header-bottom sticky-header">
                 <div class="container">
                     <div class="header-left">
-                        <div class="dropdown category-dropdown show is-on" data-visible="true">
+                        <div class="dropdown category-dropdown show is-on" data-visible="false">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="true" data-display="static"
-                                title="Browse Categories">
+                                aria-haspopup="true" aria-expanded="false" data-display="static"
+                                title="Laptop Categories">
                                 Laptop Categories
                             </a>
 
@@ -174,87 +174,11 @@
                                     <a href="/" class="sf-with-ul">Home</a>
                                 </li>
                                 <li>
-                                    <a href="category.html" class="sf-with-ul">Shop</a>
-
-                                    <div class="megamenu megamenu-md">
-                                        <div class="row no-gutters">
-                                            <div class="col-md-8">
-                                                <div class="menu-col">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="menu-title">Shop with sidebar</div>
-                                                            <!-- End .menu-title -->
-                                                            <ul>
-                                                                <li><a href="category-list.html">Shop List</a></li>
-                                                                <li><a href="category-2cols.html">Shop Grid 2
-                                                                        Columns</a></li>
-                                                                <li><a href="category.html">Shop Grid 3 Columns</a></li>
-                                                                <li><a href="category-4cols.html">Shop Grid 4
-                                                                        Columns</a></li>
-                                                                <li><a href="category-market.html"><span>Shop
-                                                                            Market<span
-                                                                                class="tip tip-new">New</span></span></a>
-                                                                </li>
-                                                            </ul>
-
-                                                            <div class="menu-title">Shop no sidebar</div>
-                                                            <!-- End .menu-title -->
-                                                            <ul>
-                                                                <li><a href="category-boxed.html"><span>Shop Boxed No
-                                                                            Sidebar<span
-                                                                                class="tip tip-hot">Hot</span></span></a>
-                                                                </li>
-                                                                <li><a href="category-fullwidth.html">Shop Fullwidth No
-                                                                        Sidebar</a></li>
-                                                            </ul>
-                                                        </div><!-- End .col-md-6 -->
-
-                                                        <div class="col-md-6">
-                                                            <div class="menu-title">Product Category</div>
-                                                            <!-- End .menu-title -->
-                                                            <ul>
-                                                                <li><a href="product-category-boxed.html">Product
-                                                                        Category Boxed</a></li>
-                                                                <li><a href="product-category-fullwidth.html"><span>Product
-                                                                            Category Fullwidth<span
-                                                                                class="tip tip-new">New</span></span></a>
-                                                                </li>
-                                                            </ul>
-                                                            <div class="menu-title">Shop Pages</div>
-                                                            <!-- End .menu-title -->
-                                                            <ul>
-                                                                <li><a href="cart.html">Cart</a></li>
-                                                                <li><a href="checkout.html">Checkout</a></li>
-                                                                <li><a href="wishlist.html">Wishlist</a></li>
-                                                                <li><a href="/dashboard">My Account</a></li>
-                                                                <li><a href="#">Lookbook</a></li>
-                                                            </ul>
-                                                        </div><!-- End .col-md-6 -->
-                                                    </div><!-- End .row -->
-                                                </div><!-- End .menu-col -->
-                                            </div><!-- End .col-md-8 -->
-
-                                            <div class="col-md-4">
-                                                <div class="banner banner-overlay">
-                                                    <a href="category.html" class="banner banner-menu">
-                                                        <img src="/userAssets/images/menu/banner-1.jpg" alt="Banner">
-
-                                                        <div class="banner-content banner-content-top">
-                                                            <div class="banner-title text-white">Last
-                                                                <br>Chance<br><span><strong>Sale</strong></span>
-                                                            </div>
-                                                            <!-- End .banner-title -->
-                                                        </div><!-- End .banner-content -->
-                                                    </a>
-                                                </div><!-- End .banner banner-overlay -->
-                                            </div><!-- End .col-md-4 -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .megamenu megamenu-md -->
+                                    <a href="/shop" class="sf-with-ul">Shop</a>
                                 </li>
 
                                 <li>
                                     <a href="#" class="sf-with-ul">More</a>
-
                                     <ul>
                                         <li>
                                             <a href="about" class="sf-with-ul">About</a>
@@ -293,14 +217,14 @@
                             <div class="row">
                                 <div class="col-auto offset-lg-3 intro-col">
                                     <h3 class="intro-subtitle">Trade-In Offer</h3><!-- End .h3 intro-subtitle -->
-                                    <h1 class="intro-title">MacBook Air <br>Latest Model
+                                    <h1 class="intro-title"><%= productData.productName %> <br>Latest Model
                                         <span>
                                             <sup class="font-weight-light">from</sup>
-                                            <span class="text-primary">$999<sup>,99</sup></span>
+                                            <span class="text-primary"><%= varientData[0].variantPrice %><sup>,99</sup></span>
                                         </span>
                                     </h1><!-- End .intro-title -->
 
-                                    <a href="category.html" class="btn btn-outline-primary-2">
+                                    <a href="shop" class="btn btn-outline-primary-2">
                                         <span>Shop Now</span>
                                         <i class="icon-long-arrow-right"></i>
                                     </a>
@@ -310,19 +234,19 @@
                     </div><!-- End .intro-slide -->
 
                     <div class="intro-slide"
-                        style="background-image: url(/userAssets/images/demos/demo-13/slider/slide-2.jpg);">
+                        style="background-image: url(/userAssets/images/demos/demo-13/slider/slide-6.jpg);">
                         <div class="container intro-content">
                             <div class="row">
                                 <div class="col-auto offset-lg-3 intro-col">
-                                    <h3 class="intro-subtitle">Trevel & Outdoor</h3><!-- End .h3 intro-subtitle -->
-                                    <h1 class="intro-title">Original Outdoor <br>Beanbag
+                                    <h3 class="intro-subtitle" style="color: white;">Trevel & Outdoor</h3><!-- End .h3 intro-subtitle -->
+                                    <h1 class="intro-title" style="color: white;">Gaming <br> Laptops
                                         <span>
-                                            <sup class="font-weight-light line-through">$89,99</sup>
-                                            <span class="text-primary">$29<sup>,99</sup></span>
+                                            <!-- <sup class="font-weight-light line-through">$89,99</sup> -->
+                                            <!-- <span class="text-success">$29<sup>,99</sup></span> -->
                                         </span>
                                     </h1><!-- End .intro-title -->
 
-                                    <a href="category.html" class="btn btn-outline-primary-2">
+                                    <a href="shop" class="btn btn-outline-primary-2">
                                         <span>Shop Now</span>
                                         <i class="icon-long-arrow-right"></i>
                                     </a>
@@ -331,27 +255,7 @@
                         </div><!-- End .container intro-content -->
                     </div><!-- End .intro-slide -->
 
-                    <div class="intro-slide"
-                        style="background-image: url(/userAssets/images/demos/demo-13/slider/slide-3.jpg);">
-                        <div class="container intro-content">
-                            <div class="row">
-                                <div class="col-auto offset-lg-3 intro-col">
-                                    <h3 class="intro-subtitle">Fashion Promotions</h3><!-- End .h3 intro-subtitle -->
-                                    <h1 class="intro-title">Tan Suede <br>Biker Jacket
-                                        <span>
-                                            <sup class="font-weight-light line-through">$240,00</sup>
-                                            <span class="text-primary">$180<sup>,99</sup></span>
-                                        </span>
-                                    </h1><!-- End .intro-title -->
-
-                                    <a href="category.html" class="btn btn-outline-primary-2">
-                                        <span>Shop Now</span>
-                                        <i class="icon-long-arrow-right"></i>
-                                    </a>
-                                </div><!-- End .col-auto offset-lg-3 -->
-                            </div><!-- End .row -->
-                        </div><!-- End .container intro-content -->
-                    </div><!-- End .intro-slide -->
+                    
                 </div><!-- End .owl-carousel owl-simple -->
 
                 <span class="slider-loader"></span><!-- End .slider-loader -->
@@ -4471,103 +4375,93 @@
                                 <span class="icon-box-icon">
                                     <i class="icon-rocket"></i>
                                 </span>
-
                                 <div class="icon-box-content">
-                                    <h3 class="icon-box-title">Free Shipping</h3><!-- End .icon-box-title -->
+                                    <h3 class="icon-box-title">Free Shipping</h3>
                                     <p>Orders $50 or more</p>
-                                </div><!-- End .icon-box-content -->
-                            </div><!-- End .icon-box -->
-                        </div><!-- End .col-sm-6 col-lg-3 -->
-
+                                </div>
+                            </div>
+                        </div>
+        
                         <div class="col-sm-6 col-lg-3">
                             <div class="icon-box icon-box-side">
                                 <span class="icon-box-icon">
                                     <i class="icon-rotate-left"></i>
                                 </span>
-
                                 <div class="icon-box-content">
-                                    <h3 class="icon-box-title">Free Returns</h3><!-- End .icon-box-title -->
+                                    <h3 class="icon-box-title">Free Returns</h3>
                                     <p>Within 30 days</p>
-                                </div><!-- End .icon-box-content -->
-                            </div><!-- End .icon-box -->
-                        </div><!-- End .col-sm-6 col-lg-3 -->
-
+                                </div>
+                            </div>
+                        </div>
+        
                         <div class="col-sm-6 col-lg-3">
                             <div class="icon-box icon-box-side">
                                 <span class="icon-box-icon">
                                     <i class="icon-info-circle"></i>
                                 </span>
-
                                 <div class="icon-box-content">
-                                    <h3 class="icon-box-title">Get 20% Off 1 Item</h3><!-- End .icon-box-title -->
+                                    <h3 class="icon-box-title">Get 20% Off 1 Item</h3>
                                     <p>When you sign up</p>
-                                </div><!-- End .icon-box-content -->
-                            </div><!-- End .icon-box -->
-                        </div><!-- End .col-sm-6 col-lg-3 -->
-
+                                </div>
+                            </div>
+                        </div>
+        
                         <div class="col-sm-6 col-lg-3">
                             <div class="icon-box icon-box-side">
                                 <span class="icon-box-icon">
                                     <i class="icon-life-ring"></i>
                                 </span>
-
                                 <div class="icon-box-content">
-                                    <h3 class="icon-box-title">We Support</h3><!-- End .icon-box-title -->
+                                    <h3 class="icon-box-title">We Support</h3>
                                     <p>24/7 amazing services</p>
-                                </div><!-- End .icon-box-content -->
-                            </div><!-- End .icon-box -->
-                        </div><!-- End .col-sm-6 col-lg-3 -->
-                    </div><!-- End .row -->
-                </div><!-- End .container -->
-            </div><!-- End .icon-boxes-container -->
-
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
             <div class="footer-middle border-0">
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-12 col-lg-6">
                             <div class="widget widget-about">
-                                <img src="/userAssets/images/demos/demo-13/logo-footer.png" class="footer-logo"
-                                    alt="Footer Logo" width="105" height="25">
-                                <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate
-                                    magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan
-                                    porttitor, facilisis luctus, metus. </p>
-
+                                <img src="/adminAssets/imgs/icons/new-icon.png" class="footer-logo" alt="Footer Logo" width="150" height="25">
+                                <p>Digital Empire is your premier online store for the latest and most powerful laptops. Discover top brands, exceptional deals, and unmatched customer service, all in one place.</p>
+        
                                 <div class="widget-about-info">
                                     <div class="row">
                                         <div class="col-sm-6 col-md-4">
                                             <span class="widget-about-title">Got Question? Call us 24/7</span>
-                                            <a href="tel:123456789">+0123 456 789</a>
-                                        </div><!-- End .col-sm-6 -->
+                                            <a href="tel:123456789">+91 9946114729</a>
+                                        </div>
                                         <div class="col-sm-6 col-md-8">
                                             <span class="widget-about-title">Payment Method</span>
                                             <figure class="footer-payments">
-                                                <img src="/userAssets/images/payments.png" alt="Payment methods"
-                                                    width="272" height="20">
-                                            </figure><!-- End .footer-payments -->
-                                        </div><!-- End .col-sm-6 -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .widget-about-info -->
-                            </div><!-- End .widget about-widget -->
-                        </div><!-- End .col-sm-12 col-lg-3 -->
-
+                                                <img src="/userAssets/images/payments.png" alt="Payment methods" width="272" height="20">
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
                         <div class="col-sm-4 col-lg-2">
                             <div class="widget">
-                                <h4 class="widget-title">Information</h4><!-- End .widget-title -->
-
+                                <h4 class="widget-title">Information</h4>
                                 <ul class="widget-list">
                                     <li><a href="about">About Molla</a></li>
-                                    <li><a href="#">How to shop on Molla</a></li>
+                                    <li><a href="howShop">How to shop on Digital</a></li>
                                     <li><a href="faq">FAQ</a></li>
                                     <li><a href="contact.html">Contact us</a></li>
-                                    <li><a href="login.html">Log in</a></li>
-                                </ul><!-- End .widget-list -->
-                            </div><!-- End .widget -->
-                        </div><!-- End .col-sm-4 col-lg-3 -->
-
+                                    <li><a href="signUp">Log in</a></li>
+                                </ul>
+                            </div>
+                        </div>
+        
                         <div class="col-sm-4 col-lg-2">
                             <div class="widget">
-                                <h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
-
+                                <h4 class="widget-title">Customer Service</h4>
                                 <ul class="widget-list">
                                     <li><a href="#">Payment Methods</a></li>
                                     <li><a href="#">Money-back guarantee!</a></li>
@@ -4575,52 +4469,28 @@
                                     <li><a href="#">Shipping</a></li>
                                     <li><a href="#">Terms and conditions</a></li>
                                     <li><a href="#">Privacy Policy</a></li>
-                                </ul><!-- End .widget-list -->
-                            </div><!-- End .widget -->
-                        </div><!-- End .col-sm-4 col-lg-3 -->
-
-                        <div class="col-sm-4 col-lg-2">
-                            <div class="widget">
-                                <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
-
-                                <ul class="widget-list">
-                                    <li><a href="#">Sign In</a></li>
-                                    <li><a href="cart.html">View Cart</a></li>
-                                    <li><a href="#">My Wishlist</a></li>
-                                    <li><a href="#">Track My Order</a></li>
-                                    <li><a href="#">Help</a></li>
-                                </ul><!-- End .widget-list -->
-                            </div><!-- End .widget -->
-                        </div><!-- End .col-sm-64 col-lg-3 -->
-                    </div><!-- End .row -->
-                </div><!-- End .container -->
-            </div><!-- End .footer-middle -->
-
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
             <div class="footer-bottom">
                 <div class="container">
-                    <p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p>
-                    <!-- End .footer-copyright -->
-                    <ul class="footer-menu">
-                        <li><a href="#">Terms Of Use</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul><!-- End .footer-menu -->
-
+                    <p class="footer-copyright">Copyright © 2020 Irshad Sulthani. All Rights Reserved.</p>
                     <div class="social-icons social-icons-color">
                         <span class="social-label">Social Media</span>
-                        <a href="#" class="social-icon social-facebook" title="Facebook" target="_blank"><i
-                                class="icon-facebook-f"></i></a>
-                        <a href="#" class="social-icon social-twitter" title="Twitter" target="_blank"><i
-                                class="icon-twitter"></i></a>
-                        <a href="#" class="social-icon social-instagram" title="Instagram" target="_blank"><i
-                                class="icon-instagram"></i></a>
-                        <a href="#" class="social-icon social-youtube" title="Youtube" target="_blank"><i
-                                class="icon-youtube"></i></a>
-                        <a href="#" class="social-icon social-pinterest" title="Pinterest" target="_blank"><i
-                                class="icon-pinterest"></i></a>
-                    </div><!-- End .soial-icons -->
-                </div><!-- End .container -->
-            </div><!-- End .footer-bottom -->
-        </footer><!-- End .footer -->
+                        <a href="#" class="social-icon social-facebook" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
+                        <a href="#" class="social-icon social-twitter" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
+                        <a href="#" class="social-icon social-instagram" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
+                        <a href="#" class="social-icon social-youtube" title="Youtube" target="_blank"><i class="icon-youtube"></i></a>
+                        <a href="#" class="social-icon social-pinterest" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 

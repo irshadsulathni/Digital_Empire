@@ -71,32 +71,32 @@
                     <div class="col-lg-6">
                         <div class="card mb-4">
                             <div class="card-header">
-                                <h4>Basic</h4>
+                                <h4>Basic Detail of Product</h4>
                             </div>
                             <% if (typeof message !=='undefined' ) { %>
                                 <p style="color: red;" class="d-inline-flex p-2 ">
                                     <%= message %>*
                                 </p>
                                 <% } %>
-                            <div class="card-body">
-                                <form action="/admin/addProduct" method="POST" enctype="multipart/form-data">
-                                    <div class="mb-4">
-                                        <label for="product_name" class="form-label">Product Name</label>
-                                        <input type="text" placeholder="Type here" class="form-control"
-                                            id="product_name" name="productName" />
+                                    <div class="card-body">
+                                        <form action="/admin/addProduct" method="POST" enctype="multipart/form-data">
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Product Name</label>
+                                                <input type="text" placeholder="Type here" class="form-control"
+                                                    id="product_name" name="productName" />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label"> Description</label>
+                                                <textarea placeholder="Type here" class="form-control" rows="4"
+                                                    name="productDiscription"></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div>
+                                                    <button type="submit"
+                                                        class="btn btn-md rounded font-sm hover-up">Publish</button>
+                                                </div>
+                                            </div>
                                     </div>
-                                    <div class="mb-4">
-                                        <label class="form-label"> Description</label>
-                                        <textarea placeholder="Type here" class="form-control" rows="4"
-                                            name="productDiscription"></textarea>
-                                    </div>
-                                    <div class="row">
-                                        <div>
-                                            <button type="submit"
-                                                class="btn btn-md rounded font-sm hover-up">Publish</button>
-                                        </div>
-                                    </div>
-                            </div>
                         </div>
                     </div>
                     <div class="col-lg-3">
@@ -106,8 +106,9 @@
                             </div>
                             <div class="card-body">
                                 <div class="input-upload">
-                                    <img src="/adminAssets/imgs/theme/upload.svg"  />
-                                    <input class="form-control" type="file" id="product_images" name="productImages" multiple/>
+                                    <img src="/adminAssets/imgs/theme/upload.svg" />
+                                    <input class="form-control" type="file" id="product_images" name="productImages"
+                                        multiple />
                                 </div>
                             </div>
                         </div>
@@ -119,18 +120,20 @@
                             <div class="card-body">
                                 <div class="row gx-2">
                                     <div class="col-sm-6 mb-3">
-                                        <label class="form-label" >Category</label>
+                                        <label class="form-label">Category</label>
                                         <select class="form-select" name="productCategory">
-                                            <% if(typeof category !== "undefined"){ %>
-                                            <% category.forEach((value) => { %>
-                                                <option> <%= value.name %></option>
-                                           <% }) %>
-                                            <% } %>
-                                            
+                                            <% if(typeof category !=="undefined" ){ %>
+                                                <% category.forEach((value)=> { %>
+                                                    <option>
+                                                        <%= value.name %>
+                                                    </option>
+                                                    <% }) %>
+                                                        <% } %>
+
                                         </select>
                                     </div>
                                     <div class="mb-4">
-                                        <label for="product_name" class="form-label" >Brand</label>
+                                        <label for="product_name" class="form-label">Brand</label>
                                         <input type="text" class="form-control" name="productBrand" />
                                     </div>
                                 </div>
@@ -143,34 +146,6 @@
                 </div>
             </section>
 
-            <!-- the modal for adding the varient of laptop -->
-
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form>
-                        <div class="mb-3">
-                          <label for="recipient-name" class="col-form-label">Recipient:</label>
-                          <input type="text" class="form-control" id="recipient-name">
-                        </div>
-                        <div class="mb-3">
-                          <label for="message-text" class="col-form-label">Message:</label>
-                          <textarea class="form-control" id="message-text"></textarea>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Send message</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
         </main>
         <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -180,7 +155,7 @@
         <!-- Main Script -->
         <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
 
-        
+
 </body>
 
 </html>

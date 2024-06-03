@@ -5,6 +5,7 @@ const userController = require('../controllers/userController');
 const auth = require('../middleware/userAuth');
 const passport = require('passport');
 require('../passport');
+const productController =  require('../controllers/productController')
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -17,12 +18,16 @@ user_route.get('/signUp', auth.isLogout, userController.loadSignUp);
 user_route.post('/signIn', auth.isLogout, userController.addUser);
 user_route.post('/signUp', userController.verifyLogin);
 
+
 // user home page things
 user_route.get('/dashboard' , userController.loadDashBoard);
 user_route.get('/',userController.loadHome);
 user_route.get('/about', userController.loadAbout);
 user_route.get('/faq',  userController.loadFAQ);
-user_route.get('/signIn', auth.isLogout,userController.loadsignIn);
+user_route.get('/signIn', auth.isLogout,userController.loadsignIn);;
+user_route.get('/shop', userController.loadShop);
+user_route.get('/productPage', productController.loadProductDeatiles);
+user_route.get('/howShop', userController.loadHowShop)
 
 //user error
 user_route.get('/404', userController.load404);

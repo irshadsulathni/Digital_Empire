@@ -18,6 +18,7 @@
     <!-- Bootstrap CSS -->
     <!-- for sweetalert -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -55,12 +56,12 @@
             border-top: 1px solid rgba(0, 0, 0, 0.012);
             display: flex;
             justify-content: space-between;
-           
+
         }
 
         .btn-edit {
             background-color: darkorange;
-            
+
         }
     </style>
 </head>
@@ -71,229 +72,257 @@
 
     <%- include('../layouts/adminSide') %>
 
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products"></option>
-                        <option value="New orders"></option>
-                        <option value="Apple iphone"></option>
-                        <option value="Ahmed Hassan"></option>
-                    </datalist>
-                </form>
-            </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications animation-shake"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </header>
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Products List</h2>
-                </div>
-                <div>
-                    <a href="/admin/addProduct" class="btn btn-sm rounded" style="background-color: green;">Create new</a>
-                </div>
-            </div>
-            <div class="card mb-4">
-                <div class="card-body">
-                    <article class="itemlist">
-                        <div class="row">
-                            <% productData.forEach((element,index) => { %>
-                                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                                    <div class="card card-product-grid">
-                                        <div class="img-wrap">
-                                            <img src="<%= element.productImage[0] %>" name="productImage" multiple />
-                                        </div>
-                                        <div class="info-wrap">
-                                            <a  class="title" data-bs-toggle="modal" data-bs-target="#variantModal" onclick="updateModal('<%= JSON.stringify(variantData[index]) %>')"><%= element.productName %></a>
-                                                <div class="price mt-1">₹<%= variantData[index].variantPrice %></div>
-                                            <div class="price mt-1">💻 <%= variantData[index].variantQuantity %></div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <a href="/admin/editProduct?productId=<%= element._id %>" class="btn btn-sm btn-edit rounded">Edit</a>
-                                            <% if (element.list) { %>
-                                                <a href="#" class="btn btn-sm btn-list rounded" style="background-color: darkred;"
-                                                    onclick="listorUnlistOfProduct('<%= element._id %>', false)"> ! Hide</a>
-                                            <% } else { %>
-                                                <a href="#" class="btn btn-sm btn-list rounded " style="background-color: red;"
-                                                    onclick="listorUnlistOfProduct('<%= element._id %>', true)"> Hide</a>
-                                            <% } %>
-                                            <a href="#" class="btn btn-sm rounded" style="background-color: red;"> Delete</a>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            <% }); %>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
                         </div>
-                    </article>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
                 </div>
-            </div>
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
                         </li>
                     </ul>
-                </nav>
-            </div>
-        </section>
-
-        <div class="modal fade dark" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
-            <div class="modal-dialog " style="max-width: 600px;">
-                <div class="modal-content" style="background-color: rgb(68, 68, 68);">
-                    <div class="modal-header ">
-                        <h5 class="modal-title" id="variantModalLabel">Product Variants</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Products List</h2>
                     </div>
-                    <div class="modal-body" style="background-color: rgb(68, 68, 68);">
-                                <div class="row">
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Price</label>
-                                        <input  type="text" class="form-control" name="variantPrice" id="variantPrice" required />
+                    <div>
+                        <a href="/admin/addProduct" class="btn btn-sm rounded" style="background-color: green;">Create
+                            new</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <article class="itemlist">
+                            <div class="row">
+                                <% productData.forEach((element, index) => { %>
+                                    <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                                        <div class="card card-product-grid">
+                                            <div class="img-wrap">
+                                                <img src="<%= element.productImage[0] %>" name="productImage" multiple />
+                                            </div>
+                                            <div class="info-wrap">
+                                                <a class="title" data-bs-toggle="modal" data-bs-target="#variantModal"
+                                                    onclick="updateModal('<%= JSON.stringify(variantData[index]) %>')">
+                                                    <%= element.productName %>
+                                                </a>
+                                                <% if (variantData[index]) { %>
+                                                    <div class="price mt-1">₹<%= variantData[index].variantPrice %></div>
+                                                    <div class="price mt-1">💻<%= variantData[index].variantQuantity %></div>
+                                                <% } else { %>
+                                                    <div class="price mt-1">Price Unavailable</div>
+                                                    <div class="price mt-1">Quantity Unavailable</div>
+                                                <% } %>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a href="/admin/editProduct?productId=<%= element._id %>"
+                                                    class="btn btn-sm btn-edit rounded">Edit</a>
+                                                <% if (element.list) { %>
+                                                    <a href="#" class="btn btn-sm btn-list rounded"
+                                                        style="background-color: darkred;"
+                                                        onclick="listorUnlistOfProduct('<%= element._id %>', false)">! Hide</a>
+                                                <% } else { %>
+                                                    <a href="#" class="btn btn-sm btn-list rounded"
+                                                        style="background-color: red;"
+                                                        onclick="listorUnlistOfProduct('<%= element._id %>', true)">Hide</a>
+                                                <% } %>
+                                                <a href="#"
+                                                    class="btn btn-sm rounded"
+                                                    style="background-color: red;"
+                                                    onclick="confirmDelete('<%= element._id %>', '<%= variantData[index]._id %>')">Delete</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Processor</label>
-                                        <input placeholder="Processor" type="text" class="form-control" id="variantProcessor" name="variantProcessor" required />
-                                    </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">RAM</label>
-                                        <input placeholder="RAM" type="text" class="form-control" id="variantRAM" name="variantRAM" required />
-                                    </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">GPU</label>
-                                        <input placeholder="GPU" type="text" class="form-control" id="variantGPU" name="variantGPU" required />
-                                    </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Color</label>
-                                        <input placeholder="Color" type="text" class="form-control" id="variantColor" name="variantColor" required />
-                                    </div>
-                                    <div class="col-lg-6 mb-4">
-                                        <label class="form-label">Stock</label>
-                                        <input placeholder="💻<%= variantData.variantQuantity  %>" type="text" class="form-control" id="variantQuantity" name="variantQuantity" required />
-                                    </div>
-                                </div>                   
+                                <% }); %>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
                         </ul>
+                    </nav>
+                </div>
+            </section>
+
+            <div class="modal fade dark" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog " style="max-width: 600px;">
+                    <div class="modal-content" style="background-color: rgb(68, 68, 68);">
+                        <div class="modal-header ">
+                            <h5 class="modal-title" id="variantModalLabel">Product Variants</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="background-color: rgb(68, 68, 68);">
+                            <div class="row">
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">Price</label>
+                                    <input type="text" class="form-control" name="variantPrice" id="variantPrice"
+                                        required />
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">Processor</label>
+                                    <input placeholder="Processor" type="text" class="form-control"
+                                        id="variantProcessor" name="variantProcessor" required />
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">RAM</label>
+                                    <input placeholder="RAM" type="text" class="form-control" id="variantRAM"
+                                        name="variantRAM" required />
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">GPU</label>
+                                    <input placeholder="GPU" type="text" class="form-control" id="variantGPU"
+                                        name="variantGPU" required />
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">Color</label>
+                                    <input placeholder="Color" type="text" class="form-control" id="variantColor"
+                                        name="variantColor" required />
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <label class="form-label">Stock</label>
+                                    <input placeholder=" 💻 <%= variantData.variantQuantity  %>" type="text"
+                                        class="form-control" id="variantQuantity" name="variantQuantity" required />
+                                </div>
+                            </div>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn" style="background-color: darkorange;">Edit</button>
+                        </div>
                     </div>
-                    <div class="modal-footer" >
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
-            </div>
-        </div>
+                </div>
 
 
-    </main>
-    <script src="/adminassets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/adminassets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/adminassets/js/vendors/select2.min.js"></script>
-    <script src="/adminassets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/adminassets/js/vendors/jquery.fullscreen.min.js"></script>
-    <script src="/adminassets/js/main.js" type="text/javascript"></script>
-    <script>
-        async function listorUnlistOfProduct(productId, list) {
+        </main>
+        <script src="/adminassets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminassets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminassets/js/vendors/select2.min.js"></script>
+        <script src="/adminassets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminassets/js/vendors/jquery.fullscreen.min.js"></script>
+        <script src="/adminassets/js/main.js" type="text/javascript"></script>
+        <script>
+            async function listorUnlistOfProduct(productId, list) {
 
-            swal({
-                title: list ? "List Product" : "Unlist Product",
-                text: list ? "Are you sure you want to list this product?" : "Are you sure you want to unlist this product?",
-                icon: "warning",
-                buttons: {
-                    cancel: "Cancel",
-                    confirm: {
-                        text: "Yes",
-                        value: true,
-                        visible: true,
-                        className: "btn-confirm",
-                        closeModal: true
-                    }
-                }
-            }).then(async (confirmed) => {
-                if (confirmed) {
-                    try {
-                        const response = await fetch('/admin/product/list', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ productId, list })
-                        });
-                        const data = await response.json();
-                        if (data) {
-                            // Show success message
-                            if (list) {
-                                swal("Product Listed!", "Your product has been successfully listed.", "success").then(() => {
-                                    // Reload the page after the success message is closed
-                                    location.reload();
-                                });
-                            } else {
-                                swal("Product Unlisted!", "Your product has been successfully unlisted.", "success").then(() => {
-                                    // Reload the page after the success message is closed
-                                    location.reload();
-                                });
-                            }
+                swal({
+                    title: list ? "List Product" : "Unlist Product",
+                    text: list ? "Are you sure you want to list this product?" : "Are you sure you want to unlist this product?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: "Cancel",
+                        confirm: {
+                            text: "Yes",
+                            value: true,
+                            visible: true,
+                            className: "btn-confirm",
+                            closeModal: true
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        // Show error message
-                        swal("Oops!", "Something went wrong. Please try again later.", "error");
                     }
+                }).then(async (confirmed) => {
+                    if (confirmed) {
+                        try {
+                            const response = await fetch('/admin/product/list', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId, list })
+                            });
+                            const data = await response.json();
+                            if (data) {
+                                // Show success message
+                                if (list) {
+                                    swal("Product Listed!", "Your product has been successfully listed.", "success").then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    swal("Product Unlisted!", "Your product has been successfully unlisted.", "success").then(() => {
+                                        location.reload();
+                                    });
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            // Show error message
+                            swal("Oops!", "Something went wrong. Please try again later.", "error");
+                        }
+                    }
+                });
+            }
+
+            function updateModal(datas) {
+                let data = JSON.parse(datas);
+                console.log(data.variantPrice);
+                document.getElementById('variantPrice').value = `₹ ${data.variantPrice}`
+                document.getElementById('variantProcessor').value = data.variantProcessor
+                document.getElementById('variantRAM').value = data.variantRAM
+                document.getElementById('variantGPU').value = data.variantGPU
+                document.getElementById('variantColor').value = data.variantColor
+                document.getElementById('variantQuantity').value = `💻 ${data.variantQuantity}`
+
+
+            }
+
+            function confirmDelete(productId, varientId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to delete this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                        popup: 'custom-swal-background'
+                    }
+            }).then((result) => {
+                if (result.isConfirmed) {
+            
+                    window.location.href = `/admin/product/deleteProduct?productId=${productId}&varientId=${varientId}`;
                 }
             });
         }
+        </script>
 
-        
-        // $(document).ready(function() {
-        //     $('.title').on('click', function() {
-        //         var variantPrice1 = $(this).data('product-price');
-        //         // var productId = $(this).data('product-id');
-
-        //         // Populate the modal fields
-        //         $('#variantModal #variantPrice').text(variantPrice1);
-        //         // $('#variantModal #productId').text(productId);
-                
-        //         // If you have more data attributes, you can handle them similarly
-        //     });
-        // });
-        function updateModal (datas) {
-           let data = JSON.parse(datas);
-           console.log(data.variantPrice);
-            document.getElementById('variantPrice').value = `₹ ${data.variantPrice}`
-            document.getElementById('variantProcessor').value = data.variantProcessor
-            document.getElementById('variantRAM').value = data.variantRAM
-            document.getElementById('variantGPU').value = data.variantGPU
-            document.getElementById('variantColor').value = data.variantColor
-            document.getElementById('variantQuantity').value = `💻 ${data.variantQuantity}`
-
-
-        }
-
-    </script>
-    
 </body>
 
 </html>

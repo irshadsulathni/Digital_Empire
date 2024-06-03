@@ -4,7 +4,7 @@ const isLogin = async (req, res, next) => {
     try {
         
         if (!req.session.user_id) {
-            res.render('user/signUp.ejs');
+            res.render('user/signUp');
         }
          else {
             const user = await User.findById(req.session.user_id)
@@ -34,7 +34,7 @@ const isLogout = async (req, res, next) => {
                 req.session.destroy()
                 return res.status(403).send('Your account is blocked.');
             }
-            res.redirect('/home');
+            res.render('user/signUp');
         } else {
             next();
         }

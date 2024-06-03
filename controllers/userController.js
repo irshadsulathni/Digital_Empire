@@ -1,6 +1,8 @@
 const User = require('../models/userModel')
 const Otp = require('../controllers/otpController')
 const OTP = require('../models/otpModel')
+const Product = require('../models/productModel')
+const Variant = require('../models/varientModel')
 
 const bcrypt = require('bcrypt')
 const { name } = require('ejs')
@@ -31,7 +33,9 @@ const load404 = async (req, res) => {
 // Load user Home page for a Preview
 const loadHome = async (req, res) => {
     try {
-        res.render('user/home')
+        const productData = await Product.findOne({list:false})
+        const varientData = await Variant.find({})
+        res.render('user/home',{varientData,productData})
     } catch (error) {
         console.log(error)
     }
@@ -125,7 +129,8 @@ const addUser = async (req, res) => {
                     email: req.body.email,
                     mobile: req.body.mobile,
                     password: spassword,
-                    is_verified: 0
+                    is_verified: 0,
+                    is_blocked: false
                 });
 
                 // After the validation user data storing in session
@@ -219,7 +224,7 @@ const otpVerify = async (req, res) => {
     try {
         const otpString = Object.values(req.body).join('');
         if (req.session.otp == otpString) {
-            req.session.userData.is_verified=1
+            req.session.userData.is_verified = 1
             const userData = req.session.userData;
             const user = new User(userData);
             await user.save();
@@ -240,20 +245,20 @@ const otpVerify = async (req, res) => {
 const resendOtp = async (req, res) => {
     try {
         if (req.session && req.session.userData.email) {
-            const  email  = req.session.userData.email;
+            const email = req.session.userData.email;
             const newOtp = Otp.resendOtp(email);
-            const otpdata = await OTP.findOne({email: email})
+            const otpdata = await OTP.findOne({ email: email })
             req.session.otp = newOtp
             otpdata.otp = newOtp
             await otpdata.save();
             res.render('user/otpVerify');
-          } else {
+        } else {
             // Handle the case where session or email is missing
             console.error('Error: No email found in session');
             // Redirect to login page or send an error message
-            res.redirect('user/signUp');
-          }
-          
+            res.redirect('/signUp');
+        }
+
     } catch (error) {
         console.log(error)
     }
@@ -309,6 +314,26 @@ const failureGoogleLogin = (req, res) => {
     res.send("error")
 }
 
+const loadShop = async (req, res) => {
+    try {
+        const varientData = await Variant.find({})
+        const productData = await Product.find({ list: false })
+
+        res.render('user/shop', { productData, varientData })
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+// load How to shop page for user guidence
+
+const loadHowShop = async (req, res) => {
+    try {
+        res.render('user/howShop')
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 
 module.exports = {
     load404,
@@ -326,6 +351,8 @@ module.exports = {
     loadAuth,
     successGoogleLogin,
     resendOtp,
-    failureGoogleLogin
+    failureGoogleLogin,
+    loadShop,
+    loadHowShop
 
 }

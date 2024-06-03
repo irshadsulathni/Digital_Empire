@@ -137,12 +137,12 @@
                         });
                     }
                 })
-
                 .catch(error => {
+                    console.error('Error:', error);
                     Swal.fire({
                         icon: "error",
-                        title: "Request Failed",
-                        text: 'An error occurred while verifying the OTP. Please try again.',
+                        title: "An error occurred",
+                        text: "Please try again later."
                     });
                 });
 

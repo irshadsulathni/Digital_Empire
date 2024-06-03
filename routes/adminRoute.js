@@ -55,8 +55,9 @@ admin_route.get('/product', auth.isLogin, productController.loadProduct);
 admin_route.get('/adminLogout', auth.isLogin, adminController.adminLogout);
 admin_route.get('/addProduct', auth.isLogin, productController.loadAddProduct);
 admin_route.get('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
-admin_route.get('/editProduct', auth.isLogin, productController.loadEditProduct)
-admin_route.get('/varient', auth.isLogin , varientController.loadVarient)
+admin_route.get('/editProduct', auth.isLogin, productController.loadEditProduct);
+admin_route.get('/varient', auth.isLogin , varientController.loadVarient);
+admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct)
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);
@@ -66,7 +67,7 @@ admin_route.post('/editCategory', auth.isLogin, categoryController.updateCategor
 admin_route.post('/addProduct', auth.isLogin, upload.array('productImages', 10), productController.addProduct);
 admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
 admin_route.post('/editProduct', auth.isLogin, upload.array('productImages', 10), productController.updateProduct)
-admin_route.post('/varient', auth.isLogin , varientController.addVarient)
+admin_route.post('/varient', auth.isLogin , varientController.addVarient);
 
 
 

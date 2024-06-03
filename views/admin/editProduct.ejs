@@ -70,20 +70,20 @@
                                     <%= message %>*
                                 </p>
                             <% } %>
-                            <form method="post">
+                            <form method="post" >
                                 <div class="mb-4">
                                     <label for="product_title" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" id="product_title"
+                                    <input type="text" name="productName" class="form-control" id="product_title"
                                         value="<%= product.productName %>" />
                                 </div>
                                 <div class="mb-4">
                                     <label for="product_brand" class="form-label">Brand</label>
-                                    <input type="text" class="form-control" id="product_brand"
+                                    <input type="text" name="productBrand" class="form-control" id="product_brand"
                                         value="<%= product.productBrand %>" />
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Product Description</label>
-                                    <textarea class="form-control" rows="4"><%= product.productDiscription %></textarea>
+                                    <textarea class="form-control" name="productDescription" rows="4"><%= product.productDiscription %></textarea>
                                 </div>
                                 <!-- Display Existing Images -->
                                 <% if (product && product.productImage && product.productImage.length > 0) { %>

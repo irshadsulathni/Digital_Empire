@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
 const Product = require('../models/productModel');
 const Category = require('../models/categoryModel');
-const Variant = require('../models/varientModel')
+const Variant = require('../models/varientModel');
+const fs = require('fs');
+const path = require ('path')
 /*********************************************
  * 
  * 
@@ -25,8 +27,10 @@ const Variant = require('../models/varientModel')
 
 const loadProduct = async (req, res) => {
     try {
-        const variantData = await Variant.find({})
-        const productData = await Product.find({})
+        const productData = await Product.find({});
+        
+        const variantData = await Variant.find({});
+       
         res.render('admin/product', {variantData, productData, activeProductMessage: 'active' })
 
     } catch (error) {
@@ -54,13 +58,13 @@ const addProduct = async (req, res) => {
         if (!productDiscription || productDiscription.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Description' });
         }
-        if (!productBrand || productBrand.trim() === '') {
-            return res.render('admin/addProduct', {category, productData, message: 'Invalid Brand' });
-        }
         const productImage = req.files.map(file => `/publicImages/${file.filename}`);
 
         if (productImage.length !== 4) {
             return res.render('admin/addProduct', {category, productData, message: 'You must upload exactly 4 images' });
+        }
+        if (!productBrand || productBrand.trim() === '') {
+            return res.render('admin/addProduct', {category, productData, message: 'Invalid Brand' });
         }
 
         // const existProductName = await Product.findOne({category, productName: { $regex: new RegExp(`^${productName}$`, 'i') } });
@@ -132,30 +136,32 @@ const updateProduct = async (req, res) => {
     try {
         const categeryData = await Category.find({});
         const productId = req.query.productId;
-        console.log('prodrv     igf    '+productId);
         const productData = await Product.findOne({ _id: productId });
-        const { productName, productDiscription, productCategory } = req.body;
-
-        console.log('req.body' + req.body);
+        const { productName, productDescription, productCategory } = req.body;
+        console.log(req.body);
 
         if (!productName || productName.trim() === '') {
-            return res.render('admin/addProduct', { categeryData, message: 'Invalid Name', product: productData });
+            return res.render('admin/editProduct', { categeryData, message: 'Invalid Name', product: productData });
         }
-        if (!productDiscription || productDiscription.trim() === '') {
-            return res.render('admin/addProduct', { categeryData, message: 'Invalid Description', product: productData });
+        if (!productDescription || productDescription.trim() === '') {
+            console.log("productDiscription  " + productDescription);
+            return res.render('admin/editProduct', { categeryData, message: 'Invalid Description', product: productData });
         }
 
-        const productImage = req.files.map(file => `/publicImages/${file.filename}`);
+        // const productImage = req.files.map(file => `/publicImages/${file.filename}`);
+        // console.log(productImage);
+
+        console.log(req.files);
 
         if (productImage.length !== 4) {
-            return res.render('admin/addProduct', { categeryData, message: 'You must upload exactly 4 images', product: productData });
+            return res.render('admin/editProduct', { categeryData, message: 'You must upload exactly 4 images', product: productData });
         }
 
         const category = await Category.findOne({name:productCategory})
-        console.log('here also getting');
+        console.log('hsdgkhgf jhsdjhfkjhs jkhsdfjhjlsdfhadfsk  jhsjdla')
         console.log(category);
         if (!category) {
-            return res.render('admin/addProduct', { categeryData, message: 'Category not found', product: productData });
+            return res.render('admin/editProduct', { categeryData, message: 'Category not found', product: productData });
         }
 
         // Update the product
@@ -164,27 +170,38 @@ const updateProduct = async (req, res) => {
             {
                 $set: {
                     productName: productName,
-                    productDiscription: productDiscription,
-                    productCategory: category._id, // Use the category's _id
+                    productDiscription: productDescription,
+                    productCategory: category._id,
                     productImage: productImage,
                 }
             },
-            { new: true } // Return the updated document
+            { new: true } 
         );
 
-        console.log(updatedProduct);
-
         if (!updatedProduct) {
-            return res.render('admin/addProduct', { categeryData, message: 'Failed to update product', product: productData });
+            return res.render('admin/editProduct', { categeryData, message: 'Failed to update product', product: productData });
         }
 
         res.redirect('/admin/product');
     } catch (error) {
         console.log(error.message);
-        res.status(500).send('Internal Server Error'); // Send a generic error response
     }
 };
+const deleteProduct = async (req,res) => {
+    try {
+        const varientId = req.query.varientId;
+       
+        const productId = req.query.productId;
+       
+       
+        await Product.findOneAndDelete({_id:productId});
+        await Variant.findOneAndDelete({_id:varientId});
 
+        res.redirect('/admin/product')
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 
 /*********************************************
@@ -206,12 +223,28 @@ const updateProduct = async (req, res) => {
  * 
  * ***********************************************/
 
+const loadProductDeatiles = async (req,res) =>{
+    try {
+        const categoryData = await Category.findOne({});
+        const { productId } = req.query;    
+        const productData = await Product.findOne({_id:productId});
+        const varientData = await Variant.findOne({productId:productId});
+        res.render('user/productPage',{productData,varientData,categoryData});
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+
+
+
 module.exports = {
     loadProduct,
     loadAddProduct,
     addProduct,
     listorUnlistOfProduct,
     loadEditProduct,
-    updateProduct
-
-}
+    updateProduct,
+    loadProductDeatiles,
+    deleteProduct
+};

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Digital Empire</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpg" sizes="32x32" href="/userAssets/images/icons/icon.jpg">
+    <link rel="icon" type="image/jpg" sizes="16x16" href="/userAssets/images/icons/icon.jpg">
+    <link rel="manifest" href="/userAssets/images/icons/site.html">
+    <link rel="mask-icon" href="/userAssets/images/icons/safari-pinned-tab.svg" color="#666666">
+    <link rel="shortcut icon" href="/userAssets/images/icons/icon.jpg">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="/userAssets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/style.css">
+    <link rel="stylesheet" href="/userAssets/css/plugins/owl-carousel/owl.carousel.css">
+    <link rel="stylesheet" href="/userAssets/css/plugins/magnific-popup/magnific-popup.css">
+    <link rel="stylesheet" href="/userAssets/css/plugins/nouislider/nouislider.css">
+</head>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        color: #555;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1,
+    h2 {
+        color: #009688; /* Changed color to teal */
+        margin-top: 20px; /* Decreased margin-top */
+    }
+
+    p {
+        margin-bottom: 15px; /* Decreased margin-bottom */
+        color: #777; /* Changed text color */
+        font-size: 16px; /* Decreased font size */
+    }
+
+    .step-icon {
+        font-size: 1.5em; /* Decreased font size */
+        color: #009688; /* Changed color to teal */
+        margin-right: 15px; /* Decreased margin-right */
+    }
+
+    .footer {
+        background-color: #444;
+        padding: 20px;
+        text-align: center;
+        margin-top: 40px;
+        color: #fff;
+    }
+
+    .media {
+        border: 1px solid #ccc; /* Changed border color */
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #fff;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adjusted box shadow */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .media:hover {
+        transform: translateY(-5px);
+    }
+
+    .media-body {
+        color: #555; /* Changed text color */
+    }
+
+    .media h2 {
+        color: #009688; /* Changed color to teal */
+        font-size: 18px; /* Decreased font size */
+    }
+
+    .media img {
+        max-width: 10%; /* Ensures images fit within their containers */
+        max-height: 20%;
+        border-radius: 5px; /* Adds a slight border-radius to images */
+        margin-bottom: 15px; /* Adds spacing below images */
+    }
+</style>
+
+<body>
+        <header class="header">
+                
+            <div class="header-middle sticky-header">
+                <div class="container">
+                    <div class="header-left">
+                        <button class="mobile-menu-toggler">
+                            <span class="sr-only">Toggle mobile menu</span>
+                            <i class="icon-bars"></i>
+                        </button>
+
+                        <a href="/" class="logo" style="margin-left: -250px;">
+                            <img src="/userAssets/images/icons/new-icon.png" alt="Molla Logo" width="150" height="25">
+                        </a>
+
+                        <nav class="main-nav">
+                            <ul class="menu sf-arrows">
+                                <li class="megamenu-container">
+                                    <a href="/" class="sf-with-ul">Home</a>
+                                </li>
+                                <li>
+                                    <a href="shop" class="sf-with-ul">Shop</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="#" class="sf-with-ul">More</a>
+
+                                    <ul>
+                                        <li>
+                                            <a href="about" class="sf-with-ul">About</a>
+                                        </li>
+                                        <li>
+                                            <a href="contact.html" class="sf-with-ul">Contact</a>
+                                        </li>
+                                        <li><a href="faq">FAQs</a></li>
+                                    
+                                    </ul>
+                                </li>
+                            </ul><!-- End .menu -->
+                        </nav><!-- End .main-nav -->
+                    </div><!-- End .header-left -->
+
+                    <div class="header-right" style="margin-right: -260px;">
+                        <div class="header-search">
+                            <a href="#" class="search-toggle" role="button" title="Search"><i class="icon-search"></i></a>
+                            <form action="#" method="get">
+                                <div class="header-search-wrapper">
+                                    <label for="q" class="sr-only">Search</label>
+                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search in..." required>
+                                </div><!-- End .header-search-wrapper -->
+                            </form>
+                        </div><!-- End .header-search -->
+
+                        <div class="dropdown cart-dropdown">
+                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
+                                <i class="icon-shopping-cart"></i>
+                                <span class="cart-count">2</span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <div class="dropdown-cart-products">
+                                    <div class="product">
+                                        <div class="product-cart-details">
+                                            <h4 class="product-title">
+                                                <a href="product.html">Beige knitted elastic runner shoes</a>
+                                            </h4>
+
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty">1</span>
+                                                x $84.00
+                                            </span>
+                                        </div><!-- End .product-cart-details -->
+
+                                        <figure class="product-image-container">
+                                            <a href="product.html" class="product-image">
+                                                <img src="/userAssets/images/products/cart/product-1.jpg" alt="product">
+                                            </a>
+                                        </figure>
+                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                    </div><!-- End .product -->
+
+                                    <div class="product">
+                                        <div class="product-cart-details">
+                                            <h4 class="product-title">
+                                                <a href="product.html">Blue utility pinafore denim dress</a>
+                                            </h4>
+
+                                            <span class="cart-product-info">
+                                                <span class="cart-product-qty">1</span>
+                                                x $76.00
+                                            </span>
+                                        </div><!-- End .product-cart-details -->
+
+                                        <figure class="product-image-container">
+                                            <a href="product.html" class="product-image">
+                                                <img src="/userAssets/images/products/cart/product-2.jpg" alt="product">
+                                            </a>
+                                        </figure>
+                                        <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                    </div><!-- End .product -->
+                                </div><!-- End .cart-product -->
+
+                                <div class="dropdown-cart-total">
+                                    <span>Total</span>
+
+                                    <span class="cart-total-price">$160.00</span>
+                                </div><!-- End .dropdown-cart-total -->
+
+                                <div class="dropdown-cart-action">
+                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
+                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .dropdown-cart-total -->
+                            </div><!-- End .dropdown-menu -->
+                        </div><!-- End .cart-dropdown -->
+                    </div><!-- End .header-right -->
+                </div><!-- End .container -->
+            </div><!-- End .header-middle -->
+        </header><!-- End .header -->
+    <div class="container">
+    <h1 class="text-center my-4">How to Shop on Digital Empire</h1>
+    <div class="media my-4">
+        <img>
+        <div class="media-body">
+            <h2>Step 1: Browse Our Collection</h2>
+            <p>Explore our categories to find a variety of laptops. Use the search bar to quickly find specific models or brands.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 2: Select Your Laptop</h2>
+            <p>Click on a laptop to view detailed information, specifications, and customer reviews. Select the desired variant if available.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 3: Add to Cart</h2>
+            <p>Click the "Add to Cart" button on the product page. View your cart to ensure you have selected the correct items.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 4: Proceed to Checkout</h2>
+            <p>Click the "Proceed to Checkout" button in your cart. If you are a returning customer, log in. New customers can register or checkout as a guest.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 5: Enter Shipping Information</h2>
+            <p>Enter your shipping address and ensure all details are accurate.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 6: Choose Payment Method</h2>
+            <p>Select your preferred payment method. Provide the necessary payment information securely.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 7: Review and Place Order</h2>
+            <p>Check all the details of your order. Click the "Place Order" button to complete your purchase.</p>
+        </div>
+    </div>
+    <div class="media my-4">
+        <img >
+        <div class="media-body">
+            <h2>Step 8: Confirmation and Delivery</h2>
+            <p>You will receive an order confirmation email. Use the tracking link provided to monitor the status of your delivery.</p>
+        </div>
+    </div>
+</div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2022 Irshad Sulthani. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Plugins JS File -->
+    <script src="/userAssets/js/jquery.min.js"></script>
+    <script src="/userAssets/js/bootstrap.bundle.min.js"></script>
+    <script src="/userAssets/js/jquery.hoverIntent.min.js"></script>
+    <script src="/userAssets/js/jquery.waypoints.min.js"></script>
+    <script src="/userAssets/js/superfish.min.js"></script>
+    <script src="/userAssets/js/owl.carousel.min.js"></script>
+    <script src="/userAssets/js/wNumb.js"></script>
+    <script src="/userAssets/js/bootstrap-input-spinner.js"></script>
+    <script src="/userAssets/js/jquery.magnific-popup.min.js"></script>
+    <script src="/userAssets/js/nouislider.min.js"></script>
+    <!-- Main JS File -->
+    <script src="/userAssets/js/main.js"></script>
+</body>
+
+</html>

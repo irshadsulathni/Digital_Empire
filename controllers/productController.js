@@ -27,11 +27,20 @@ const path = require ('path')
 
 const loadProduct = async (req, res) => {
     try {
-        const productData = await Product.find({});
-        
-        const variantData = await Variant.find({});
+
+        const firstPage = 4;
+
+        const currentPage = parseInt(req.query.page) || 1;
+
+        const startPage = (currentPage - 1 ) * firstPage;
+        const productData = await Product.find({}).skip(startPage).limit(firstPage);
+        const variantData = await Variant.find({}).skip(startPage).limit(firstPage);
+
+        const count = await Product.countDocuments({});
+
+        const totalPage = Math.ceil(count / firstPage)
        
-        res.render('admin/product', {variantData, productData, activeProductMessage: 'active' })
+        res.render('admin/product', {variantData, productData, activeProductMessage: 'active' ,totalPage ,currentPage})
 
     } catch (error) {
         console.log(error.message);
@@ -47,18 +56,34 @@ const loadAddProduct = async (req, res) => {
         console.log(error.message);
     }
 }
+
+// adding product
+
+
 const addProduct = async (req, res) => {
     try {
+        if(!req.body){
+            return res.status(400).json({error:'fill in the fields'})
+        }
+        const { productName, productDiscription, productCategory,productBrand } = req.body;
+
+
+        
         const category = await Category.find({})
         const productData = await Product.find({})
-        const { productName, productDiscription, productCategory,productBrand } = req.body;
+       
+
+        console.log('req.body ', req.files);
+
         if (!productName || productName.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Name' });
         }
         if (!productDiscription || productDiscription.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Description' });
         }
+        
         const productImage = req.files.map(file => `/publicImages/${file.filename}`);
+       
 
         if (productImage.length !== 4) {
             return res.render('admin/addProduct', {category, productData, message: 'You must upload exactly 4 images' });
@@ -66,12 +91,6 @@ const addProduct = async (req, res) => {
         if (!productBrand || productBrand.trim() === '') {
             return res.render('admin/addProduct', {category, productData, message: 'Invalid Brand' });
         }
-
-        // const existProductName = await Product.findOne({category, productName: { $regex: new RegExp(`^${productName}$`, 'i') } });
-
-        // if (existProductName) {
-        //     res.render('admin/addProduct', {category, productData, message: 'The Product Name is already existed' })
-        // }
         else {
             
             const categeryData = await Category.findOne({name:productCategory})
@@ -89,10 +108,12 @@ const addProduct = async (req, res) => {
                     productBrand:productBrand
                 });
               const savedProduct =  await product.save()
-                req.session.productId = savedProduct._id
+                req.session.productId = savedProduct._id;
+                console.log('req.session.productId ', req.session.productId);
               const productId = savedProduct._id;
-    
-                res.redirect(`/admin/varient?productId=${productId}`);
+              console.log('productId' , productId)
+               return res.status(200).json({id:productId})
+
             }
         }
 
@@ -132,34 +153,39 @@ const loadEditProduct = async (req, res) => {
     }
 }
 
+
+const removeProductImage = async (req, res) =>{
+    try {
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 const updateProduct = async (req, res) => {
     try {
         const categeryData = await Category.find({});
         const productId = req.query.productId;
         const productData = await Product.findOne({ _id: productId });
         const { productName, productDescription, productCategory } = req.body;
-        console.log(req.body);
+       
 
         if (!productName || productName.trim() === '') {
             return res.render('admin/editProduct', { categeryData, message: 'Invalid Name', product: productData });
         }
         if (!productDescription || productDescription.trim() === '') {
-            console.log("productDiscription  " + productDescription);
+        
             return res.render('admin/editProduct', { categeryData, message: 'Invalid Description', product: productData });
         }
 
-        // const productImage = req.files.map(file => `/publicImages/${file.filename}`);
-        // console.log(productImage);
-
-        console.log(req.files);
+        const productImage = req.files.map(file => `/publicImages/${file.filename}`);
 
         if (productImage.length !== 4) {
             return res.render('admin/editProduct', { categeryData, message: 'You must upload exactly 4 images', product: productData });
         }
 
         const category = await Category.findOne({name:productCategory})
-        console.log('hsdgkhgf jhsdjhfkjhs jkhsdfjhjlsdfhadfsk  jhsjdla')
-        console.log(category);
+      
         if (!category) {
             return res.render('admin/editProduct', { categeryData, message: 'Category not found', product: productData });
         }

@@ -33,13 +33,21 @@ const load404 = async (req, res) => {
 // Load user Home page for a Preview
 const loadHome = async (req, res) => {
     try {
-        const productData = await Product.findOne({list:false})
-        const varientData = await Variant.find({})
-        res.render('user/home',{varientData,productData})
+        // Assuming productData is retrieved from the database using a mongoose model
+        const productData = await Product.findOne({ list: false });
+
+        // Assuming varientData is retrieved from the database using a mongoose model
+        const variantData = await Variant.find({});
+
+        // Pass both productData and varientData to the EJS template
+        console.log(productData , ' productData');
+        
+        res.render('user/home', { productData, variantData });
     } catch (error) {
-        console.log(error)
+        console.log(error.message);
     }
-}
+};
+
 
 // Load Company about page
 const loadAbout = async (req, res) => {

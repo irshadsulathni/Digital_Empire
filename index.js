@@ -14,6 +14,7 @@ mongoose.connect(process.env.mongo_id);
 
 const app = express();
 
+app.use('/publicImages', express.static(path.join(__dirname, '../public/publicImages')));
 
 app.use(nocache());
 
@@ -21,8 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
-
-app.use('/publicImages', express.static(path.join(__dirname, '../public/publicImages')));
 
 app.set('view engine', 'ejs')
 

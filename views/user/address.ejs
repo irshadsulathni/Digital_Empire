@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Molla - Bootstrap eCommerce Template</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/userAssets/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/userAssets/images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/userAssets/images/icons/favicon-16x16.png">
+    <link rel="manifest" href="/userAssets/images/icons/site.html">
+    <link rel="mask-icon" href="/userAssets/images/icons/safari-pinned-tab.svg" color="#666666">
+    <link rel="shortcut icon" href="/userAssets/images/icons/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="/userAssets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/style.css">
+    <!-- Toastify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+
+    <style>
+        .main {
+            padding-top: 50px;
+            /* Adjust as needed */
+            padding-bottom: 50px;
+            /* Adjust as needed */
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 40px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- page header ejs -->
+        <% include('../layouts/pageHeader') %>
+
+        <div class="main">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="card-title text-center mb-4">Add Address</h2>
+                                <form id="addressForm" method="post">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="fullName">Full Name *</label>
+                                            <input type="text" class="form-control" id="fullName" name="fullName" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="phoneNumber">Phone Number *</label>
+                                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addressLine1">Address Line 1 *</label>
+                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="addressLine2">Address Line 2</label>
+                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="landmark">Landmark</label>
+                                        <input type="text" class="form-control" id="landmark" name="landmark">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="alternative">Alternative</label>
+                                        <input type="text" class="form-control" id="alternative" name="alternative">
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="city">City *</label>
+                                            <input type="text" class="form-control" id="city" name="city" required>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="state">State *</label>
+                                            <input type="text" class="form-control" id="state" name="state" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="zipCode">Country *</label>
+                                        <input type="text" class="form-control" id="country" name="country" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="zipCode">Zip Code *</label>
+                                        <input type="number" class="form-control" id="zipCode" name="zipCode" required>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Footer of the page -->
+            <% include('../layouts/pageFooter') %>
+    </div><!-- End .page-wrapper -->
+    
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+    
+    <!-- Toastify JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+       document.getElementById('addressForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Collect form data
+    const data = {
+        fullName: document.getElementById('fullName').value,
+        phoneNumber: document.getElementById('phoneNumber').value,
+        email: document.getElementById('email').value,
+        addressLine1: document.getElementById('addressLine1').value,
+        addressLine2: document.getElementById('addressLine2').value,
+        landmark: document.getElementById('landmark').value,
+        alternative: document.getElementById('alternative').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        country:document.getElementById('country').value,
+        zipCode: document.getElementById('zipCode').value
+    };
+
+    console.log('data', data);
+
+    try {
+        // Send a POST request to your backend
+        const response = await fetch('/address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+            // If request is successful, display success message
+            if(responseData.success){
+            window.location.href = '/dashboard'
+            }
+        } else {
+            // If request fails, display error message
+            displayErrorMessage(responseData.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // If an unexpected error occurs, display a generic error message
+        displayErrorMessage('An unexpected error occurred');
+    }
+});
+
+// Example usage of Toastify for displaying a success message
+function displaySuccessMessage(message) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        close: true,
+        gravity: 'bottom', // `top` or `bottom`
+        position: 'right', // `left`, `center`, or `right`
+        backgroundColor: 'green',
+        stopOnFocus: true // Prevents dismissing of toast on hover
+    }).showToast();
+}
+
+// Example usage of Toastify for displaying an error message
+function displayErrorMessage(message) {
+    Toastify({
+        text: message,
+        duration: 3000,
+        close: true,
+        gravity: 'bottom', // `top` or `bottom`
+        position: 'right', // `left`, `center`, or `right`
+        backgroundColor: 'red',
+        stopOnFocus: true // Prevents dismissing of toast on hover
+    }).showToast();
+}
+
+    </script>
+    <!-- End of your custom JavaScript -->
+    </body>
+    
+    </html>
+    

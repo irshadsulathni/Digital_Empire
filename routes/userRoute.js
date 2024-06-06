@@ -6,6 +6,7 @@ const auth = require('../middleware/userAuth');
 const passport = require('passport');
 require('../passport');
 const productController =  require('../controllers/productController')
+const addressController = require('../controllers/addressController')
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -27,7 +28,8 @@ user_route.get('/faq',  userController.loadFAQ);
 user_route.get('/signIn', auth.isLogout,userController.loadsignIn);;
 user_route.get('/shop', userController.loadShop);
 user_route.get('/productPage', productController.loadProductDeatiles);
-user_route.get('/howShop', userController.loadHowShop)
+user_route.get('/howShop', userController.loadHowShop);
+user_route.get('/address' ,auth.isLogin, addressController.loadaddress )
 
 //user error
 user_route.get('/404', userController.load404);
@@ -56,7 +58,12 @@ user_route.get('/success', userController.successGoogleLogin)
 // failure 
 user_route.get('/failure' , userController.failureGoogleLogin);
 
-user_route.get('/resend-otp', userController.resendOtp)
+user_route.get('/resend-otp', userController.resendOtp);
+
+
+// for address managment
+
+user_route.post('/address' , auth.isLogin, addressController.addAddress)
 
 
 module.exports = user_route;

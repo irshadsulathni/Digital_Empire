@@ -23,21 +23,22 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
 
         const ext = path.extname(file.originalname)
-        const uniqueFileName = `image_${Date.now()}${ext}`;
+        const uniqueFileName = `image_${Date.now() + Math.round( Math.random() * 100)}${ext}`;
         cb(null, uniqueFileName)
     }
 
 })
 const upload = multer({
     storage: storage,
-    // limits: { fileSize: 1024 * 1024 * 5 },
-    fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/^image/)) {
-            return cb(new Error('Only Image file are Allowed'), false);
-        }
-        cb(null, true)
-    }
+    // fileFilter: (req, file, cb) => {
+    //     if (!file.mimetype.match(/^image/)) {
+    //         return cb(new Error('Only Image file are Allowed'), false);
+    //     }
+    //     cb(null, true)
+    // }
 })
+
+admin_route.use('/publicImages', express.static(path.join(__dirname, '../public/publicImages')));
 
 
 // for session hendling
@@ -64,7 +65,7 @@ admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);
 admin_route.post('/category', auth.isLogin, categoryController.addCategories);
 admin_route.post('/category/list', auth.isLogin, categoryController.listOrUnlist);
 admin_route.post('/editCategory', auth.isLogin, categoryController.updateCategory);
-admin_route.post('/addProduct', auth.isLogin, upload.array('productImages', 10), productController.addProduct);
+admin_route.post('/addProduct', auth.isLogin, upload.array('croppedImages', 10), productController.addProduct);
 admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
 admin_route.post('/editProduct', auth.isLogin, upload.array('productImages', 10), productController.updateProduct)
 admin_route.post('/varient', auth.isLogin , varientController.addVarient);

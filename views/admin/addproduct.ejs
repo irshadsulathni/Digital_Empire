@@ -15,147 +15,391 @@
     <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="/dist/cropper.min.css">
+    <link rel="stylesheet" href="/dist/cropper.css">
+    <script src="/dist/cropper.js"></script>
+    <script src="/dist/cropper.min.js"></script>
+    <style>
+        .card-body img{
+
+            width: 16rem !important;
+            height: 15rem !important;
+            max-width: none !important;
+            margin: 5%;
+            
+
+        }
+    </style>
 </head>
 
 <body class="dark">
     <div class="screen-overlay"></div>
 
-    // for aside Items EJS
     <%- include('../layouts/adminSide') %>
 
-        <main class="main-wrap">
-            <header class="main-header navbar">
-                <div class="col-search">
-                    <form class="searchform">
-                        <div class="input-group">
-                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                            <button class="btn btn-light bg" type="button"><i
-                                    class="material-icons md-search"></i></button>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products"></option>
+                        <option value="New orders"></option>
+                        <option value="Apple iphone"></option>
+                        <option value="Ahmed Hassan"></option>
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                        class="material-icons md-apps"></i></button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic Detail of Product</h4>
                         </div>
-                        <datalist id="search_terms">
-                            <option value="Products"></option>
-                            <option value="New orders"></option>
-                            <option value="Apple iphone"></option>
-                            <option value="Ahmed Hassan"></option>
-                        </datalist>
-                    </form>
-                </div>
-                <div class="col-nav">
-                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
-                            class="material-icons md-apps"></i></button>
-                    <ul class="nav">
-                        <li class="nav-item">
-                            <a class="nav-link btn-icon" href="#">
-                                <i class="material-icons md-notifications animation-shake"></i>
-                                <span class="badge rounded-pill">3</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-icon darkmode" href="#"> <i
-                                    class="material-icons md-nights_stay"></i> </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
-                                    class="material-icons md-cast"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </header>
-            <section class="content-main">
-                <div class="row">
-                    <div class="col-9">
-                        <div class="content-header">
-                            <h2 class="content-title">Add New Product</h2>
+                        <% if (typeof message !=='undefined' ) { %>
+                        <p style="color: red;" class="d-inline-flex p-2 ">
+                            <%= message %>*
+                        </p>
+                        <% } %>
+                        <div class="card-body">
+                            <form action="/admin/addProduct" method="POST" enctype="multipart/form-data" id="productForm">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product Name</label>
+                                    <input type="text" placeholder="Type here" class="form-control" id="product_name"
+                                        name="productName" />
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label"> Description</label>
+                                    <textarea placeholder="Type here" class="form-control" rows="4"
+                                        name="productDiscription"></textarea>
+                                </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h4>Basic Detail of Product</h4>
+                    <div class="card mb-10">
+                        <div class="card-header">
+                            <h4>Organization</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-2">
+                                <div class="col-sm-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="productCategory">
+                                        <% if(typeof category !=="undefined" ){ %>
+                                        <% category.forEach((value)=> { %>
+                                        <option>
+                                            <%= value.name %>
+                                        </option>
+                                        <% }) %>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Brand</label>
+                                    <input type="text" class="form-control" name="productBrand" />
+                                </div>
                             </div>
-                            <% if (typeof message !=='undefined' ) { %>
-                                <p style="color: red;" class="d-inline-flex p-2 ">
-                                    <%= message %>*
-                                </p>
-                                <% } %>
-                                    <div class="card-body">
-                                        <form action="/admin/addProduct" method="POST" enctype="multipart/form-data">
-                                            <div class="mb-4">
-                                                <label for="product_name" class="form-label">Product Name</label>
-                                                <input type="text" placeholder="Type here" class="form-control"
-                                                    id="product_name" name="productName" />
-                                            </div>
-                                            <div class="mb-4">
-                                                <label class="form-label"> Description</label>
-                                                <textarea placeholder="Type here" class="form-control" rows="4"
-                                                    name="productDiscription"></textarea>
-                                            </div>
-                                            <div class="row">
-                                                <div>
-                                                    <button type="submit"
-                                                        class="btn btn-md rounded font-sm hover-up">Publish</button>
-                                                </div>
-                                            </div>
-                                    </div>
+                            <!-- row.// -->
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h4>Media</h4>
+                    <!-- card end// -->
+                </div>
+                <div class="col-lg-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Media</h4>
+                        </div>
+                        <div class="card-body">
+                            <%for(let i = 0; i < 4; i += 2) {%>
+                            <div class="row">
+                            <div class="input-upload  col-6">
+                                <div class="box">
+                                    <input class="form-control form-image" type="file" id="file-input<%=i%>" data-id="<%=i%>"   />
+                                </div>
+                                <!-- <button type="button" id="cropButton<%=i%>" class="btn btn-primary mt-2">Crop & Preview</button> -->
+                                <div class="box-">
+                                    <div class="result"></div>
+                                </div>
+                                <!-- Right box for cropped image preview -->
+                                <div class="box-2 img-result row align-items-center justify-content-center ">
+                                    <img style="display: none;" id="previewImg<%=i%>" class="cropped" src="" alt="">
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="input-upload">
-                                    <img src="/adminAssets/imgs/theme/upload.svg" />
-                                    <input class="form-control" type="file" id="product_images" name="productImages"
-                                        multiple />
+                            <div class="input-upload col-6">
+                                <div class="box">
+                                    <input class="form-control form-image" type="file" id="file-input<%=i+1%>"  data-id="<%=i+1%>"   />
+                                </div>
+                                <!-- <button type="button" id="cropButton<%=i+1%>" class="btn btn-primary mt-2">Crop & Preview</button> -->
+                                <div class="box-">
+                                    <div class="result"></div>
+                                </div>
+                                <!-- Right box for cropped image preview -->
+                                <div class="box- img-result row align-items-center justify-content-center">
+                                    <img style="display: none;" id="previewImg<%=i+1%>" class="cropped" src="" alt="">
                                 </div>
                             </div>
                         </div>
-                        <!-- card end// -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h4>Organization</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row gx-2">
-                                    <div class="col-sm-6 mb-3">
-                                        <label class="form-label">Category</label>
-                                        <select class="form-select" name="productCategory">
-                                            <% if(typeof category !=="undefined" ){ %>
-                                                <% category.forEach((value)=> { %>
-                                                    <option>
-                                                        <%= value.name %>
-                                                    </option>
-                                                    <% }) %>
-                                                        <% } %>
-
-                                        </select>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="product_name" class="form-label">Brand</label>
-                                        <input type="text" class="form-control" name="productBrand" />
-                                    </div>
-                                </div>
-                                <!-- row.// -->
-                            </div>
+                            <%}%>
                         </div>
-                        <!-- card end// -->
+                        <div class="row align-items-center justify-content-center">
+                            
+                                <button type="submit" class="btn btn-primary w-25 mb-3 justify-content-center rounded font-sm hover-up"
+                                    >Publish</button>
+                            
+                        </div>
                     </div>
-                    </form>
+                    
+                    <!-- card end// -->
                 </div>
-            </section>
+                </form>
+            </div>
+            <%for(let i = 0; i < 4; i++) {%>
 
-        </main>
-        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
-        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
-        <script src="/adminAssets/js/vendors/select2.min.js"></script>
-        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
-        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
-        <!-- Main Script -->
-        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+            <div class="modal fade" id="imageModal<%=i%>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                      <button type="button" class="btn-close" ></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container-fluid">
+                        <div class="imagecrop<%=i%> width-100">
+    
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" id="cropButton<%=i%>" class="btn btn-primary">Crop</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <%}%>
+
+        </section>
+    </main>
+
+    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const croppers = [];
+
+            document.querySelectorAll('.form-image').forEach(item => {
+                item.addEventListener('change' , function previewImage(event) {
+            let element = event.target;
+            let number = element.getAttribute('data-id');
+            console.log(element, number);
+            let cropper;
+            
+            
+
+            let imageCrop = document.querySelector(`.imagecrop${number}`);
+            let imagePreview = document.getElementById(`previewImg${number}`);
+            
+
+            if(element.files && element.files.length > 0){
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    
+                    $(document).ready(function() {
+
+                        document.getElementById(`imageModal${number}`).classList.add('show')
+                        $(`#imageModal${number}`).modal('show');
+                        let modal = document.getElementById(`imageModal${number}`);
+                    })
+                    let img = document.createElement('img');
+                    img.id = 'image';
+                    img.src = e.target.result;
+                    imageCrop.appendChild(img);
+
+                    cropper = new Cropper(img, {
+                        viewMode: 0,
+                        dragMode: 'move',
+                        responsive: true,
+                        rotatable: true,
+                        scalable: true,
+                        cropBoxResizable: true,
+
+                        intitialAspectRatio: 1/1,
+                        minContainerWidth: 450,
+                        minContainerHeight: 500,
+                        minCanvasHeight: 500,
+                        minCanvasWidth: 500,
+                    })
+
+                   
+                }
+                reader.readAsDataURL(element.files[0]);
+
+
+                const cropButton = document.getElementById('cropButton'+number);
+                cropButton.addEventListener('click' , function() {
+                    let modal = document.getElementById('imageModal'+number);
+                    let bootstrapModal = bootstrap.Modal.getInstance(modal);
+                    bootstrapModal.hide()
+                    
+                    let imgSrc = cropper.getCroppedCanvas().toDataURL('image/jpeg');
+                    imagePreview.style.display = 'block';
+                    imagePreview.src = imgSrc;
+                    console.log('croppers beor' , croppers)
+                    croppers.push(imgSrc);
+                    console.log('croppers after', croppers)
+                    // sessionStorage.setItem('myArray', arrayString);
+                   
+
+                    
+                })
+
+
+            }
+
+        } )
+
+            })
+
+
+         
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    let formData = new FormData(e.target);
+                    
+
+                    croppers.forEach((image, index) => {
+                        console.log(image, 'image');
+                        
+                        let blob = dataURLToBlob(image);
+                        formData.append(`croppedImages`, blob, `croppedImage${index}.jpeg`);
+                        // console.log(`croppedImage${index}`, blob); // Log each blob being appended
+                    });
+                     console.log(croppers);
+            
+                    
+            console.log(formData, 'fomdata');
+                    fetch('/admin/addProduct', { 
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.json())
+                    .then((data) => {
+                        if (data.id) {
+                         window.location.href = `/admin/varient?productId=${data.id}`;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+
+                    
+        });
+        function dataURLToBlob(dataURL) {
+            let binary = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(":")[1].split(';')[0]
+            const ab = new ArrayBuffer(binary.length);
+            const ix = new Uint8Array(ab)
+
+            for (let i = 0; i < binary.length; i++) {
+               ix[i] = binary.charCodeAt(i)
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        })
+
+        
+
+
+
+
+
+        // let result = document.querySelector('.result');
+        // let imgResult = document.querySelector('.img-result');
+        // let upload = document.querySelector('#file-input');
+        // let croppers = [];
+        // let croppedImages = [];
+    
+        // upload.addEventListener('change', (e) => {
+        //     if (e.target.files.length) {
+        //         result.innerHTML = '';
+        //         imgResult.classList.add('hide');
+        //         croppers = [];
+        //         croppedImages = [];
+    
+        //         Array.from(e.target.files).forEach(file => {
+        //             const reader = new FileReader();
+        //             reader.onload = (e) => {
+        //                 if (e.target.result) {
+        //                     let img = document.createElement('img');
+        //                     img.src = e.target.result;
+        //                     result.appendChild(img);
+    
+        //                     let cropper = new Cropper(img);
+        //                     croppers.push(cropper);
+        //                 }
+        //             };
+        //             reader.readAsDataURL(file);
+        //         });
+        //     }
+        // });
+    
+        // document.getElementById('cropButton').addEventListener('click', () => {
+        //     croppedImages = croppers.map(cropper => cropper.getCroppedCanvas().toDataURL('image/jpeg'));
+        //     console.log(croppedImages)
+        //     result.innerHTML = '';
+    
+        //     croppedImages.forEach(src => {
+        //         let img = document.createElement('img');
+        //         img.src = src;
+        //         result.appendChild(img);
+        //     });
+    
+        //     imgResult.classList.remove('hide');
+        // });
+    
+        
+    
+        
+    </script>
+    
+    
 </body>
 
 </html>

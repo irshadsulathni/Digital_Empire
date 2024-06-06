@@ -1,0 +1,263 @@
+<%- include('../userLayouts/header.ejs') %>
+
+
+    <div class="page-wrapper">
+        
+        <%- include('../userLayouts/pageHeader.ejs') %>
+
+        <main class="main">
+        	<!-- <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
+        		<div class="container">
+        			<h1 class="page-title">My Account<span>Shop</span></h1>
+        		</div>
+        	</div> -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+                <div class="container">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                    </ol>
+                </div><!-- End .container -->
+            </nav><!-- End .breadcrumb-nav -->
+
+            <div class="page-content">
+            	<div class="dashboard">
+	                <div class="container">
+	                	<div class="row">
+	                		<aside class="col-md-4 col-lg-3">
+	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+								    <li class="nav-item">
+								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+								    </li>
+									<li class="nav-item">
+								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-wallet" role="tab" aria-controls="tab-address" aria-selected="false">Wallet</a>
+								    </li>
+								    <li class="nav-item">
+								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+								    </li>
+								    <li class="nav-item">
+								        <a id="logoutLink" class="nav-link" href="/logout">Sign Out</a>
+								    </li>
+								</ul>
+	                		</aside><!-- End .col-lg-3 -->
+
+	                		<div class="col-md-8 col-lg-9">
+	                			<div class="tab-content">
+								    <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+								    	<p>Hello <span class="font-weight-normal text-dark"><%- user.name %>,</span></p>
+
+                                        <p>Your Email : <span class="font-weight-normal text-dark"><%- user.email %></span></p>
+
+                                        <p>Your Mobile Number : <span class="font-weight-normal text-dark">
+                                            <% if (!user.number) { %>
+                                                <a href="#tab-account" class="tab-trigger-link link-underline">Add A Mobile Number</a>
+                                            <% } else { %>
+                                                <%- user.number  %>
+                                            <% } %>
+                                        </span></p>
+
+                                        <p>You Have Currently <span class="font-weight-normal text-dark"><strong><%= Orders.length %></strong></span> Orders</p>
+
+								    	<p>From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
+								    </div><!-- .End .tab-pane -->
+
+								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+										<% if (Orders.length === 0) { %>
+											<div class="no-orders text-center">
+												<p>No orders have been made yet.</p>
+												<a href="/shop" class="btn btn-primary"><span>Go Shopping</span><i class="icon-long-arrow-right"></i></a>
+											</div>
+										<% } else { %>
+											<div class="orders-list">
+												<% Orders.forEach((order, index) => { %>
+													<div class="order-card card mb-4">
+														<div class="card-body">
+															<h3 class="card-title mb-3">Order <%= index + 1 %> :</h3>
+															<div class="products-list">
+																<% for(let i = 0; i < order.products.length; i++) { %>
+																	<% if (order.products[i].product) { %>
+																		<div class="order-product">
+																			<a href="" class="product-name"><%= order.products[i].product.name %></a>
+																			<a href="" class="product-price">₹ <%= order.products[i].product.price %>.00 x <%= order.products[i].quantity %> = ₹ <%= order.products[i].product.price * order.products[i].quantity %>.00</a>
+																		</div>
+																	<% } else { %>
+																		<div class="product">
+																			<span>Product is null</span>
+																		</div>
+																	<% } %>
+																<% } %>
+															</div>
+															<% if (order.discount_price !== 0) { %>
+																<p class="total-price"><strong>Coupon Discount:</strong> ₹ <%= order.discount_price %>.00</p>
+															<% } %>
+															<div class="order-details">
+																<p class="total-price"><strong>Total Price:</strong> ₹ <%= order.order_total + order.discount_price %>.00</p>
+																<% if (order.discount_price !== 0) { %>
+																	<p class="total-price"><strong>Last Price:</strong> ₹ <%= order.order_total %>.00</p>
+																<% } %>
+																<% if (order.order_status == 'cancelOrder') { %>
+																	<p class="order-status"><strong>Order Status:</strong> Order Cancelled</p>
+																<% } else { %>
+																	<p class="order-status"><strong>Order Status:</strong> <%= order.order_status %></p>
+																	<% } %>
+															</div>
+															<div class="button-details">
+																<a class="btn btn-info btn-sm" href="/ordertrack?orderId=<%= order._id %>">Details</a>
+																<% if (order.order_status == 'delivered') { %>
+																	<button onclick="returnOrder('<%= order._id %>')" class="btn btn-warning btn-sm">Return Order</button>
+																<% } else { %>
+																	<% if (order.order_status == 'cancelOrder') { %>
+																	<% } else { %>
+																		<button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger btn-sm">Cancel Order</button>
+																	<% } %>
+																<% } %>
+															</div>
+														</div><!-- End .card-body -->
+													</div><!-- End .order-card -->
+												<% }); %>
+											</div><!-- End .orders-list -->
+										<% } %>
+									</div><!-- .End .tab-pane -->																									
+
+								    <div class="tab-pane fade" id="tab-wallet" role="tabpanel" aria-labelledby="tab-downloads-link">
+
+								    	<div class="card shadow-lg mb-4">
+											<div class="card-body ali">
+												<h2 class="card-title my-3" style="font-size: 3rem; color: #343a40; text-decoration: underline;">My Wallet</h2>
+												<div class="wallet-info mb-4 p-3 bg-light rounded border">
+													<p class="mb-1" style="font-size: 2rem;"><strong>Wallet Balance:</strong> ₹ <span id="wallet-balance" style="font-size: 2.5rem; color: #007bff;"><%= user.wallet_balance %>.00</span></p>
+												</div>
+												<h4 class="mb-3" style="color: #343a40;">Transaction History</h4>
+												<ul class="list-group">
+													<% if ( walletData != null || walletData.length != 0) { %>
+														<% for (let i = 0; i < walletData.length; i++) { %>
+															<% if (walletData[i].type_of_transaction == 'Deposit') { %>
+																<li class="list-group-item d-flex justify-content-between align-items-center">
+																	<div>
+																		<h5 class="mb-1" style="color: #495057;">Deposit</h5>
+																		<small style="color: #6c757d;">Date: June 1, 2024</small>
+																	</div>
+																	<div>
+																		<strong style="color: #28a745;">Amount: ₹ <%= walletData[i].amount %>.00</strong>
+																	</div>
+																</li>
+															<% } else { %>
+																<li class="list-group-item d-flex justify-content-between align-items-center">
+																	<div>
+																		<h5 class="mb-1" style="color: #495057;">Withdrawal</h5>
+																		<small style="color: #6c757d;">Date: <%= walletDate[i] %></small>
+																	</div>
+																	<div>
+																		<strong style="color: #dc3545;">Amount: ₹ <%= walletData[i].amount %>.00</strong>
+																	</div>
+																</li>
+															<% } %>
+														<% } %>
+													<% } else { %>
+														<p>No Transaction History.</p>
+													<% } %>
+												</ul>
+											</div><!-- End .card-body -->
+										</div><!-- End .card -->
+								    
+									</div><!-- .End .tab-pane -->
+
+								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+
+										<h3 class="card-title mb-1"><b><u>Billing Address</u></b></h3><!-- End .card-title -->
+
+										<% if (typeof addressPageMessage !== 'undefined') { %>
+											<p style="color: red;" class="d-inline-flex p-2 " ><%= addressPageMessage %>*</p>
+										<% } %>
+
+								    	<p>The <b>1st address</b> will be used on the checkout page by default.</p>
+
+								    	<div class="row">
+											<% if (address.length == 0) { %>
+												<div class="col-lg-6"><p><b>There has no Address Added</b></p></div>
+											<% } else { %>
+												<% for (let i = 0; i < address.length; i++) { %>
+													<div class="col-lg-6">
+														<div class="card card-dashboard">
+															<div class="card-body">
+																<p><b>SI : </b><%= i + 1 %><br>
+																	<b>Name : </b><%= address[i].name %><br>
+																    <b>Mobile Number : </b><%= address[i].mobileNumber %><br>
+																    <b>Location : </b><%= address[i].locality %>, <%= address[i].city %>, <%= address[i].state %><br>
+																    <b>Pincode : </b><%= address[i].pincode %><br>
+																   <% if (address[i].landmark !== null) { %>
+																	<b>Landmark : </b><%= address[i].landmark %><br>
+																   <% } else { } %>
+																   <% if (address[i].mobileNumber2 !== null) { %>
+																	<b>Secondary Number : </b><%= address[i].mobileNumber2 %><br>
+																   <% } else { } %>
+																<a onmouseover="this.style.textDecoration = 'underline'" onmouseout="this.style.textDecoration = 'none'" href="/editAddress?id=<%= address[i]._id %>" class="mr-3">Edit <i class="icon-edit"></i></a>
+																<a onmouseover="this.style.textDecoration = 'underline'; this.style.cursor = 'pointer'" onmouseout="this.style.textDecoration = 'none'" onclick="deleteAddress('<%= address[i].id %>')" style="color: #d15a5e;">Delete<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="14px" fill="#d15a5e"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></a></p>
+															</div><!-- End .card-body -->
+														</div><!-- End .card-dashboard -->
+													</div><!-- End .col-lg-6 -->
+		
+												<% } %>
+											<% } %>
+
+								    		<div class="col-lg-6">
+								    			<div class="card card-dashboard">
+								    				<div class="card-body">
+								    					<h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
+
+														<p>You Can Add upto 5 Adresses(<%= 5 - address.length %> remaining).<br>
+														<a href="/addAddress">Add new Address <i class="icon-edit"></i></a></p>
+								    				</div><!-- End .card-body -->
+								    			</div><!-- End .card-dashboard -->
+								    		</div><!-- End .col-lg-6 -->
+								    	</div><!-- End .row -->
+								    </div><!-- .End .tab-pane -->
+
+								    <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+								    	<form action="#">
+
+		            						<label>Display Name *</label>
+		            						<input type="text" class="form-control" required>
+		            						<small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
+
+		                					<label>Email address *</label>
+		        							<input type="email" class="form-control" required>
+
+                                            <label>Mobile Number (leave blank to leave unchanged)</label>
+		        							<input type="text" class="form-control">
+
+		            						<label>Current password (leave blank to leave unchanged)</label>
+		            						<input type="password" class="form-control">
+
+		            						<label>New password (leave blank to leave unchanged)</label>
+		            						<input type="password" class="form-control">
+
+		            						<label>Confirm new password</label>
+		            						<input type="password" class="form-control mb-2">
+
+		                					<button type="submit" class="btn btn-outline-primary-2">
+			                					<span>SAVE CHANGES</span>
+			            						<i class="icon-long-arrow-right"></i>
+			                				</button>
+			                			</form>
+								    </div><!-- .End .tab-pane -->
+								</div>
+	                		</div><!-- End .col-lg-9 -->
+	                	</div><!-- End .row -->
+	                </div><!-- End .container -->
+                </div><!-- End .dashboard -->
+            </div><!-- End .page-content -->
+        </main><!-- End .main -->
+
+        <%- include('../userLayouts/pageFooter.ejs') %>
+            
+    </div><!-- End .page-wrapper -->
+    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+	<script>

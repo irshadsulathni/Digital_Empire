@@ -69,8 +69,14 @@ const adminLogout = async (req, res) => {
 
 const loadUserList = async (req,res)=>{
     try {
+        const firstPage = 8;
+        const currentPage = parseInt(req.query.page) || 1;
+        const startPage = (currentPage - 1) * firstPage;
+        const count = await User.countDocuments({}).skip(startPage).limit(firstPage)
+        const totalPage = Math.ceil(count / firstPage)
+
         const users = await User.find({});
-        res.render('admin/userList',{users, activeUserListMessage:'active'})
+        res.render('admin/userList',{users, activeUserListMessage:'active', totalPage , currentPage})
       } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error fetching users' }); // Handle errors with JSON response

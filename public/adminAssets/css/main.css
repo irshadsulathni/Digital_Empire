@@ -4310,7 +4310,9 @@ body.dark .dropdown-menu .dropdown-item.text-danger {
 .custom-swal-background .swal2-title {
   color: #333; /* Title color */
 }
-
+.custom-swal-background .swal2-title.list{
+  color: #333; /* Title color */
+}
 .custom-swal-background .swal2-content {
   color: #666; /* Content color */
 }

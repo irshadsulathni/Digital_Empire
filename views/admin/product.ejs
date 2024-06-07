@@ -157,20 +157,20 @@
                                                         <div class="price mt-1">Quantity Unavailable</div>
                                                         <% } %>
                                             </div>
-                                            <div class="card-footer">
+                                            <div class="card-footer p-0">
                                                 <a href="/admin/editProduct?productId=<%= element._id %>"
-                                                    class="btn btn-sm btn-edit rounded">Edit</a>
+                                                    class="btn btn-sm btn-edit rounded m-1">Edit</a>
                                                 <% if (element.list) { %>
-                                                    <a href="#" class="btn btn-sm btn-list rounded"
+                                                    <a href="#" class="btn btn-sm btn-list rounded m-1"
                                                         style="background-color: darkred;"
                                                         onclick="listorUnlistOfProduct('<%= element._id %>', false)">!
                                                         Hide</a>
                                                     <% } else { %>
-                                                        <a href="#" class="btn btn-sm btn-list rounded"
+                                                        <a href="#" class="btn btn-sm btn-list rounded m-1"
                                                             style="background-color: red;"
                                                             onclick="listorUnlistOfProduct('<%= element._id %>', true)">Hide</a>
                                                         <% } %>
-                                                            <a href="#" class="btn btn-sm rounded"
+                                                            <a href="#" class="btn btn-sm rounded m-1"
                                                                 style="background-color: red;"
                                                                 onclick="confirmDelete('<%= element._id %>', '<%= variantData[index]._id %>')">Delete</a>
                                             </div>

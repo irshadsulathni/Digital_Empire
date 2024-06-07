@@ -69,6 +69,7 @@ admin_route.post('/addProduct', auth.isLogin, upload.array('croppedImages', 10),
 admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
 admin_route.post('/editProduct', auth.isLogin, upload.array('productImages', 10), productController.updateProduct)
 admin_route.post('/varient', auth.isLogin , varientController.addVarient);
+admin_route.post('/removeProductImage' , auth.isLogin , productController.removeProductImage);
 
 
 

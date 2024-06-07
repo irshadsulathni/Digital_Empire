@@ -20,10 +20,15 @@
     <link rel="stylesheet" href="/dist/cropper.css">
     <script src="/dist/cropper.js"></script>
     <script src="/dist/cropper.min.js"></script>
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <style>
         .card-body img {
-            width: 16rem !important;
-            height: 15rem !important;
+            width: 18rem !important;
+            height: 16rem !important;
             max-width: none !important;
             margin: 5%;
         }
@@ -91,7 +96,7 @@
                                 </p>
                                 <% } %>
                                     <div class="card-body">
-                                        <form action="/admin/addProduct" method="POST" enctype="multipart/form-data"
+                                        <form action="/admin/editProduct" method="POST" enctype="multipart/form-data"
                                             id="productForm">
                                             <div class="mb-4">
                                                 <label for="product_name" class="form-label">Product Name</label>
@@ -101,7 +106,7 @@
                                             <div class="mb-4">
                                                 <label class="form-label"> Description</label>
                                                 <textarea class="form-control" rows="4"
-                                                    name="productDiscription"><%= product.productDiscription %></textarea>
+                                                    name="productDescription"><%= product.productDescription %></textarea>
                                             </div>
                                     </div>
                         </div>
@@ -132,7 +137,7 @@
                                             value="<%= product.productBrand %>" />
                                     </div>
                                 </div>
-                                
+
                                 <!-- row.// -->
                             </div>
 
@@ -147,19 +152,24 @@
                                         <label class="form-label d-flex justify-content-center">Existing Images</label>
                                         <div class="product-images d-flex flex-wrap">
                                             <% product.productImage.forEach((image, index) => { %>
-                                                <div class="image-wrapper d-flex flex-column align-items-center m-5" style="position: relative;">
-                                                    <img src="<%= image %>" alt="Product Image" class="img-fluid" style="width: 300px; height: 200px;" />
-                                                    <button type="button" class="btn btn-danger btn-sm remove-image-btn mt-2" data-image="<%= image %>" onclick="removeImage('<%= image %>', this)">Remove</button>
-                                                </div>
+                                                <% if (image) { %>
+                                                    <div class="image-wrapper d-flex flex-column align-items-center m-5" style="position: relative;">
+                                                        <img src="<%= image %>" alt="Product Image" class="img-fluid" style="width: 300px; height: 200px;" />
+                                                        <button type="button" class="btn btn-danger btn-sm remove-image-btn mt-2" data-image="<%= image %>" onclick="removeImage('<%= image %>', this)">Remove</button>
+                                                    </div>
+                                                <% } %>
                                             <% }) %>
                                         </div>
                                     </div>
+                                <% } else { %>
+                                    <p>No images available.</p>
                                 <% } %>
                             </div>
                         </div>
                     </div>
                     
-                        <!-- card end// -->
+
+                    <!-- card end// -->
                     <div class="col-lg-12">
                         <div class="card mb-4">
                             <div class="card-header">
@@ -257,15 +267,15 @@
 
 
 
-        <!-- for removing the existing image -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script>
             function removeImage(imageUrl, button) {
                 // Find the parent wrapper of the image
                 const imageWrapper = button.closest('.image-wrapper');
-        
+
                 // Remove the image wrapper from the DOM
                 imageWrapper.remove();
-        
+
                 // AJAX request to notify the server about the removal
                 fetch('/admin/removeProductImage', {
                     method: 'POST',
@@ -274,20 +284,25 @@
                     },
                     body: JSON.stringify({ imageUrl: imageUrl })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message using Toastr
-                        toastr.success('Image removed successfully');
-                    } else {
-                        // Show error message using Toastr
-                        toastr.error('Failed to remove image');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    toastr.error('An error occurred while removing the image');
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message using Toastr
+                            toastr.success('Image removed successfully');
+                        } else {
+                            // Show error message using Toastr
+                            toastr.error('Failed to remove image');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        toastr.error('An error occurred while removing the image');
+                    });
             }
         </script>
 
@@ -300,7 +315,6 @@
                     item.addEventListener('change', function previewImage(event) {
                         let element = event.target;
                         let number = element.getAttribute('data-id');
-                        console.log(element, number);
                         let cropper;
 
 
@@ -353,10 +367,8 @@
                                 let imgSrc = cropper.getCroppedCanvas().toDataURL('image/jpeg');
                                 imagePreview.style.display = 'block';
                                 imagePreview.src = imgSrc;
-                                console.log('croppers beor', croppers)
                                 croppers.push(imgSrc);
-                                console.log('croppers after', croppers)
-                                // sessionStorage.setItem('myArray', arrayString);
+
 
 
 
@@ -377,23 +389,18 @@
 
 
                     croppers.forEach((image, index) => {
-                        console.log(image, 'image');
 
                         let blob = dataURLToBlob(image);
                         formData.append(`croppedImages`, blob, `croppedImage${index}.jpeg`);
-                        // console.log(`croppedImage${index}`, blob); // Log each blob being appended
                     });
-                    console.log(croppers);
 
-
-                    console.log(formData, 'fomdata');
-                    fetch('/admin/addProduct', {
+                    fetch('/admin/editProduct', {
                         method: 'POST',
                         body: formData
                     }).then(response => response.json())
                         .then((data) => {
                             if (data.id) {
-                                window.location.href = `/admin/varient?productId=${data.id}`;
+                                window.location.href = '/admin/product'
                             }
                         })
                         .catch(error => console.error('Error:', error));
@@ -413,7 +420,6 @@
                 }
 
             })
-
         </script>
 
 

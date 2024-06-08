@@ -92,7 +92,7 @@
                                                 aria-selected="false">Account Details</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="" id="logoutButton">Sign Out</a>
+                                            <a type="button" class="nav-link" id="logoutButton">Sign Out</a>
                                         </li>
                                     </ul>
                                 </aside><!-- End .col-lg-3 -->
@@ -344,31 +344,32 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                        .then(response => {
-                            if (response.ok) {
-                                // Redirect to login page or home page after successful logout
-                                window.location.href = '/signUp';
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    'There was a problem logging you out.',
-                                    'error'
-                                );
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
+                    .then(response => {
+                        console.log('Logout response:', response); // Debugging line
+                        if (response.ok) {
+                            // Redirect to login page or home page after successful logout
+                            window.location.href = '/signUp';
+                        } else {
                             Swal.fire(
                                 'Error!',
                                 'There was a problem logging you out.',
                                 'error'
                             );
-                        });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during fetch:', error); // Debugging line
+                        Swal.fire(
+                            'Error!',
+                            'There was a problem logging you out.',
+                            'error'
+                        );
+                    });
                 }
             });
         });
-
     </script>
+    
 
     <!-- Plugins JS File -->
     <script src="/userAssets/js/jquery.min.js"></script>

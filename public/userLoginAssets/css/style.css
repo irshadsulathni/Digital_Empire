@@ -466,7 +466,8 @@ label.valid {
 .forgot-pass {
   position: relative;
   font-size: 14px; 
-  margin-left:  308px;}
+  /* margin-left:  380px; */
+}
 
 .social-label {
   display: inline-block;

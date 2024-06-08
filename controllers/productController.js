@@ -118,6 +118,8 @@ const loadEditProduct = async (req, res) => {
 
         const productId = req.query.productId;
 
+        req.session.productId = productId
+
         const productData = await Product.findOne({ _id: productId });
 
         if (productData) {
@@ -131,8 +133,11 @@ const loadEditProduct = async (req, res) => {
 
 const removeProductImage = async (req, res) => {
     try {
+        const productId = req.session.productId;
+
         const imageUrl = req.body.imageUrl;
-        console.log(imageUrl);
+
+        await Product.updateOne({ _id: productId }, { $pull: { productImage: imageUrl } })
 
         const imagePath = path.join('/Users/irshadsulthani/Desktop/Digital Empire/public', imageUrl);
 
@@ -149,65 +154,79 @@ const removeProductImage = async (req, res) => {
     }
 };
 
-const updateProduct = async (req, res ) => {
+const updateProduct = async (req, res) => {
     try {
-        console.log('hy hello');
+
+        // Get productId from query parameters
+        const productId = req.session.productId;
+
+
+        const product = await Product.findById({ _id: productId })
+
+
+        console.log(productId, '  productId');
+
+        // Validate productId
+        if (!productId) {
+            throw new Error('Product ID is required');
+        }
+
+        // Fetch the product by productId
+        const productData = await Product.findOne({ _id: productId });
+        if (!productData) {
+            throw new Error('Product not found');
+        }
+
+        // Get product details from request body
+        const { productName, productDescription, productCategory } = req.body;
+
+        let productImages = product.productImage; // Initialize with existing images
+
+            // Handle newly uploaded images
+            if (req.files && req.files.length > 0) {
+                const newImages = req.files.map(file => `/publicImages/${file.filename}`);
+                productImages = [...productImages, ...newImages]; // Concatenate existing and new images
+            }
+
+        // Fetch the category by name
+        const category = await Category.findOne({ name: productCategory });
+        if (!category) {
+            throw new Error('Category not found');
+        }
+
+        // Update the product
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: productId }, // Query
+            {
+                $set: {
+                    productName: productName,
+                    productDescription: productDescription,
+                    productCategory: category._id,
+                    productImage: productImages,
+                }
+            },
+            { new: true }
+        );
+
+        // Check if the update was successful
+        if (!updatedProduct) {
+            throw new Error('Failed to update product');
+        }
+
+        // Log the updated product
+        console.log(updatedProduct);
+
+        // Redirect to the admin product page
+        return res.status(200).json({ success: 'success' })
+
     } catch (error) {
+        // Log the error
         console.log(error);
+
+        // Send an error response to the client
+        res.status(500).send({ error: error.message });
     }
-}
-
-// const updateProduct = async (req, res) => {
-//     try {
-//         const categeryData = await Category.find({});
-//         const productId = req.query.productId;
-//         const productData = await Product.findOne({ _id: productId });
-//         const { productName, productDescription, productCategory } = req.body;
-
-
-//         // if (!productName || productName.trim() === '') {
-//         //     return res.render('admin/editProduct', { categeryData, message: 'Invalid Name', product: productData });
-//         // }
-//         // if (!productDescription || productDescription.trim() === '') {
-
-//         //     return res.render('admin/editProduct', { categeryData, message: 'Invalid Description', product: productData });
-//         // }
-
-//         const productImage = req.files.map(file => `/publicImages/${file.filename}`);
-
-//         // if (productImage.length !== 4) {
-//         //     return res.render('admin/editProduct', { categeryData, message: 'You must upload exactly 4 images', product: productData });
-//         // }
-
-//         // const category = await Category.findOne({ name: productCategory })
-
-//         // if (!category) {
-//         //     return res.render('admin/editProduct', { categeryData, message: 'Category not found', product: productData });
-//         // }
-
-//         // Update the product
-//         const updatedProduct = await Product.findOneAndUpdate(
-//             { _id: productId }, // Query
-//             {
-//                 $set: {
-//                     productName: productName,
-//                     productDescription: productDescription,
-//                     productCategory: category._id,
-//                     productImage: productImage,
-//                 }
-//             },
-//             { new: true }
-//         );
-
-//         if (!updatedProduct) {
-//             return res.render('admin/editProduct', { categeryData, message: 'Failed to update product', product: productData });
-//         }
-
-//         res.redirect('/admin/product');
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// };
+};
 
 
 const deleteProduct = async (req, res) => {

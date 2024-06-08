@@ -143,13 +143,12 @@ const addUser = async (req, res) => {
 
                 // After the validation user data storing in session
                 req.session.userData = user;
-                console.log(req.session.userData);
                 const otp = Otp.sendOtp(req.body.email)
                 const otp1 = new OTP({
                     email: req.session.userData.email,
                     otp: otp
                 })
-                await otp1.save()
+                await otp1.save();
                 req.session.otp = otp
                 res.render('user/otpVerify')
 
@@ -207,6 +206,7 @@ const logout = async (req, res) => {
     });
 }
 
+
 // Loading dashboard
 const loadDashBoard = async (req, res) => {
     try {
@@ -261,9 +261,9 @@ const resendOtp = async (req, res) => {
             await otpdata.save();
             res.render('user/otpVerify');
         } else {
-            // Handle the case where session or email is missing
+
             console.error('Error: No email found in session');
-            // Redirect to login page or send an error message
+
             res.redirect('/signUp');
         }
 
@@ -281,7 +281,6 @@ const loadAuth = (req, res) => {
 const successGoogleLogin = async (req, res) => {
     try {
         if (!req.body) {
-            console.log('User not authenticated');
             return res.render('user/404');
         }
 
@@ -342,7 +341,6 @@ const loadHowShop = async (req, res) => {
     }
 }
 
-
 module.exports = {
     load404,
     loadHome,
@@ -361,6 +359,6 @@ module.exports = {
     resendOtp,
     failureGoogleLogin,
     loadShop,
-    loadHowShop
+    loadHowShop,
 
 }

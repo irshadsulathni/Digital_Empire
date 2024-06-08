@@ -5,8 +5,9 @@ const userController = require('../controllers/userController');
 const auth = require('../middleware/userAuth');
 const passport = require('passport');
 require('../passport');
-const productController =  require('../controllers/productController')
-const addressController = require('../controllers/addressController')
+const productController =  require('../controllers/productController');
+const addressController = require('../controllers/addressController');
+const forgetPasswordControll = require('../controllers/forgetPasswordControll');
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -23,13 +24,20 @@ user_route.post('/signUp', userController.verifyLogin);
 // user home page things
 user_route.get('/dashboard' , userController.loadDashBoard);
 user_route.get('/',userController.loadHome);
-user_route.get('/about', userController.loadAbout);
+user_route.get('/about',auth.isLogin, userController.loadAbout);
 user_route.get('/faq',  userController.loadFAQ);
 user_route.get('/signIn', auth.isLogout,userController.loadsignIn);;
 user_route.get('/shop', userController.loadShop);
 user_route.get('/productPage', productController.loadProductDeatiles);
 user_route.get('/howShop', userController.loadHowShop);
-user_route.get('/address' ,auth.isLogin, addressController.loadaddress )
+user_route.get('/address' ,auth.isLogin, addressController.loadaddress );
+
+
+//forgot password
+user_route.get('/forgetPassword', forgetPasswordControll.forget);
+user_route.post('/forgetPassword' , forgetPasswordControll.verifyEmail,forgetPasswordControll.otpVerify );
+user_route.get('/password' , forgetPasswordControll.loadpassword);
+user_route.post('/password', forgetPasswordControll.updatePassword)
 
 //user error
 user_route.get('/404', userController.load404);

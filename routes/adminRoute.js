@@ -30,13 +30,13 @@ const storage = multer.diskStorage({
 })
 const upload = multer({
     storage: storage,
-    // fileFilter: (req, file, cb) => {
-    //     if (!file.mimetype.match(/^image/)) {
-    //         return cb(new Error('Only Image file are Allowed'), false);
-    //     }
-    //     cb(null, true)
-    // }
-})
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/^image/)) {
+            return cb(new Error('Only Image file are Allowed'), false);
+        }
+        cb(null, true)
+    }
+});
 
 admin_route.use('/publicImages', express.static(path.join(__dirname, '../public/publicImages')));
 
@@ -67,7 +67,7 @@ admin_route.post('/category/list', auth.isLogin, categoryController.listOrUnlist
 admin_route.post('/editCategory', auth.isLogin, categoryController.updateCategory);
 admin_route.post('/addProduct', auth.isLogin, upload.array('croppedImages', 10), productController.addProduct);
 admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
-admin_route.post('/editProduct', auth.isLogin, upload.array('productImages', 10), productController.updateProduct)
+admin_route.post('/editProduct', auth.isLogin, upload.array('croppedImages', 10), productController.updateProduct)
 admin_route.post('/varient', auth.isLogin , varientController.addVarient);
 admin_route.post('/removeProductImage' , auth.isLogin , productController.removeProductImage);
 

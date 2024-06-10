@@ -18,6 +18,8 @@ const addVarient = async (req, res) => {
     try {
         const productId = req.session.productId;
 
+        const productData = await Product.findOne({_id:productId});
+
         const { variantPrice, variantQuantity, variantProcessor, variantRAM, variantGPU, variantColor } = req.body;
 
         if (!variantPrice || isNaN(variantPrice) || variantPrice <= 0) {
@@ -49,7 +51,12 @@ const addVarient = async (req, res) => {
             variantColor
         });
 
-        await variant.save();
+        const savedVarient = await variant.save();
+
+        productData.varientId = savedVarient._id;
+
+        await productData.save();
+
         return res.redirect('/admin/product');
     }
     catch (error) {
@@ -58,12 +65,77 @@ const addVarient = async (req, res) => {
     }
 };
 
+const loadEditVarient = async (req, res) =>{
+    try {
+        
+        const varientId = req.query.varientId;
 
+        const varientData = await Varient.findById(varientId);
 
+        res.render('admin/editVarient',{varientData})
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const updateVarient = async (req, res) => {
+    try {
+        const varientId = req.query.varientId.trim();
+
+        const {
+            variantPrice,
+            variantQuantity,
+            variantProcessor,
+            variantRAM,
+            variantGPU,
+            variantColor
+        } = req.body;
+
+        if (!variantProcessor || variantProcessor.trim() === '') {
+            return res.status(400).json({fail:"Processor information is required and must be a non-empty string."})
+        }
+
+        if (!variantRAM ||  variantRAM.trim() === '') {
+            return res.status(200).json({fail:"RAM information is required and must be a non-empty string."})
+        }
+
+        if (!variantGPU ||  variantGPU.trim() === '') {
+            return res.status(200).json({fail:"GPU information is required and must be a non-empty string."})
+        }
+
+        if (!variantColor || variantColor.trim() === '') {
+            return res.status(200).json({fail:"Color information is required and must be a non-empty string."})
+        }
+        if (variantPrice === undefined  || variantPrice <= 0) {
+            return res.status(200).json({fail:"Price must be a positive number."});
+        }
+
+        if (variantQuantity === undefined  || variantQuantity < 0) {
+            return res.status(200).json({fail:"Quantity must be a non-negative number."})
+        }
+
+        const saveVarient = await Varient.findOneAndUpdate({_id:varientId},{
+            variantColor:variantColor,
+            variantPrice:variantPrice,
+            variantGPU:variantGPU,
+            variantProcessor:variantProcessor,
+            variantRAM:variantRAM,
+            variantQuantity:variantQuantity
+        })
+
+       return res.status(200).json({success:'success'})
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while updating the variant." });
+    }
+}
 
 
 
 module.exports = {
     loadVarient,
-    addVarient
+    addVarient,
+    loadEditVarient,
+    updateVarient
 }

@@ -31,6 +31,9 @@
     <!-- Main CSS File -->
     <link rel="stylesheet" href="/userAssets/css/style.css">
     <link rel="stylesheet" href="/userAssets/css/plugins/nouislider/nouislider.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 
 <body>
@@ -148,8 +151,8 @@
                                 </div><!-- End .dropdown-cart-total -->
 
                                 <div class="dropdown-cart-action">
-                                    <a href="cart.html" class="btn btn-primary">View Cart</a>
-                                    <a href="checkout.html" class="btn btn-outline-primary-2"><span>Checkout</span><i
+                                    <a href="/cart" class="btn btn-primary">View Cart</a>
+                                    <a href="/checkout" class="btn btn-outline-primary-2"><span>Checkout</span><i
                                             class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .dropdown-cart-total -->
                             </div><!-- End .dropdown-menu -->
@@ -276,21 +279,28 @@
                                                 <option value="l">Large</option>
                                                 <option value="xl">Extra Large</option>
                                             </select>
-                                        </div><!-- End .select-custom
+                                        </div><End .select-custom
 
                                         <a href="#" class="size-guide"><i class="icon-th-list"></i>size guide</a>
                                     </div>End .details-filter-row -->
 
                                     <div class="details-filter-row details-row-size">
                                         <label for="qty">Qty:</label>
-                                        <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1"
-                                                max="10" step="1" data-decimals="0" required>
-                                        </div><!-- End .product-details-quantity -->
+                                        <!-- <div class="">
+                                            <input type="number" id="qty" disabled value="1">
+                                        </div>End .product-details-quantity -->
+                                        <h5>1</h5>
                                     </div><!-- End .details-filter-row -->
 
+
+
                                     <div class="product-details-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                        <a href="#" class="btn-product btn-cart" id="add-to-cart-btn"
+                                            onclick="addToCart('<%= varientData.variantPrice %>', '<%= productData._id %>')">
+                                            <span id="cart-btn-text">add to cart</span>
+                                        </a>
+
+
 
                                         <div class="details-action-wrapper">
                                             <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to
@@ -837,8 +847,8 @@
                             <li><a href="product-category-boxed.html">Product Category Boxed</a></li>
                             <li><a href="product-category-fullwidth.html"><span>Product Category Fullwidth<span
                                             class="tip tip-new">New</span></span></a></li>
-                            <li><a href="cart.html">Cart</a></li>
-                            <li><a href="checkout.html">Checkout</a></li>
+                            <li><a href="/cart">Cart</a></li>
+                            <li><a href="/checkout">Checkout</a></li>
                             <li><a href="wishlist.html">Wishlist</a></li>
                             <li><a href="#">Lookbook</a></li>
                         </ul>
@@ -1092,6 +1102,47 @@
     <script src="/userAssets/js/jquery.magnific-popup.min.js"></script>
     <!-- Main JS File -->
     <script src="/userAssets/js/main.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    function addToCart(variantPrice, productId) {
+        console.log('hy');
+        const price = Number(variantPrice);
+        const qty = 1; // Set the quantity to 1 for simplicity
+        const subtotal = qty * price; // Calculate subtotal
+
+        console.log('productId', productId);
+        console.log('variantPrice', price);
+        console.log('qty', qty);
+        console.log('subtotal', subtotal);
+
+        // Send a POST request using Axios
+        axios.post('/cart', {
+            productId: productId,
+            quantity: qty,
+            subtotal: subtotal
+        })
+        .then(function (success) {
+            window.location.href = '/cart';
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // Function to check if the product is already added to the cart
+    function isProductAdded(productId) {
+        // You need to implement this function to check if the product is already in the cart
+        // For now, I'll assume the product is not added to the cart
+        // Replace this with your actual implementation
+        return false;
+    }
+</script>
+
+
 </body>
 
 

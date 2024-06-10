@@ -1,0 +1,126 @@
+
+
+<!DOCTYPE html>
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial, sans-serif';
+}
+
+body, html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.success-message .icon {
+    color: #4caf50;
+    margin-bottom: 20px;
+}
+
+.success-message .icon svg {
+    width: 50px;
+    height: 50px;
+}
+
+.success-message h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.success-message p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.order-details {
+    margin-bottom: 20px;
+}
+
+.order-details p {
+    font-size: 1rem;
+    color: #333;
+}
+
+.home-button {
+    display: inline-block;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px 20px;
+    }
+
+    .success-message h1 {
+        font-size: 1.5rem;
+    }
+
+    .success-message p,
+    .order-details p {
+        font-size: 0.875rem;
+    }
+
+    .home-button {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-message">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M9 11l3 3L22 4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+            </div>
+            <h1>Thank You!</h1>
+            <p>Your order has been successfully placed.</p>
+            <div class="order-details">
+                <p><strong>Order Number:</strong> #123456</p>
+                <p><strong>Email:</strong> example@example.com</p>
+            </div>
+            <a href="/" class="home-button">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>

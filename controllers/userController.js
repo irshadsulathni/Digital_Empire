@@ -1,11 +1,11 @@
-const User = require('../models/userModel')
-const Otp = require('../controllers/otpController')
-const OTP = require('../models/otpModel')
-const Product = require('../models/productModel')
-const Variant = require('../models/varientModel')
-
-const bcrypt = require('bcrypt')
-const { name } = require('ejs')
+const User = require('../models/userModel');
+const Otp = require('../controllers/otpController');
+const OTP = require('../models/otpModel');
+const Product = require('../models/productModel');
+const Variant = require('../models/varientModel');
+const Address = require('../models/addressModel')
+const bcrypt = require('bcrypt');
+const { name } = require('ejs');
 
 
 // Password Hashing for security & threating from Hackers
@@ -33,14 +33,9 @@ const load404 = async (req, res) => {
 // Load user Home page for a Preview
 const loadHome = async (req, res) => {
     try {
-        // Assuming productData is retrieved from the database using a mongoose model
         const productData = await Product.findOne({ list: false });
 
-        // Assuming varientData is retrieved from the database using a mongoose model
         const variantData = await Variant.find({});
-
-        // Pass both productData and varientData to the EJS template
-        console.log(productData , ' productData');
         
         res.render('user/home', { productData, variantData });
     } catch (error) {
@@ -210,12 +205,15 @@ const logout = async (req, res) => {
 // Loading dashboard
 const loadDashBoard = async (req, res) => {
     try {
-        res.render('user/dashBoard')
+        const userData = await User.findOne({});
+        const addressData = await Address.find({}); // Fetching multiple addresses as an array
+        res.render('user/dashBoard', { userData: userData, addressData: addressData });
     } catch (error) {
-        console.log(error)
-        res.render('user/404')
+        console.error('Error loading dashboard:', error);
+        res.render('user/404');
     }
-}
+};
+
 
 // Load otp page
 const loadOtpVerify = async (req, res) => {

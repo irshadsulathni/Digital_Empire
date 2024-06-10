@@ -15,6 +15,10 @@
     <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+
+    <!-- Toastify CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
 <body class="dark">
@@ -23,73 +27,169 @@
     <!-- for aside Items EJS -->
     <%- include('../layouts/adminSide') %>
 
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products"></option>
-                        <option value="New orders"></option>
-                        <option value="Apple iphone"></option>
-                        <option value="Ahmed Hassan"></option>
-                    </datalist>
-                </form>
-            </div>
-            <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
-                        class="material-icons md-apps"></i></button>
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon" href="#">
-                            <i class="material-icons md-notifications animation-shake"></i>
-                            <span class="badge rounded-pill">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                    </li>
-                </ul>
-            </div>
-        </header>
-        <section class="content-main">
-            <div class="row">
-                <div class="col-12">
-                    <div class="content-header">
-                        <h2 class="content-title">Edit Variant</h2>
-                    </div>
-                </div>
-                <div class="col-lg-8 offset-lg-2">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h4>Basic</h4>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
                         </div>
-                        <% if (typeof message !=='undefined' ) { %>
-                            <p style="color: red;" class="d-inline-flex p-2">
-                                <%= message %>*
-                            </p>
-                        <% } %>
-                        <div class="card-body">
-                            
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="content-header">
+                            <h2 class="content-title">Edit Variant of the Product</h2>
                         </div>
                     </div>
+                    <div class="col-lg-8 offset-lg-2">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <% if (typeof message !=='undefined' ) { %>
+                                <p style="color: red;" class="d-inline-flex p-2">
+                                    <%= message %>*
+                                </p>
+                                <% } %>
+                                    <div class="card-body">
+                                        <form id="editVariantForm">
+                                            <div class="row">
+                                                <div class="col-lg-6 mb-4">
+                                                    <input type="text" id="varientId" hidden
+                                                        value="<%= varientData._id %>">
+                                                    <label class="form-label">Price</label>
+                                                    <input value="<%= varientData.variantPrice %>" type="text"
+                                                        class="form-control" name="variantPrice" required />
+                                                </div>
+                                                <div class="col-lg-6 mb-4">
+                                                    <label class="form-label">Processor</label>
+                                                    <input value="<%= varientData.variantProcessor %>" type="text"
+                                                        class="form-control" name="variantProcessor" required />
+                                                </div>
+                                                <div class="col-lg-6 mb-4">
+                                                    <label class="form-label">RAM</label>
+                                                    <input value="<%= varientData.variantRAM %>" type="text"
+                                                        class="form-control" name="variantRAM" required />
+                                                </div>
+                                                <div class="col-lg-6 mb-4">
+                                                    <label class="form-label">GPU</label>
+                                                    <input value="<%= varientData.variantGPU %>" type="text"
+                                                        class="form-control" name="variantGPU" required />
+                                                </div>
+                                                <div class="col-lg-6 mb-4">
+                                                    <label class="form-label">Color</label>
+                                                    <input value="<%= varientData.variantColor %>" type="text"
+                                                        class="form-control" name="variantColor" required />
+                                                </div>
+                                                <div class="col-lg-6 mb-4">
+                                                    <label class="form-label">Stock</label>
+                                                    <input value="<%= varientData.variantQuantity %>" type="text"
+                                                        class="form-control" name="variantQuantity" required />
+                                                </div>
+                                                <div class="col-lg-12 d-flex justify-content-center">
+                                                    <button type="submit"
+                                                        class="btn btn-md btn-primary rounded font-sm hover-up">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
-    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="/adminAssets/js/vendors/select2.min.js"></script>
-    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
-    <!-- Main Script -->
-    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+            </section>
+        </main>
+
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            document.getElementById('editVariantForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+        
+                const formData = new FormData(this);
+                const formObject = Object.fromEntries(formData.entries());
+        
+                const varientId = document.getElementById('varientId').value;
+        
+                console.log('varientId', varientId);
+        
+                fetch(`/admin/editVarient?varientId=${varientId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formObject)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/admin/product'
+                    } else {
+                        Toastify({
+                            text: data.fail, // Pass the error message received from the server
+                            duration: 3000,
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: "right", // `left`, `center` or `right`
+                            backgroundColor: "red",
+                        }).showToast();
+                    };
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Toastify({
+                        text: 'An error occurred while processing your request.',
+                        duration: 3000,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        backgroundColor: "red",
+                    }).showToast();
+                });
+            });
+        </script>
+        
 </body>
 
 </html>

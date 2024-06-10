@@ -58,7 +58,8 @@ admin_route.get('/addProduct', auth.isLogin, productController.loadAddProduct);
 admin_route.get('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
 admin_route.get('/editProduct', auth.isLogin, productController.loadEditProduct);
 admin_route.get('/varient', auth.isLogin , varientController.loadVarient);
-admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct)
+admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct);
+admin_route.get('/editVarient', auth.isLogin, varientController.loadEditVarient);
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);
@@ -70,6 +71,7 @@ admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOf
 admin_route.post('/editProduct', auth.isLogin, upload.array('croppedImages', 10), productController.updateProduct)
 admin_route.post('/varient', auth.isLogin , varientController.addVarient);
 admin_route.post('/removeProductImage' , auth.isLogin , productController.removeProductImage);
+admin_route.post('/editVarient' , auth.isLogin , varientController.updateVarient);
 
 
 

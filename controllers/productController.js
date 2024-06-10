@@ -157,46 +157,39 @@ const removeProductImage = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
 
-        // Get productId from query parameters
         const productId = req.session.productId;
 
 
         const product = await Product.findById({ _id: productId })
 
-
-        console.log(productId, '  productId');
-
-        // Validate productId
         if (!productId) {
             throw new Error('Product ID is required');
         }
 
-        // Fetch the product by productId
         const productData = await Product.findOne({ _id: productId });
         if (!productData) {
             throw new Error('Product not found');
         }
-
-        // Get product details from request body
         const { productName, productDescription, productCategory } = req.body;
 
-        let productImages = product.productImage; // Initialize with existing images
+        let productImages = product.productImage;
 
-            // Handle newly uploaded images
             if (req.files && req.files.length > 0) {
                 const newImages = req.files.map(file => `/publicImages/${file.filename}`);
-                productImages = [...productImages, ...newImages]; // Concatenate existing and new images
+                productImages = [...productImages, ...newImages];
+
+                if(!productImages.length == 4){
+                    return res.status(400).json({error:'A product can have a maximum of 4 images'})
+                }
             }
 
-        // Fetch the category by name
         const category = await Category.findOne({ name: productCategory });
         if (!category) {
             throw new Error('Category not found');
         }
 
-        // Update the product
         const updatedProduct = await Product.findOneAndUpdate(
-            { _id: productId }, // Query
+            { _id: productId }, 
             {
                 $set: {
                     productName: productName,
@@ -208,22 +201,15 @@ const updateProduct = async (req, res) => {
             { new: true }
         );
 
-        // Check if the update was successful
         if (!updatedProduct) {
             throw new Error('Failed to update product');
         }
 
-        // Log the updated product
-        console.log(updatedProduct);
 
-        // Redirect to the admin product page
         return res.status(200).json({ success: 'success' })
 
     } catch (error) {
-        // Log the error
         console.log(error);
-
-        // Send an error response to the client
         res.status(500).send({ error: error.message });
     }
 };

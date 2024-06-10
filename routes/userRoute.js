@@ -8,6 +8,8 @@ require('../passport');
 const productController =  require('../controllers/productController');
 const addressController = require('../controllers/addressController');
 const forgetPasswordControll = require('../controllers/forgetPasswordControll');
+const cartController = require('../controllers/cartController');
+const checkOutController = require('../controllers/checkOutController');
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -31,6 +33,16 @@ user_route.get('/shop', userController.loadShop);
 user_route.get('/productPage', productController.loadProductDeatiles);
 user_route.get('/howShop', userController.loadHowShop);
 user_route.get('/address' ,auth.isLogin, addressController.loadaddress );
+
+// cart
+
+user_route.get('/cart', auth.isLogin,cartController.loadcart);
+user_route.get('/checkOut' , auth.isLogin ,checkOutController.loadCheckOut);
+user_route.get('/loadsuccessPage', auth.isLogin, checkOutController.loadsuccessPage);
+user_route.post('/cart', auth.isLogin,cartController.addToCart);
+
+
+
 
 
 //forgot password

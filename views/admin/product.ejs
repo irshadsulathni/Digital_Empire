@@ -262,6 +262,7 @@
                                     <input placeholder="Color" type="text" class="form-control" id="variantColor"
                                         name="variantColor" required />
                                 </div>
+                                <input type="hidden" id="varientId" >
                                 <div class="col-lg-6 mb-4">
                                     <label class="form-label">Stock</label>
                                     <input placeholder=" 💻 <%= variantData.variantQuantity  %>" type="text"
@@ -272,7 +273,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn" style="background-color: darkorange;">Edit</button>
+                           <button type="button" class="btn" id="editVarientLink" style="background-color: darkorange;"  onclick="varientEditId()" >Edit</button>
                         </div>
                     </div>
                 </div>
@@ -343,7 +344,7 @@
                 document.getElementById('variantGPU').value = data.variantGPU
                 document.getElementById('variantColor').value = data.variantColor
                 document.getElementById('variantQuantity').value = `💻 ${data.variantQuantity}`
-
+                document.getElementById('varientId').value = data._id;
 
             }
 
@@ -364,6 +365,15 @@
                     }
                 });
             }
+
+            function varientEditId() {
+                const varientId = document.getElementById('varientId').value;
+                console.log(varientId, 'he hello its here');
+
+                const editVarientLink = document.getElementById('editVarientLink');
+                window.location.href = `/admin/editVarient?varientId=${varientId}`;
+            }
+            
         </script>
 
 </body>

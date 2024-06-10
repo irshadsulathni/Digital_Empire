@@ -127,27 +127,50 @@
                                                     SHOP</span><i class="icon-long-arrow-right"></i></a>
                                         </div><!-- .End .tab-pane -->
 
-                                        <!-- <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                                        <% if (userData) { %>
+                                            <p>Hey <%= userData.name %></p>
+                                        <% } else { %>
+                                            <p>User data not available.</p>
+                                        <% } %>
+
+                                         <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
                                             <p>The following addresses will be used on the checkout page by default.</p>
+
+                                            <% if (userData) { %>
+                                                <% if (Array.isArray(addressData) && addressData.length > 0) { %>
+                                                    <% addressData.forEach((element, index) => { %>
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                                <div class="card card-dashboard">
+                                                                    <div class="card-body">
+                                                                        <h3 class="card-title">Billing Address</h3>
+                                                                        <p>
+                                                                            <b>Name</b>: <%= userData.name %> <br>
+                                                                            <b>Mob</b>: <%= element.phoneNumber %><br>
+                                                                            <b>Address</b>: <%= element.addressLine1 %>, <%= element.addressLine2 %><br>
+                                                                            <%= element.city %>, <%= element.state %><br>
+                                                                            <b>zip code</b>: <%= element.postalCode %>
+                                                                            <a href="#">Edit <i class="icon-edit"></i></a>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% }); %>
+                                                <% } else { %>
+                                                    <p>No addresses found.</p>
+                                                <% } %>
+                                            <% } else { %>
+                                                <p>User data not available.</p>
+                                            <% } %>
+                                            
+                                                    <p>You Can Add upto 5 Adresses( %>
+                                                        remaining).<br>
+                                                        <a href="/address">Add new Address <i
+                                                                class="icon-edit"></i></a></p>
+                                                </div><!-- End .col-lg-6 ---->
     
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="card card-dashboard">
-                                                        <div class="card-body">
-                                                            <h3 class="card-title">Billing Address</h3><!-- End .card-title 
-    
-                                                            <p>User Name<br>
-                                                            User Company<br>
-                                                            John str<br>
-                                                            New York, NY 10001<br>
-                                                            1-234-987-6543<br>
-                                                            yourmail@mail.com<br>
-                                                            <a href="#">Edit <i class="icon-edit"></i></a></p>
-                                                        </div><!-- End .card-body --
-                                                    </div><!-- End .card-dashboard --
-                                                </div><!-- End .col-lg-6 --
-    
-                                                <div class="col-lg-6">
+                                                <!-- <div class="col-lg-6">
                                                     <div class="card card-dashboard">
                                                         <div class="card-body">
                                                             <h3 class="card-title">Shipping Address</h3><!-- End .card-title --
@@ -156,15 +179,16 @@
                                                             <a href="#">Edit <i class="icon-edit"></i></a></p>
                                                         </div><!-- End .card-body --
                                                     </div><!-- End .card-dashboard --
-                                                </div><!-- End .col-lg-6 --
-                                            </div><!-- End .row --
-                                        </div>.End .tab-pane -->
+                                                </div>End .col-lg-6 -->
+                                            </div><!-- End .row -->
 
-                                        <div class="tab-pane fade" id="tab-address" role="tabpanel"
+                                        </div><!-- .End .tab-pane -->
+
+                                        <!-- <div class="tab-pane fade" id="tab-address" role="tabpanel"
                                             aria-labelledby="tab-address-link">
 
                                             <h3 class="card-title mb-1"><b><u>Billing Address</u></b></h3>
-                                            <!-- End .card-title -->
+                                            <!-- End .card-title --
 
 
                                             <p style="color: red;" class="d-inline-flex p-2 ">*</p>
@@ -207,26 +231,26 @@
                                                                             d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                                                                     </svg></a>
                                                             </p>
-                                                        </div><!-- End .card-body -->
-                                                    </div><!-- End .card-dashboard -->
-                                                </div><!-- End .col-lg-6 -->
+                                                        </div><!-- End .card-body --
+                                                    </div><!-- End .card-dashboard --
+                                                </div><!-- End .col-lg-6 --
 
 
                                                 <div class="col-lg-6">
                                                     <div class="card card-dashboard">
                                                         <div class="card-body">
                                                             <h3 class="card-title">Shipping Address</h3>
-                                                            <!-- End .card-title -->
+                                                            <!-- End .card-title --
 
                                                             <p>You Can Add upto 5 Adresses( %>
                                                                     remaining).<br>
                                                                     <a href="/addAddress">Add new Address <i
                                                                             class="icon-edit"></i></a></p>
-                                                        </div><!-- End .card-body -->
-                                                    </div><!-- End .card-dashboard -->
-                                                </div><!-- End .col-lg-6 -->
-                                            </div><!-- End .row -->
-                                        </div><!-- .End .tab-pane -->
+                                                        </div><!-- End .card-body --
+                                                    </div><!-- End .card-dashboard --
+                                                </div><!-- End .col-lg-6 --
+                                            </div><!-- End .row --
+                                        </div>.End .tab-pane -->
 
                                         <div class="tab-pane fade" id="tab-account" role="tabpanel"
                                             aria-labelledby="tab-account-link">

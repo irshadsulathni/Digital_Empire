@@ -1109,15 +1109,10 @@
 
 <script>
     function addToCart(variantPrice, productId) {
-        console.log('hy');
+
         const price = Number(variantPrice);
         const qty = 1; // Set the quantity to 1 for simplicity
         const subtotal = qty * price; // Calculate subtotal
-
-        console.log('productId', productId);
-        console.log('variantPrice', price);
-        console.log('qty', qty);
-        console.log('subtotal', subtotal);
 
         // Send a POST request using Axios
         axios.post('/cart', {
@@ -1133,11 +1128,7 @@
         });
     }
 
-    // Function to check if the product is already added to the cart
     function isProductAdded(productId) {
-        // You need to implement this function to check if the product is already in the cart
-        // For now, I'll assume the product is not added to the cart
-        // Replace this with your actual implementation
         return false;
     }
 </script>

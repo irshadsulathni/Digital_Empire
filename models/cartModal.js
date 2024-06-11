@@ -19,7 +19,10 @@ const cartSchema = new mongoose.Schema({
         subTotal: {
             type: Number
         }
-    }]
+    }],
+    cartTotal:{
+        type:Number
+    }
 });
 
 module.exports = mongoose.model('Cart', cartSchema);

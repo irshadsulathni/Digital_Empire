@@ -50,7 +50,7 @@ const loadAddProduct = async (req, res) => {
     try {
         const productId = req.body.productId
         const product = await Product.findOne({ _id: productId })
-        const category = await Category.find({})
+        const category = await Category.find({list:false})
         res.render('admin/addproduct', { category, activeProductMessage: 'active', product })
     } catch (error) {
         console.log(error.message);
@@ -155,7 +155,12 @@ const removeProductImage = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-    try {
+    try {   
+
+        const addressCount = await Address.countDocuments({ userId: userId });
+        if (addressCount >= 5) {
+            return res.status(400).json({ message: 'Maximum address limit reached' });
+        }
 
         const productId = req.session.productId;
 
@@ -217,15 +222,13 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
-        const varientId = req.query.varientId;
 
-        const productId = req.query.productId;
-
-
+        const { varientId,productId } = req.query
+  
         await Product.findOneAndDelete({ _id: productId });
         await Variant.findOneAndDelete({ _id: varientId });
 
-        res.redirect('/admin/product')
+        res.redirect('/admin/product');
     } catch (error) {
         console.log(error.message)
     }

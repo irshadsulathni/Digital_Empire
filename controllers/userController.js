@@ -6,6 +6,7 @@ const Variant = require('../models/varientModel');
 const Address = require('../models/addressModel')
 const bcrypt = require('bcrypt');
 const { name } = require('ejs');
+const Category = require('../models/categoryModel')
 
 
 // Password Hashing for security & threating from Hackers
@@ -33,11 +34,13 @@ const load404 = async (req, res) => {
 // Load user Home page for a Preview
 const loadHome = async (req, res) => {
     try {
+        const userId= req.session.user_id;
+        const userData = await User.findOne({_id:userId});
         const productData = await Product.findOne({ list: false });
-
+        const categeryData = await Category.findOne({ list:false })
         const variantData = await Variant.find({});
         
-        res.render('user/home', { productData, variantData });
+        res.render('user/home', { productData, variantData,categeryData,userData });
     } catch (error) {
         console.log(error.message);
     }
@@ -205,9 +208,11 @@ const logout = async (req, res) => {
 // Loading dashboard
 const loadDashBoard = async (req, res) => {
     try {
-        const userData = await User.findOne({});
-        const addressData = await Address.find({}); // Fetching multiple addresses as an array
-        res.render('user/dashBoard', { userData: userData, addressData: addressData });
+        const userId = req.session.user_id;
+        const userData = await User.findOne({_id:userId});
+        const addressData = await Address.find({userId:userId}); 
+        
+        res.render('user/dashboard', { userData: userData, addressData: addressData });
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
@@ -270,11 +275,15 @@ const resendOtp = async (req, res) => {
     }
 }
 
-// for google login
 
 const loadAuth = (req, res) => {
-    const data = req.session.userData
+    try {
+        const data = req.session.userData
     res.render('auth')
+    } catch (error) {
+        console.log(error.message);
+    }
+    
 }
 const successGoogleLogin = async (req, res) => {
     try {
@@ -284,28 +293,23 @@ const successGoogleLogin = async (req, res) => {
 
         const { given_name, email } = req.user;
 
-        // Check if the user with the provided email already exists
         const existingUser = await User.findOne({ email: email });
 
         if (existingUser) {
-            req.session.user_id = email; // Store user's email in session
-            return res.render('user/home'); // Render home page
+            req.session.user_id = email; 
+            return res.render('user/home'); 
         }
 
-        // Create a new user document with the provided data
         const newUser = new User({
             name: given_name,
             email: email,
-            is_verifed: 1 // Assuming user is verified after successful Google login
+            is_verifed: 1 
         });
 
-        // Save the new user document to the database
         await newUser.save();
 
-        // Store user's email in session
         req.session.user_id = email;
 
-        // Render home page
         res.render('user/home');
 
     } catch (error) {
@@ -321,14 +325,17 @@ const failureGoogleLogin = (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-        const varientData = await Variant.find({})
-        const productData = await Product.find({ list: false })
-
-        res.render('user/shop', { productData, varientData })
+        const userId= req.session.user_id;
+        const userData = await User.find({_id:userId});
+        const varientData = await Variant.find({});
+        const productData = await Product.find({ list: false });
+        const categoryData = await Category.find({ list:false });
+        res.render('user/shop', { productData, varientData, categoryData, userData })
     } catch (error) {
         console.log(error.message)
     }
 }
+
 // load How to shop page for user guidence
 
 const loadHowShop = async (req, res) => {
@@ -338,6 +345,43 @@ const loadHowShop = async (req, res) => {
         console.log(error.message)
     }
 }
+
+const passwordUpdate = async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        const userId = req.session.user_id;
+        const userData = await User.findById({ _id: userId });
+    
+        const passwordMatch = await bcrypt.compare(currentPassword, userData.password);
+        if (!passwordMatch) {
+            return res.status(200).json({ message: 'Current password is incorrect' });
+        }
+    
+        // Validation for new password
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(newPassword)) {
+            return res.status(200).json({
+                message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+            });
+        }
+    
+        // checking the new pass and confirm pass
+        if (newPassword !== confirmPassword) {
+            return res.status(200).json({ message: 'Passwords do not match' });
+        }
+
+        const spassword = await bcrypt.hash(newPassword,10);
+
+       const passwordUpdate = await User.findOneAndUpdate({_id:userId},{password:spassword})
+    
+        return res.status(200).json({ success: true, message: 'Password updated successfully' });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+    
+};
+
 
 module.exports = {
     load404,
@@ -358,5 +402,6 @@ module.exports = {
     failureGoogleLogin,
     loadShop,
     loadHowShop,
+    passwordUpdate
 
 }

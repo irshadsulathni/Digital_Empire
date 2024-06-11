@@ -24,7 +24,7 @@ user_route.post('/signUp', userController.verifyLogin);
 
 
 // user home page things
-user_route.get('/dashboard' , userController.loadDashBoard);
+user_route.get('/dashboard' , auth.isLogin,userController.loadDashBoard);
 user_route.get('/',userController.loadHome);
 user_route.get('/about',auth.isLogin, userController.loadAbout);
 user_route.get('/faq',  userController.loadFAQ);
@@ -33,23 +33,25 @@ user_route.get('/shop', userController.loadShop);
 user_route.get('/productPage', productController.loadProductDeatiles);
 user_route.get('/howShop', userController.loadHowShop);
 user_route.get('/address' ,auth.isLogin, addressController.loadaddress );
+user_route.delete('/dashboard/deleteAddress', auth.isLogin, addressController.deleteAddress);
+user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress)
 
 // cart
-
 user_route.get('/cart', auth.isLogin,cartController.loadcart);
 user_route.get('/checkOut' , auth.isLogin ,checkOutController.loadCheckOut);
 user_route.get('/loadsuccessPage', auth.isLogin, checkOutController.loadsuccessPage);
 user_route.post('/cart', auth.isLogin,cartController.addToCart);
-
-
-
+user_route.post('/updateCount' , auth.isLogin, cartController.updateqQuantity)
 
 
 //forgot password
 user_route.get('/forgetPassword', forgetPasswordControll.forget);
 user_route.post('/forgetPassword' , forgetPasswordControll.verifyEmail,forgetPasswordControll.otpVerify );
 user_route.get('/password' , forgetPasswordControll.loadpassword);
-user_route.post('/password', forgetPasswordControll.updatePassword)
+user_route.post('/password', forgetPasswordControll.updatePassword);
+//change password
+
+user_route.post('/dashboard' , auth.isLogin, userController.passwordUpdate);
 
 //user error
 user_route.get('/404', userController.load404);
@@ -82,8 +84,8 @@ user_route.get('/resend-otp', userController.resendOtp);
 
 
 // for address managment
-
-user_route.post('/address' , auth.isLogin, addressController.addAddress)
+user_route.post('/address' , auth.isLogin, addressController.addAddress);
+user_route.post('/editAddress', auth.isLogin, addressController.editAddress)
 
 
 module.exports = user_route;

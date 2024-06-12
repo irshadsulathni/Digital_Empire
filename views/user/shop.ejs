@@ -973,12 +973,58 @@
                 .then(data => {
                     if(data.message === 'completed' ){
                         console.log('Form data sent successfully:',data.filteredData);
+                        displayProduct(data.filteredData)
                     }
                 })
                 .catch(error => {
                     console.error('Error sending form data:', error);
                 });
+
         }
+
+        function displayProduct(filteredData) {
+    const productAfterFilter = document.querySelector('.products .row');
+    productAfterFilter.innerHTML = '';
+
+    
+
+    filteredData.forEach((element, index) => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
+        productElement.innerHTML = `
+            <div class="product">
+                <figure class="product-media">
+                    <a href="productPage?productId=${element._id}">
+                        <img src="${element.productImage[0]}" alt="Product image" class="product-image">
+                    </a>
+                    <div class="product-action-vertical">
+                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                    </div>
+                    <div class="product-action action-icon-top">
+                        <a href="/cart" class="btn-product btn-cart"><span>add to cart</span></a>
+                        <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
+                        <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
+                    </div>
+                </figure>
+                <div class="product-body">
+                    <div class="product-cat">
+                        <a href="#">Accessories</a>
+                    </div>
+                    <h3 class="product-title"><a href="product.html">${element.productName}</a></h3>
+                    <div class="product-price">
+                        ₹ ${filteredData[index].variantPrice}
+                    </div>
+                    <div class="ratings-container">
+                        <div class="ratings">
+                            <div class="ratings-val" style="width: 80%;"></div>
+                        </div>
+                        <span class="ratings-text">( 11 Reviews )</span>
+                    </div>
+                </div>
+            </div>`;
+        productAfterFilter.appendChild(productElement);
+    });
+}
     </script>
 
 

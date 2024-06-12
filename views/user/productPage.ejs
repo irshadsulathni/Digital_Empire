@@ -245,7 +245,7 @@
                                             )</a>
                                     </div><!-- End .rating-container -->
 
-                                    <div class="product-price">₹<%= varientData.variantPrice %>
+                                    <div class="product-price">₹<%= productData.varientId.variantPrice %>
                                     </div><!-- End .product-price -->
 
                                     <div class="product-content">
@@ -257,7 +257,7 @@
                                     <div class="details-filter-row details-row-size">
                                         <label>Color:</label>
                                         <p>
-                                            <%= varientData.variantColor %>
+                                            <%= productData.varientId.variantColor %>
                                         </p>
                                         <!-- <div class="product-nav product-nav-thumbs">
                                             <a href="#" class="active">
@@ -296,7 +296,7 @@
 
                                     <div class="product-details-action">
                                         <a href="#" class="btn-product btn-cart" id="add-to-cart-btn"
-                                            onclick="addToCart('<%= varientData.variantPrice %>', '<%= productData._id %>')">
+                                            onclick="addToCart('<%= productData.varientId.variantPrice %>', '<%= productData._id %>')">
                                             <span id="cart-btn-text">add to cart</span>
                                         </a>
 
@@ -314,7 +314,7 @@
                                         <div class="product-cat">
                                             <span>Category:</span>
                                             <a href="#">
-                                                <%= categoryData.name %>
+                                                <%= productData.productCategory.name %>
                                             </a>
                                             <!-- <a href="#">Dresses</a>,
                                             <a href="#">Yellow</a> -->

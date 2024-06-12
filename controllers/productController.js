@@ -256,11 +256,9 @@ const deleteProduct = async (req, res) => {
 
 const loadProductDeatiles = async (req, res) => {
     try {
-        const categoryData = await Category.findOne({});
         const { productId } = req.query;
-        const productData = await Product.findOne({ _id: productId });
-        const varientData = await Variant.findOne({ productId: productId });
-        res.render('user/productPage', { productData, varientData, categoryData });
+        const productData = await Product.findOne({ _id: productId }).populate('productCategory').populate('varientId');
+        res.render('user/productPage', { productData });
     } catch (error) {
         console.log(error.message);
     }

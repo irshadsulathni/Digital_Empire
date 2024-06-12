@@ -200,7 +200,7 @@ const logout = async (req, res) => {
         if (err) {
             return res.status(500).send('Error logging out');
         }
-        res.redirect('/SignIn'); // Adjust the redirect as needed
+        res.redirect('/'); // Adjust the redirect as needed
     });
 }
 
@@ -328,9 +328,14 @@ const loadShop = async (req, res) => {
         const userId= req.session.user_id;
         const userData = await User.find({_id:userId});
         const varientData = await Variant.find({});
+        const brand =  await Product.distinct("productBrand");
+        const processor = await Variant.distinct("variantProcessor");
+        const ram = await Variant.distinct("variantRAM");
+        const gpu = await Variant.distinct("variantGPU");
+        const color = await Variant.distinct('variantColor');
         const productData = await Product.find({ list: false });
         const categoryData = await Category.find({ list:false });
-        res.render('user/shop', { productData, varientData, categoryData, userData })
+        res.render('user/shop', { productData, varientData, categoryData, userData , brand, processor, ram, gpu, color})
     } catch (error) {
         console.log(error.message)
     }
@@ -382,6 +387,75 @@ const passwordUpdate = async (req, res) => {
     
 };
 
+const filter = async (req, res) => {
+    try {
+        let requestBody = {};
+        req.body.forEach(obj => {
+            Object.assign(requestBody, obj);
+        });
+
+        const { category, ram, processor, gpu, color, brand, priceRange } = requestBody;
+
+        const productData = await Product.find({ list: false })
+            .populate('productCategory')
+            .populate('varientId');
+
+        let filteredData = productData;
+
+        // Filter by category
+        if (category && Array.isArray(category) && category.length > 0) {
+            filteredData = filteredData.filter(product => category.includes(product.productCategory.name));
+        }
+
+        // Filter by RAM
+        if (ram && Array.isArray(ram) && ram.length > 0) {
+            filteredData = filteredData.filter(product => ram.includes(product.varientId.variantRAM));
+        }
+
+        // Filter by processor
+        if (processor && Array.isArray(processor) && processor.length > 0) {
+            filteredData = filteredData.filter(product => processor.includes(product.varientId.variantProcessor));
+        }
+
+        // Filter by GPU
+        if (gpu && Array.isArray(gpu) && gpu.length > 0) {
+            filteredData = filteredData.filter(product => gpu.includes(product.varientId.variantGPU));
+        }
+
+        // Filter by color
+        if (color && Array.isArray(color) && color.length > 0) {
+            filteredData = filteredData.filter(product => color.includes(product.varientId.variantColor));
+        }
+
+        // Filter by brand
+        if (brand && Array.isArray(brand) && brand.length > 0) {
+            filteredData = filteredData.filter(product => brand.includes(product.productBrand));
+        }
+
+        // Filter by price range
+        if (priceRange && typeof priceRange === 'string') {
+            const [minStr, maxStr] = priceRange.replace(/₹/g, '').split(' - ').map(s => s.trim());
+            const minPrice = parseInt(minStr, 10);
+            const maxPrice = parseInt(maxStr, 10);
+
+            if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+                filteredData = filteredData.filter(product => {
+                    const price = product.varientId.variantPrice;
+                    return price >= minPrice && price <= maxPrice;
+                });
+                console.log('After price range filter:', filteredData);
+            } else {
+                console.log('Invalid price range:', priceRange);
+            }
+        }
+        res.status(200).json({ message: 'completed', filteredData :filteredData });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error filtering products', error });
+    }
+};
+
+
 
 module.exports = {
     load404,
@@ -402,6 +476,6 @@ module.exports = {
     failureGoogleLogin,
     loadShop,
     loadHowShop,
-    passwordUpdate
-
+    passwordUpdate,
+    filter
 }

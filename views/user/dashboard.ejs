@@ -35,6 +35,20 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+         .password-container {
+            position: relative;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
 
 </head>
 
@@ -150,13 +164,22 @@
                                                 </div><!-- End .row -->
 
                                                 <label>Current password (leave blank to leave unchanged)</label>
-                                                <input id="current-password" type="password" class="form-control">
-
+                                                <div class="password-container">
+                                                    <input id="current-password" type="password" class="form-control">
+                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('current-password')"></i>
+                                                </div>
+                                            
                                                 <label>New password (leave blank to leave unchanged)</label>
-                                                <input id="new-password" type="password" class="form-control">
-
+                                                <div class="password-container">
+                                                    <input id="new-password" type="password" class="form-control">
+                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('new-password')"></i>
+                                                </div>
+                                            
                                                 <label>Confirm new password</label>
-                                                <input id="confirm-password" type="password" class="form-control mb-2">
+                                                <div class="password-container">
+                                                    <input id="confirm-password" type="password" class="form-control mb-2">
+                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('confirm-password')"></i>
+                                                </div>
 
                                                 <button type="submit" class="btn btn-outline-primary-2">
                                                     <span>SAVE CHANGES</span>
@@ -375,7 +398,7 @@
                                         );
                                     }
 
-                                    window.location.href = '/signUp';
+                                    window.location.href = '/';
                                 } else {
                                     Swal.fire(
                                         'Error!',
@@ -492,6 +515,22 @@
                     }
                 }
             }
+
+            // for showing the password
+
+            function togglePassword(id) {
+            var input = document.getElementById(id);
+            var icon = input.nextElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
 
         </script>
 

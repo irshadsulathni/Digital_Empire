@@ -49,8 +49,8 @@ user_route.get('/forgetPassword', forgetPasswordControll.forget);
 user_route.post('/forgetPassword' , forgetPasswordControll.verifyEmail,forgetPasswordControll.otpVerify );
 user_route.get('/password' , forgetPasswordControll.loadpassword);
 user_route.post('/password', forgetPasswordControll.updatePassword);
-//change password
 
+//change password
 user_route.post('/dashboard' , auth.isLogin, userController.passwordUpdate);
 
 //user error
@@ -82,6 +82,7 @@ user_route.get('/failure' , userController.failureGoogleLogin);
 
 user_route.get('/resend-otp', userController.resendOtp);
 
+user_route.post('/shop', userController.filter)
 
 // for address managment
 user_route.post('/address' , auth.isLogin, addressController.addAddress);

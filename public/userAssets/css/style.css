@@ -12347,7 +12347,7 @@ button:focus {
 
 .widget-collapsible .widget-body {
     padding-top: 1rem;
-    padding-bottom: 2rem
+    padding-bottom: 0rem;
 }
 
 .filter-item {

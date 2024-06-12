@@ -173,15 +173,15 @@ $(document).ready(function () {
 			start: [ 0, 750 ],
 			connect: true,
 			step: 50,
-			margin: 200,
+			margin: 2000,
 			range: {
 				'min': 0,
-				'max': 1000
+				'max': 500000
 			},
 			tooltips: true,
 			format: wNumb({
 		        decimals: 0,
-		        prefix: '$'
+		        prefix: '₹'
 		    })
 		});
 

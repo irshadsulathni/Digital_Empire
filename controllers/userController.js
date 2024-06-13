@@ -6,7 +6,9 @@ const Variant = require('../models/varientModel');
 const Address = require('../models/addressModel')
 const bcrypt = require('bcrypt');
 const { name } = require('ejs');
-const Category = require('../models/categoryModel')
+const Category = require('../models/categoryModel');
+const Cart = require('../models/cartModal');
+const Order = require('../models/orderModel')
 
 
 // Password Hashing for security & threating from Hackers
@@ -39,7 +41,13 @@ const loadHome = async (req, res) => {
         const productData = await Product.findOne({ list: false });
         const categeryData = await Category.findOne({ list:false })
         const variantData = await Variant.find({});
-        
+        const cartData = await Cart.findOne({ userId: userId })
+            .populate({
+                path: 'product.productId',
+                populate: {
+                    path: 'varientId'
+                }
+            });        
         res.render('user/home', { productData, variantData,categeryData,userData });
     } catch (error) {
         console.log(error.message);
@@ -209,10 +217,11 @@ const logout = async (req, res) => {
 const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        const orderData = await Order.find({userId:userId});
         const userData = await User.findOne({_id:userId});
         const addressData = await Address.find({userId:userId}); 
         
-        res.render('user/dashboard', { userData: userData, addressData: addressData });
+        res.render('user/dashboard', { userData: userData, addressData: addressData ,orderData: orderData});
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
@@ -457,9 +466,9 @@ const filter = async (req, res) => {
                     const price = product.varientId.variantPrice;
                     return price >= minPrice && price <= maxPrice;
                 });
-                console.log('After price range filter:', filteredData);
+                console.log('After price range filter:');
             } else {
-                console.log('Invalid price range:', priceRange);
+                console.log('Invalid price range:');
             }
         }
         res.status(200).json({ message: 'completed', filteredData :filteredData });

@@ -34,7 +34,12 @@ user_route.get('/productPage', productController.loadProductDeatiles);
 user_route.get('/howShop', userController.loadHowShop);
 user_route.get('/address' ,auth.isLogin, addressController.loadaddress );
 user_route.delete('/dashboard/deleteAddress', auth.isLogin, addressController.deleteAddress);
-user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress)
+user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
+
+// order
+
+
+user_route.post('/orders', auth.isLogin, checkOutController.orders);
 
 // cart
 user_route.get('/cart', auth.isLogin,cartController.loadcart);

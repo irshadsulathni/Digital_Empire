@@ -1,9 +1,4 @@
-
-
 <!DOCTYPE html>
-
-
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,100 +6,106 @@
     <title>Order Success</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial, sans-serif';
-}
+        /* Container styles */
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
 
-body, html {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f4;
-}
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.container {
-    background-color: #fff;
-    padding: 20px 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
+        /* Icon styles */
+        .icon {
+            color: #4caf50;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
 
-.success-message .icon {
-    color: #4caf50;
-    margin-bottom: 20px;
-}
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
 
-.success-message .icon svg {
-    width: 50px;
-    height: 50px;
-}
+        .icon svg {
+            width: 50px;
+            height: 50px;
+        }
 
-.success-message h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: #333;
-}
+        /* Heading styles */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-.success-message p {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #666;
-}
+        /* Paragraph styles */
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.4;
+        }
 
-.order-details {
-    margin-bottom: 20px;
-}
+        /* Order details styles */
+        .order-details {
+            margin-bottom: 20px;
+        }
 
-.order-details p {
-    font-size: 1rem;
-    color: #333;
-}
+        .order-details p {
+            font-size: 1rem;
+            color: #333;
+        }
 
-.home-button {
-    display: inline-block;
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
+        /* Button styles */
+        .home-button {
+            display: inline-block;
+            background-color: #4caf50;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
 
-.home-button:hover {
-    background-color: #45a049;
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 15px 20px;
-    }
-
-    .success-message h1 {
-        font-size: 1.5rem;
-    }
-
-    .success-message p,
-    .order-details p {
-        font-size: 0.875rem;
-    }
-
-    .home-button {
-        padding: 8px 16px;
-        font-size: 0.875rem;
-    }
-}
-
-
+        .home-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -117,7 +118,7 @@ body, html {
             <p>Your order has been successfully placed.</p>
             <div class="order-details">
                 <p><strong>Order Number:</strong> #123456</p>
-                <p><strong>Email:</strong> example@example.com</p>
+                <p><strong>Email:</strong> <%= userData.email %> </p>
             </div>
             <a href="/" class="home-button">Continue Shopping</a>
         </div>

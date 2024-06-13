@@ -38,15 +38,123 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-         .password-container {
+        .password-container {
             position: relative;
         }
+
         .eye-icon {
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .order-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        .order-details:last-child {
+            border-bottom: none;
+        }
+
+        .order-details-content {
+            flex-grow: 1;
+        }
+
+        .order-details h2 {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .order-details p {
+            margin: 5px 0;
+            color: #777;
+        }
+
+        .cancel-button {
+            background-color: #ff5050;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            animation: fadeIn 0.5s ease;
+            margin-left: 20px;
+        }
+
+        .cancel-button:hover {
+            background-color: #cc0000;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+
+            .order-details {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cancel-button {
+                margin-left: 0;
+                margin-top: 10px;
+            }
         }
     </style>
 
@@ -135,10 +243,47 @@
 
                                         <div class="tab-pane fade" id="tab-orders" role="tabpanel"
                                             aria-labelledby="tab-orders-link">
-                                            <p>No order has been made yet.</p>
-                                            <a href="category.html" class="btn btn-outline-primary-2"><span>GO
-                                                    SHOP</span><i class="icon-long-arrow-right"></i></a>
-                                        </div><!-- .End .tab-pane -->
+                                            <div id="order-container">
+                                                <div class="container order-container">
+                                                    <h1>Order Details</h1>
+                                                    <% if (orderData.length > 0) { %>
+                                                        <% orderData.forEach(element => { %>
+                                                            <div class="order-details">
+                                                                <div class="order-details-content">
+                                                                    <h2>Order #<%= element.orderNumber %></h2>
+                                                                    <p><strong>Order ID:</strong> <%= element.orderId %></p>
+                                                                    <p><strong>Products:</strong></p>
+                                                                    <ul>
+                                                                        <% element.product.forEach(product => { %>
+                                                                            <li>
+                                                                                <p><strong>Product ID:</strong> <%= product.productId %></p>
+                                                                                <p><strong>Quantity:</strong> <%= product.quantity %></p>
+                                                                                <p><strong>SubTotal:</strong> $<%= product.subTotal %></p>
+                                                                            </li>
+                                                                        <% }) %>
+                                                                    </ul>
+                                                                    <p><strong>Cart Total:</strong> $<%= element.cartTotal %></p>
+                                                                    <p><strong>Address:</strong> <%= element.selectedAddress %></p>
+                                                                    <p><strong>Payment Method:</strong> <%= element.paymentMethod %></p>
+                                                                    <p><strong>Status:</strong> <%= element.status %></p>
+                                                                    <p><strong>Order Time:</strong> <%= element.timeStamp.toDateString() %></p>
+                                                                </div>
+                                                                <button class="cancel-button" onclick="cancelOrder('<%= element.orderId %>')">Cancel Order</button>
+                                                            </div>
+                                                        <% }) %>
+                                                    <% } else { %>
+                                                        <p>No order has been made yet.</p>
+                                                                            <a href="/shop"
+                                                                                class="btn btn-outline-primary-2"><span>GO
+                                                                                    SHOP</span><i
+                                                                                    class="icon-long-arrow-right"></i></a>
+                                                    <% } %>
+
+                                                                            
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
                                             aria-labelledby="tab-downloads-link">
@@ -166,19 +311,23 @@
                                                 <label>Current password (leave blank to leave unchanged)</label>
                                                 <div class="password-container">
                                                     <input id="current-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('current-password')"></i>
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('current-password')"></i>
                                                 </div>
-                                            
+
                                                 <label>New password (leave blank to leave unchanged)</label>
                                                 <div class="password-container">
                                                     <input id="new-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('new-password')"></i>
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('new-password')"></i>
                                                 </div>
-                                            
+
                                                 <label>Confirm new password</label>
                                                 <div class="password-container">
-                                                    <input id="confirm-password" type="password" class="form-control mb-2">
-                                                    <i class="fa fa-eye eye-icon" onclick="togglePassword('confirm-password')"></i>
+                                                    <input id="confirm-password" type="password"
+                                                        class="form-control mb-2">
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('confirm-password')"></i>
                                                 </div>
 
                                                 <button type="submit" class="btn btn-outline-primary-2">
@@ -192,46 +341,50 @@
                                             aria-labelledby="tab-address-link">
                                             <p>The following addresses will be used on the checkout page by default.</p>
 
-                                            <p>You Can Add up to 5 Addresses(<%= 5 - addressData.length %> remaining).</p>
+                                            <p>You Can Add up to 5 Addresses(<%= 5 - addressData.length %> remaining).
+                                            </p>
                                             <% if (addressData.length < 5) { %>
                                                 <p><a href="/address">Add new Address <i class="icon-edit"></i></a></p>
-                                            <% } %>
-                                            
+                                                <% } %>
 
 
-                                            <div class="row">
-                                                <% addressData.forEach((element, index)=> { %>
-                                                    <div class="col-6">
-                                                        <div class="card card-dashboard">
-                                                            <div class="card-body">
-                                                                <h3 class="card-title"> Address <%= index + 1 %>
-                                                                </h3>
-                                                                <p>
-                                                                    <b>Name</b>: <%= element.fullName %> <br>
-                                                                        <b>Mob</b>: <%= element.phoneNumber %><br>
-                                                                            <b>Address</b>: <%= element.addressLine1 %>,
-                                                                                <%= element.addressLine2 %><br>
-                                                                                    <%= element.city %>, <%=
-                                                                                            element.state %><br>
-                                                                                            <b>zip code</b>: <%=
-                                                                                                element.postalCode %>
-                                                                                                <br>
-                                                                                                <a href="/editAddress?addressId=<%= element._id %>"
-                                                                                                    class="text-primary">Edit
-                                                                                                    <i
-                                                                                                        class="fas fa-edit"></i></a>
-                                                                                                <!-- Added Delete button below -->
-                                                                                                <a href="#"
-                                                                                                    onclick="confirmDelete('<%= element._id %>')"
-                                                                                                    class="text-danger ml-3">Delete
-                                                                                                    <i
-                                                                                                        class="fas fa-trash"></i></a>
-                                                                </p>
+
+                                                    <div class="row">
+                                                        <% addressData.forEach((element, index)=> { %>
+                                                            <div class="col-6">
+                                                                <div class="card card-dashboard">
+                                                                    <div class="card-body">
+                                                                        <h3 class="card-title"> Address <%= index + 1 %>
+                                                                        </h3>
+                                                                        <p>
+                                                                            <b>Name</b>: <%= element.fullName %> <br>
+                                                                                <b>Mob</b>: <%= element.phoneNumber %>
+                                                                                    <br>
+                                                                                    <b>Address</b>: <%=
+                                                                                        element.addressLine1 %>,
+                                                                                        <%= element.addressLine2 %><br>
+                                                                                            <%= element.city %>, <%=
+                                                                                                    element.state %><br>
+                                                                                                    <b>zip code</b>: <%=
+                                                                                                        element.postalCode
+                                                                                                        %>
+                                                                                                        <br>
+                                                                                                        <a href="/editAddress?addressId=<%= element._id %>"
+                                                                                                            class="text-primary">Edit
+                                                                                                            <i
+                                                                                                                class="fas fa-edit"></i></a>
+                                                                                                        <!-- Added Delete button below -->
+                                                                                                        <a href="#"
+                                                                                                            onclick="confirmDelete('<%= element._id %>')"
+                                                                                                            class="text-danger ml-3">Delete
+                                                                                                            <i
+                                                                                                                class="fas fa-trash"></i></a>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                            <% }); %>
                                                     </div>
-                                                    <% }); %>
-                                            </div>
                                         </div><!-- End .col-lg-6 ---->
 
                                         <!-- <div class="col-lg-6">
@@ -495,7 +648,7 @@
                                 title: 'Deleted!',
                                 text: data.message,
                                 icon: 'success'
-                            }).then(()=>{
+                            }).then(() => {
                                 window.location.reload()
                             })
                         } else {
@@ -519,18 +672,18 @@
             // for showing the password
 
             function togglePassword(id) {
-            var input = document.getElementById(id);
-            var icon = input.nextElementSibling;
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                input.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
+                var input = document.getElementById(id);
+                var icon = input.nextElementSibling;
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                }
             }
-        }
 
         </script>
 

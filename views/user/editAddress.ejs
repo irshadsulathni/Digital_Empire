@@ -163,7 +163,7 @@
         if (response.ok) {
             // If request is successful, display success message
             if(responseData.success){
-            window.location.href = '/dashboard'
+                window.history.back();
             }
         } else {
             displayErrorMessage(responseData.error);

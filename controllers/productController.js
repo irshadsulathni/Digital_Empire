@@ -258,6 +258,7 @@ const loadProductDeatiles = async (req, res) => {
     try {
         const { productId } = req.query;
         const productData = await Product.findOne({ _id: productId }).populate('productCategory').populate('varientId');
+
         res.render('user/productPage', { productData });
     } catch (error) {
         console.log(error.message);

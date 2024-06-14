@@ -154,8 +154,6 @@
         zipCode: document.getElementById('zipCode').value
     };
 
-    console.log('data', data);
-
     try {
         // Send a POST request to your backend
         const response = await fetch('/address', {
@@ -169,17 +167,14 @@
         const responseData = await response.json();
 
         if (response.ok) {
-            // If request is successful, display success message
             if(responseData.success){
-            window.location.href = '/dashboard'
+                window.history.back(); 
             }
         } else {
-            // If request fails, display error message
             displayErrorMessage(responseData.error);
         }
     } catch (error) {
         console.error('Error:', error);
-        // If an unexpected error occurs, display a generic error message
         displayErrorMessage('An unexpected error occurred');
     }
 });

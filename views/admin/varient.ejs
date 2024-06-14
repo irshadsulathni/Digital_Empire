@@ -15,6 +15,13 @@
     <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
     <!-- Template CSS -->
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+        <!-- Toastify CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+        <!-- Toastify JS -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    
 </head>
 
 <body class="dark">
@@ -70,13 +77,8 @@
                         <div class="card-header">
                             <h4>Basic</h4>
                         </div>
-                        <% if (typeof message !=='undefined' ) { %>
-                            <p style="color: red;" class="d-inline-flex p-2">
-                                <%= message %>*
-                            </p>
-                        <% } %>
                         <div class="card-body">
-                            <form action="/admin/varient" method="POST">
+                            <form id="variantForm" action="/admin/varient" method="POST">
                                 <div class="row">
                                     <div class="col-lg-6 mb-4">
                                         <label class="form-label">Price</label>
@@ -120,6 +122,49 @@
     <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+    <script>
+        document.getElementById('variantForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value });
+            
+            try {
+                const response = await fetch('/admin/varient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+        
+                const result = await response.json();
+        
+                if (!response.ok) {
+                    throw new Error(result.error || 'An error occurred');
+                }
+        
+                // Redirect to the product page upon successful submission
+                window.location.href = '/admin/product';
+        
+            } catch (error) {
+                console.error(error);
+                // Show error message using Toastify
+                Toastify({
+                    text: error.message || 'An error occurred',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "red",
+                }).showToast();
+            }
+        });
+        </script>
+        
+        
+
 </body>
 
 </html>

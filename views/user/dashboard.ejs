@@ -172,6 +172,48 @@
             justify-content: flex-end;
             border-top: none;
         }
+     
+          /* Define badge styles */
+          .badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        /* Styles for different status types */
+        .badge.Pending {
+            background-color: #ffc107;
+            /* Warning color for pending */
+            color: #000000;
+            /* Text color */
+        }
+
+        .badge.Shipped {
+            background-color: #17a2b8;
+            color: #ffffff;
+            /* Text color */
+        }
+
+        .badge.Delivered {
+            background-color: #28a745;
+            /* Success color for delivered */
+            color: #ffffff;
+            /* Text color */
+        }
+
+        .badge.Canceled {
+            background-color: #dc3545;
+            /* Danger color for canceled */
+            color: #ffffff;
+            /* Text color */
+        }
+
+        /* Default style for other statuses */
+        .badge {
+            background-color: #6c757d;
+            /* Secondary color */
+            color: #ffffff;
+            /* Text color */
+        }
     </style>
 
 </head>
@@ -256,20 +298,32 @@
                                             </p>
                                         </div><!-- .End .tab-pane -->
 
-                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel"
-                                            aria-labelledby="tab-orders-link">
+                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
                                             <div id="order-container">
                                                 <div class="container order-container">
-                                                    <h3 style="display: flex; justify-content: center;">Order Details
-                                                    </h3>
-                                                    <% if (orderData.length> 0) { %>
-                                                        <% orderData.forEach(element=> { %>
+                                                    <h3 style="display: flex; justify-content: center;">Order Details</h3>
+                                                    <% if (orderData.length > 0) { %>
+                                                        <% orderData.forEach(element => { %>
                                                             <div class="order-details">
-                                                                <p><strong>Date:</strong>
-                                                                    <%= new Date(element.timeStamp).toDateString() %>
-                                                                </p>
-                                                                <h6>Order #<%= element.orderNumber %>
-                                                                </h6>
+                                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                    <p><strong>Date:</strong> <%= new Date(element.timeStamp).toDateString() %></p>
+                                                                    <div class="status-badge">
+                                                                        <span class="badge <%= element.status %>">
+                                                                            <% if (element.status === 'Pending') { %>
+                                                                                <%= element.status %>
+                                                                            <% } else if (element.status === 'Shipped') { %>
+                                                                                <%= element.status %>
+                                                                            <% } else if (element.status === 'Delivered') { %>
+                                                                                <%= element.status %>
+                                                                            <% } else if (element.status === 'Canceled') { %>
+                                                                                <%= element.status %>
+                                                                            <% } else { %>
+                                                                                <%= element.status %>
+                                                                            <% } %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <h6>Order #<%= element.orderNumber %></h6>
                                                                 <table class="table table-bordered">
                                                                     <thead>
                                                                         <tr>
@@ -278,39 +332,34 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        <% element.product.forEach(product=> { %>
+                                                                        <% element.product.forEach(product => { %>
                                                                             <tr>
-                                                                                <td>
-                                                                                    <%= product.productId.productName %>
-                                                                                </td>
-                                                                                <td>$<%= product.productId.varientId.variantPrice
-                                                                                        %>
-                                                                                </td>
+                                                                                <td><%= product.productId.productName %></td>
+                                                                                <td>$<%= product.productId.varientId.variantPrice %></td>
                                                                             </tr>
-                                                                            <% }) %>
+                                                                        <% }) %>
                                                                     </tbody>
                                                                 </table>
-                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %>
-                                                                </p>
-
-                                                                <a href="/orderTracking?orderId=<%= element._id %>"
-                                                                    class="btn btn-primary">View Details</a>
-                                                                <button class="btn btn-danger"
-                                                                    onclick="cancelOrder('<%= element._id %>')">Cancel
-                                                                    Order</button>
-                                                            </div>
-                                                            <% }) %>
-                                                                <% } else { %>
-                                                                    <p>No orders have been made yet.</p>
-                                                                    <a href="/shop"
-                                                                        class="btn btn-outline-primary-2"><span>GO
-                                                                            SHOP</span><i
-                                                                            class="icon-long-arrow-right"></i></a>
+                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %></p>
+                                                                <a href="/orderTracking?orderId=<%= element._id %>" class="btn btn-primary">View Details</a>
+                                                                <% if (element.status !== 'Canceled') { %>
+                                                                    <% if (element.status !== 'Delivered') { %>
+                                                                        <button class="btn btn-danger" onclick="cancelOrder('<%= element._id %>')">Cancel Order</button>
+                                                                    <% } else { %>
+                                                                        <button class="btn btn-danger" onclick="returnOrder('<%= element._id %>')">Return Order</button>
                                                                     <% } %>
+                                                                <% } %>
+                                                                
+                                                            </div>
+                                                        <% }) %>
+                                                    <% } else { %>
+                                                        <p>No orders have been made yet.</p>
+                                                        <a href="/shop" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
-
+                                        
 
 
 
@@ -742,12 +791,15 @@
                         })
                             .then(response => response.json())
                             .then(data => {
-                                console.log('Success:', data);
-                                Swal.fire(
+                                if(data.success == 'success'){
+                                    Swal.fire(
                                     'Cancelled!',
                                     'Your order has been cancelled.',
                                     'success'
                                 );
+                                }   
+                            }).then(()=>{
+                                window.location.reload();
                             })
                             .catch((error) => {
                                 console.error('Error:', error);

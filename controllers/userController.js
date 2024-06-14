@@ -147,7 +147,6 @@ const addUser = async (req, res) => {
                     is_blocked: false
                 });
 
-                // After the validation user data storing in session
                 req.session.userData = user;
                 const otp = Otp.sendOtp(req.body.email)
                 const otp1 = new OTP({
@@ -208,7 +207,7 @@ const logout = async (req, res) => {
         if (err) {
             return res.status(500).send('Error logging out');
         }
-        res.redirect('/'); // Adjust the redirect as needed
+        res.redirect('/'); 
     });
 }
 
@@ -222,7 +221,7 @@ const loadDashBoard = async (req, res) => {
             populate: {
                 path: 'varientId'
             }
-        });;
+        });
         const userData = await User.findOne({ _id: userId });
         const addressData = await Address.find({ userId: userId });
 
@@ -493,8 +492,6 @@ const loadOrderTracking = async (req, res) => {
                 path: 'varientId'
             }
         }).populate('selectedAddress');
-
-        console.log('Order Data:', orderData);
 
         res.render('user/orderTracking', { orderData: orderData });
     } catch (error) {

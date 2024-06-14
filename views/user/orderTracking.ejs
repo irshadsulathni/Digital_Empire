@@ -168,6 +168,41 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        
+        /* Define badge styles */
+.badge {
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+/* Styles for different status types */
+.badge.Pending {
+    background-color: #ffc107; /* Warning color for pending */
+    color: #000000; /* Text color */
+}
+
+.badge.Shipped {
+    background-color: #17a2b8; /* Info color for shipped */
+    color: #ffffff; /* Text color */
+}
+
+.badge.Delivered {
+    background-color: #28a745; /* Success color for delivered */
+    color: #ffffff; /* Text color */
+}
+
+.badge.Canceled {
+    background-color: #dc3545; /* Danger color for canceled */
+    color: #ffffff; /* Text color */
+}
+
+/* Default style for other statuses */
+.badge {
+    background-color: #6c757d; /* Secondary color */
+    color: #ffffff; /* Text color */
+}
+
+
     </style>
 </head>
 
@@ -205,10 +240,27 @@
                                     <div class="card-text mb-4"><strong>Payment Method:</strong>
                                         <%= element.paymentMethod %>
                                     </div>
-                                    <div class="card-text mb-4"><strong>Status:</strong> <span
-                                            class="badge badge-success">
-                                            <%= element.status %>
-                                        </span></div>
+                                    <div class="card-text mb-4">
+                                        <strong>Status:</strong>
+                                        <span class="badge <%= element.status %>">
+                                            <% if (element.status === 'Pending') { %>
+                                                <% // Use warning color for pending orders %>
+                                                <%= element.status %>
+                                            <% } else if (element.status === 'Shipped') { %>
+                                                <% // Use info color for shipped orders %>
+                                                <%= element.status %>
+                                            <% } else if (element.status === 'Delivered') { %>
+                                                <% // Use success color for delivered orders %>
+                                                <%= element.status %>
+                                            <% } else if (element.status === 'Canceled') { %>
+                                                <% // Use danger color for canceled orders %>
+                                                <%= element.status %>
+                                            <% } else { %>
+                                                <% // Use secondary color for other statuses %>
+                                                <%= element.status %>
+                                            <% } %>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

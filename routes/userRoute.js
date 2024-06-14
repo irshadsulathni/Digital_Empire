@@ -10,6 +10,7 @@ const addressController = require('../controllers/addressController');
 const forgetPasswordControll = require('../controllers/forgetPasswordControll');
 const cartController = require('../controllers/cartController');
 const checkOutController = require('../controllers/checkOutController');
+const orderController = require('../controllers/orderController')
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -36,9 +37,10 @@ user_route.delete('/dashboard/deleteAddress', auth.isLogin, addressController.de
 user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
 
 // order
-user_route.post('/orders', auth.isLogin, checkOutController.orders);
+user_route.post('/orders', auth.isLogin, orderController.orders);
 user_route.get('/orderTracking', auth.isLogin, userController.loadOrderTracking );
-user_route.post('/cancelOrder/:orderId', auth.isLogin , checkOutController.cancelOreder)
+user_route.post('/cancelOrder/:orderId', auth.isLogin , orderController.cancelOreder);
+
 
 // cart
 user_route.get('/cart', auth.isLogin,cartController.loadcart);

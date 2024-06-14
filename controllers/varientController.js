@@ -14,31 +14,32 @@ const loadVarient = async (req, res) => {
         console.log(error.message);
     }
 }
+
 const addVarient = async (req, res) => {
     try {
         const productId = req.session.productId;
 
-        const productData = await Product.findOne({_id:productId});
+        const productData = await Product.findOne({_id: productId});
 
         const { variantPrice, variantQuantity, variantProcessor, variantRAM, variantGPU, variantColor } = req.body;
 
         if (!variantPrice || isNaN(variantPrice) || variantPrice <= 0) {
-            return res.render('admin/varient', { message: 'Price must be a positive number' });
+            return res.status(400).json({ error: 'Price must be a positive number' });
         }
         if (!variantQuantity || isNaN(variantQuantity) || variantQuantity <= 0 || !Number.isInteger(Number(variantQuantity))) {
-            return res.render('admin/varient', { message: 'Quantity must be a positive whole number' });
+            return res.status(400).json({ error: 'Quantity must be a positive whole number' });
         }
         if (!variantProcessor || variantProcessor.trim() === '') {
-            return res.render('admin/varient', { message: 'Processor is required' });
+            return res.status(400).json({ error: 'Processor is required' });
         }
         if (!variantRAM || variantRAM.trim() === '') {
-            return res.render('admin/varient', { message: 'RAM is required' });
+            return res.status(400).json({ error: 'RAM is required' });
         }
         if (!variantGPU || variantGPU.trim() === '') {
-            return res.render('admin/varient', { message: 'GPU is required' });
+            return res.status(400).json({ error: 'GPU is required' });
         }
         if (!variantColor || variantColor.trim() === '') {
-            return res.render('admin/varient', { message: 'Color is required' });
+            return res.status(400).json({ error: 'Color is required' });
         }
 
         const variant = new Varient({
@@ -57,13 +58,14 @@ const addVarient = async (req, res) => {
 
         await productData.save();
 
-        return res.redirect('/admin/product');
-    }
-    catch (error) {
+        return res.status(200).json({ success: 'success' });
+    } catch (error) {
         console.error('Error saving variant:', error.message);
-        return res.render('admin/varient', { message: 'An error occurred while saving the variant. Please try again.' });
+        return res.status(500).json({  message: 'An error occurred while saving the variant. Please try again.' });
     }
 };
+
+
 
 const loadEditVarient = async (req, res) =>{
     try {

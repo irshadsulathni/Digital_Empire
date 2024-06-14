@@ -8,7 +8,8 @@ const productController = require('../controllers/productController');
 const path = require('path')
 const multer = require('multer');
 const fs = require('fs')
-const varientController = require('../controllers/varientController')
+const varientController = require('../controllers/varientController');
+const orderController = require('../controllers/orderController')
 
 const uploadDirectory = path.join(__dirname, '../public/publicImages');
 if (!fs.existsSync(uploadDirectory)) {
@@ -60,7 +61,9 @@ admin_route.get('/editProduct', auth.isLogin, productController.loadEditProduct)
 admin_route.get('/varient', auth.isLogin , varientController.loadVarient);
 admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct);
 admin_route.get('/editVarient', auth.isLogin, varientController.loadEditVarient);
-admin_route.get('/order', adminController.loadOrder);
+admin_route.get('/order', orderController.loadOrder);
+admin_route.get('/orderDeatail',  orderController.adminOrderControl);
+admin_route.patch('/updateOrderStatus',   orderController.updateOrderStatus)
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);

@@ -27,28 +27,23 @@ const verifyLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         
-        // Find admin data by email
+
         const adminData = await Admin.findOne({ email: email });
 
         if (adminData) {
-            // Compare passwords securely using bcrypt
             const passwordMatch = bcrypt.compare(password, adminData.password);
 
             if (passwordMatch) {
-                // Set session admin_id if password matches
                 req.session.admin_id = adminData._id;
                 res.redirect('/admin/adminHome');
             } else {
-                // Render login page with error message if password is incorrect
                 res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
             }
         } else {
-            // Render login page with error message if no admin data found
             res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
         }
 
     } catch (error) {
-        // Log the error and render the login page with a generic error message
         console.error(error);
         res.render('admin/adminLogin', { message: 'An error occurred. Please try again.' });
     }
@@ -112,13 +107,7 @@ const blockOrUnblockUser = async (req, res) => {
     }
 };
 
-const loadOrder = async (req, res)=>{
-    try {
-        res.render('admin/order',{activeOrderMessage:'active'})
-    } catch (error) {
-        
-    }
-}
+
 
 
 
@@ -128,6 +117,5 @@ module.exports = {
     verifyLogin,
     loadUserList,
     blockOrUnblockUser,
-    adminLogout,
-    loadOrder
+    adminLogout
 }

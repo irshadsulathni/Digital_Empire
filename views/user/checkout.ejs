@@ -27,6 +27,11 @@
     <link rel="stylesheet" href="/userassets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.css">
+    <!-- Add Toastify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+    <!-- Add Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <style>
         .address-container {
             border: 1px solid #ccc;
@@ -105,33 +110,39 @@
                             <div class="row">
                                 <div class="col-lg-9">
                                     <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
-                                    <div class="row">
-                                        <% addressData.forEach(element=> { %>
-                                            <div class="address-container">
-                                                <label for="<%= element._id %>">
-                                                    <input type="radio" id="<%= element._id %>" name="selectedAddress"
-                                                        value="<%= element._id %>">
-                                                    <h2><span class="icon">📍</span> Address</h2>
-                                                    <div class="address-line"><b>Name</b>: <%= element.fullName %>
+                                    <p>You Can Add up to 5 Addresses(<%= 5 - addressData.length %> remaining).
+                                    </p>
+                                    <% if (addressData.length < 5) { %>
+                                        <p><a href="/address">Add new Address <i class="icon-edit"></i></a></p>
+                                        <% } %>
+                                            <div class="row">
+                                                <% addressData.forEach(element=> { %>
+                                                    <div class="address-container">
+                                                        <label for="<%= element._id %>">
+                                                            <input type="radio" id="<%= element._id %>"
+                                                                name="selectedAddress" value="<%= element._id %>">
+                                                            <h2><span class="icon">📍</span> Address</h2>
+                                                            <div class="address-line"><b>Name</b>: <%= element.fullName
+                                                                    %>
+                                                            </div>
+                                                            <div class="address-line"><b>Mob</b>: <%=
+                                                                    element.phoneNumber %>
+                                                            </div>
+                                                            <div class="address-line"><b>Address</b>: <%=
+                                                                    element.addressLine1 %>, <%= element.addressLine2 %>
+                                                            </div>
+                                                            <div class="address-line">
+                                                                <%= element.city %>, <%= element.state %>
+                                                            </div>
+                                                            <div class="address-line"><b>Zip Code</b>: <%=
+                                                                    element.postalCode %>
+                                                            </div>
+                                                        </label>
+                                                        <a href="/editAddress?addressId=<%= element._id %>"
+                                                            class="text-primary">Edit <i class="fas fa-edit"></i></a>
                                                     </div>
-                                                    <div class="address-line"><b>Mob</b>: <%= element.phoneNumber %>
-                                                    </div>
-                                                    <div class="address-line"><b>Address</b>: <%= element.addressLine1
-                                                            %>, <%= element.addressLine2 %>
-                                                    </div>
-                                                    <div class="address-line">
-                                                        <%= element.city %>, <%= element.state %>
-                                                    </div>
-                                                    <div class="address-line"><b>Zip Code</b>: <%= element.postalCode %>
-                                                    </div>
-                                                </label>
-                                                <a href="/editAddress?addressId=<%= element._id %>"
-                                                    class="text-primary">Edit <i class="fas fa-edit"></i></a>
-                                                <a href="#" onclick="confirmDelete('<%= element._id %>')"
-                                                    class="text-danger ml-3">Delete <i class="fas fa-trash"></i></a>
-                                            </div>
-                                            <% }) %>
-                                    </div> <!-- End .row -->
+                                                    <% }) %>
+                                            </div> <!-- End .row -->
                                 </div><!-- End .col-lg-9 -->
 
                                 <aside class="col-lg-3">
@@ -146,18 +157,21 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% if (cartData && cartData.product && cartData.product.length > 0) { %>
-                                                    <% cartData.product.forEach(element => { %>
+                                                <% if (cartData && cartData.product && cartData.product.length> 0) { %>
+                                                    <% cartData.product.forEach(element=> { %>
                                                         <tr>
-                                                            <td><a href="#"><%= element.productId.productName %></a></td>
-                                                            <td>$<%= element.subTotal %></td>
+                                                            <td><a href="#">
+                                                                    <%= element.productId.productName %>
+                                                                </a></td>
+                                                            <td>$<%= element.subTotal %>
+                                                            </td>
                                                         </tr>
-                                                    <% }) %>
-                                                <% } else { %>
-                                                    <tr>
-                                                        <td colspan="2">No products in cart</td>
-                                                    </tr>
-                                                <% } %>
+                                                        <% }) %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="2">No products in cart</td>
+                                                                </tr>
+                                                                <% } %>
                                             </tbody>
                                         </table><!-- End .table table-summary -->
 
@@ -199,8 +213,10 @@
                                                             Cash on delivery
                                                         </a>
                                                     </h2> -->
+                                                    <h2 class="card-title"></h2>
                                                     <input type="checkbox" value="COD" name="paymentMethod"> <span>Cash
                                                         On delivery</span>
+                                                    </h2>
                                                 </div><!-- End .card-header -->
                                                 <div id="collapse-3" class="collapse" aria-labelledby="heading-3"
                                                     data-parent="#accordion-payment">
@@ -276,7 +292,7 @@
     <!-- Include Toastify JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.js"></script>
     <script>
-       function placeOrder(event) {
+        function placeOrder(event) {
             event.preventDefault();
 
             var selectedAddressId = document.querySelector('input[name="selectedAddress"]:checked');
@@ -286,7 +302,7 @@
                 Toastify({
                     text: "Please select an address.",
                     duration: 3000,
-                    gravity: "bottom",
+                    gravity: "top",
                     backgroundColor: "orange"
                 }).showToast();
                 return;
@@ -296,7 +312,7 @@
                 Toastify({
                     text: "Please select a payment method.",
                     duration: 3000,
-                    gravity: "bottom",
+                    gravity: "top",
                     backgroundColor: "orange"
                 }).showToast();
                 return;
@@ -308,17 +324,29 @@
 
             axios.post('/orders', orderData)
                 .then(function (response) {
-                       window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
-            
+                    window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
                 })
                 .catch(function (error) {
-                    console.log(error);
-                    Toastify({
-                        text: "Failed to place order. Please try again.",
-                        duration: 3000,
-                        gravity: "bottom",
-                        backgroundColor: "red"
-                    }).showToast();
+                    if (error.response && error.response.status === 500 && error.response.data.message === 'Insufficient stock for product') {
+                        const { name, stock, qty } = error.response.data;
+                        Toastify({
+                            text: `Insufficient stock for ${name}. Stock available: ${stock}. Requested quantity: ${qty}`,
+                            duration: 3000,
+                            gravity: "top",
+                            backgroundColor: "red",
+                            onClose: function () {
+                                window.location.href = "/cart"; // Redirect to the cart page after showing the error
+                            }
+                        }).showToast();
+                    } else {
+                        console.log(error);
+                        Toastify({
+                            text: "Failed to place order. Please try again.",
+                            duration: 3000,
+                            gravity: "bottom",
+                            backgroundColor: "red"
+                        }).showToast();
+                    }
                 });
         }
     </script>

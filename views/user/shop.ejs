@@ -83,7 +83,7 @@
                                                 <option value="popularity" selected="selected">Most Popular</option>
                                                 <!-- <option value="rating">Most Rated</option> -->
                                                 <!-- <option value="avg">Average Rated</option> -->
-                                                <option value="newArrival">New Arrival</option>
+                                                <!-- <option value="newArrival">New Arrival</option> -->
                                                 <option value="lowToHigh">Price: Low - High</option>
                                                 <option value="HighToLow">Price: High - Low</option>
                                                 <option value="AtoZ">A - Z</option>
@@ -356,7 +356,7 @@
                                     </div><!-- End .product-body 
                                 </div><!-- End .product 
                             </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-                         </div><!-- End .row -->
+                            </div><!-- End .row -->
 
                             <!-- <div class="load-more-container text-center">
                                 <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i
@@ -717,7 +717,7 @@
 
         function displayProduct(filteredData) {
             const productAfterFilter = document.querySelector('.products .row');
-            console.log('data filter',filteredData);
+            console.log('data filter', filteredData);
             productAfterFilter.innerHTML = '';
 
 
@@ -792,18 +792,14 @@
         }
 
         function displayProductAfterSorting(sortedData) {
-    console.log('hjuk', sortedData);
-    const productAfterSort = document.querySelector('.products .row');
-    if(!productAfterSort){
-        console.log('not getting');
-    }
-    productAfterSort.innerHTML = ''
-    
-            console.log('hello',productAfterSort);
-    sortedData.forEach((element, index) => {
-        const sortedElement = document.createElement('div');
-        sortedElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
-        sortedElement.innerHTML = `
+            const productAfterSort = document.querySelector('.products .row');
+            productAfterSort.innerHTML = ''
+
+            console.log('hello', productAfterSort);
+            sortedData.forEach((element, index) => {
+                const sortedElement = document.createElement('div');
+                sortedElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
+                sortedElement.innerHTML = `
             <div class="product">
                 <figure class="product-media">
                     <a href="productPage?productId=${element._id}">
@@ -834,9 +830,9 @@
                     </div>
                 </div>
             </div>`;
-        productAfterSort.appendChild(sortedElement);
-    });
-}
+                productAfterSort.appendChild(sortedElement);
+            });
+        }
 
 
 

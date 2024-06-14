@@ -101,15 +101,17 @@
                                                         <td class="price-col">$<%=
                                                                 element.productId.varientId.variantPrice %>
                                                         </td>
+                                                        <!-- <% var max = Math.min(element.productId.varientId.variantQuantity,5) %> -->
                                                         <td class="quantity-col">
                                                             <div class="cart-product-quantity">
                                                                 <input id="count<%= element.productId._id %>"
-                                                                    onchange="quantity('<%=element.productId._id%>')"
+                                                                    onchange="updateQuantity('<%=element.productId._id%>')"
                                                                     type="number" class="form-control"
-                                                                    value="<%= element.quantity %>" min="1" max="5"
+                                                                    value="<%= element.quantity %>" min="1" max="<%= element.productId.varientId.variantQuantity %>"
                                                                     step="1" data-decimals="0" required>
                                                             </div><!-- End .cart-product-quantity -->
                                                         </td>
+
                                                         <td class="total-col"
                                                             id="productTotal<%= element.productId._id %>">
                                                             <%= element.subTotal %>
@@ -140,12 +142,12 @@
                                         <div class="cart-discount">
                                             <form action="#">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" required
+                                                    <!-- <input type="text" class="form-control" required
                                                         placeholder="coupon code">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-outline-primary-2" type="submit"><i
                                                                 class="icon-long-arrow-right"></i></button>
-                                                    </div><!-- .End .input-group-append -->
+                                                    </div>.End .input-group-append -->
                                                 </div><!-- End .input-group -->
                                             </form>
                                         </div><!-- End .cart-discount -->
@@ -267,8 +269,29 @@
 
 
     <script>
+         function updateQuantity(productId) {
+            const count = document.getElementById(`count${productId}`).value;
+            updateCount(productId, count);
+        }
 
         function updateCount(id, count) {
+
+            const countInput = document.getElementById(`count${id}`);
+            const currentValue = parseInt(countInput.value);
+            const maxAllowed = 5;
+
+            if (maxAllowed <= currentValue) {
+                Swal.fire({
+                    title: 'Limit Reached',
+                    text: 'You can add a maximum of ' + maxAllowed + ' items to your cart.',
+                    icon: 'warning',
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    },
+                    confirmButtonText: 'OK'
+                });
+            }
+
             fetch('/updateCount', {
                 method: 'POST',
                 headers: {
@@ -288,30 +311,14 @@
                 .then(data => {
                     document.getElementById(`productTotal${id}`).textContent = data.total;
                     document.getElementById(`cartTotal`).textContent = data.cartTotal;
-                    console.log('Success:', cartTotal);
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
         }
 
-        function quantity(id) {
-            const countInput = document.getElementById(`count${id}`);
-            const currentValue = parseInt(countInput.value);
-            const maxAllowed = 5;
 
-            if (maxAllowed <= currentValue) {
-                Swal.fire({
-                    title: 'Limit Reached',
-                    text: 'You can add a maximum of ' + maxAllowed + ' items to your cart.',
-                    icon: 'warning',
-                    customClass: {
-                        popup: 'custom-swal-background'
-                    },
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
+        
 
         function removeCartItem(element) {
             const productId = element.closest('button').getAttribute('data-product-id');

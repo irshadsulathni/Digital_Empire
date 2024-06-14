@@ -60,6 +60,7 @@ admin_route.get('/editProduct', auth.isLogin, productController.loadEditProduct)
 admin_route.get('/varient', auth.isLogin , varientController.loadVarient);
 admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct);
 admin_route.get('/editVarient', auth.isLogin, varientController.loadEditVarient);
+admin_route.get('/order', adminController.loadOrder);
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);

@@ -308,9 +308,7 @@
 
             axios.post('/orders', orderData)
                 .then(function (response) {
-                   
-                      
-                       window.location.href = '/loadsuccessPage';
+                       window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
             
                 })
                 .catch(function (error) {

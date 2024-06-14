@@ -2,7 +2,9 @@ const Address = require('../models/addressModel');
 const Cart = require('../models/cartModal');
 const Order = require('../models/orderModel');
 const Variant = require('../models/varientModel');
-const User = require('../models/userModel')
+const User = require('../models/userModel');
+const Counter = require('../models/counterModel');
+const Product = require('../models/productModel')
 
 
 const loadCheckOut = async (req, res) => {
@@ -24,9 +26,12 @@ const loadCheckOut = async (req, res) => {
 
 const loadsuccessPage = async (req, res) => {
     try {
-        const userId = req.session.user_id
-        const userData = await User.find({_id:userId})
-        res.render('user/successPage',{userData})
+        const userId = req.session.user_id;
+        const {orderId} = req.query;
+        const userData = await User.findOne({_id:userId})
+        const orderData = await Order.findOne({_id:orderId})
+
+        res.render('user/successPage',{userData:userData,orderData:orderData})
     } catch (error) {
         console.log(error);
     }
@@ -52,7 +57,18 @@ const orders = async (req, res) => {
 
         const products = Array.isArray(cartData.product) ? cartData.product : [];
 
-        // Create a new order
+        let counter = await Counter.findById('orderNumber');
+        if (!counter) {
+            counter = new Counter({
+                _id: 'orderNumber',
+                seq: 1000 
+            });
+            await counter.save();
+        }
+
+        counter.seq++;
+        await counter.save();
+
         const newOrder = new Order({
             userId,
             product: products.map(item => ({
@@ -60,34 +76,47 @@ const orders = async (req, res) => {
                 quantity: item.quantity,
                 subTotal: item.subTotal
             })),
-            cartTotal: cartData.cartTotal,
+            orderTotal: cartData.cartTotal,
             selectedAddress,
-            paymentMethod
+            paymentMethod,
+            orderNumber: counter.seq  
         });
 
-        await newOrder.save();
+
+        const orderData = await newOrder.save();
 
         for (const item of products) {
             await Variant.updateOne(
                 { _id: item.productId.varientId }, 
-                { $inc: { variantQuantity: -item.quantity } }
+                { $inc: { variantQuantity: -item.quantity  } }
             );
+            await Product.updateOne(
+                {_id:item.productId},
+                { $inc: { count: item.quantity }}
+            )
         }
 
-
-        // Delete user's cart
         await Cart.deleteOne({ userId });
 
-        res.status(200).send('Order placed successfully');
+        res.status(200).json({message:'Order placed successfully',orderId:orderData._id});
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Failed to place order');
     }
-}
+};
 
+const cancelOreder = async (req, res) =>{
+    try {
+        console.log('ht');
+        console.log(req.params);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 module.exports = {
     loadCheckOut,
     loadsuccessPage,
-    orders
+    orders,
+    cancelOreder
 }

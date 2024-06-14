@@ -173,10 +173,10 @@ $(document).ready(function () {
 			start: [ 0, 750 ],
 			connect: true,
 			step: 50,
-			margin: 2000,
+			margin: 50000,
 			range: {
 				'min': 0,
-				'max': 500000
+				'max': 300000
 			},
 			tooltips: true,
 			format: wNumb({

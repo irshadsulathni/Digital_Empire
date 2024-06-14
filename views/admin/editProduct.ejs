@@ -268,13 +268,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script>
             function removeImage(imageUrl, button) {
-                // Find the parent wrapper of the image
                 const imageWrapper = button.closest('.image-wrapper');
 
-                // Remove the image wrapper from the DOM
                 imageWrapper.remove();
 
-                // AJAX request to notify the server about the removal
                 fetch('/admin/removeProductImage', {
                     method: 'POST',
                     headers: {

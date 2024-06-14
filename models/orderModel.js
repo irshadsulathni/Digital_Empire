@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
-    orderId:{
-        type:String
-    },
     orderNumber:{
         type:Number
     },
@@ -25,11 +22,10 @@ const orderSchema = new mongoose.Schema({
             type: Number
         }
     }],
-    cartTotal:{
-        type:Number
-    },
     selectedAddress:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Address',
+        required:true
     },
     paymentMethod:{
         type:String,
@@ -42,6 +38,10 @@ const orderSchema = new mongoose.Schema({
     timeStamp: {
         type: Date, 
         default: Date.now 
+    },
+    orderTotal:{
+        type:Number,
+        required:true
     }
 })
 

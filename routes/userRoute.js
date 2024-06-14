@@ -17,7 +17,6 @@ user_route.use(passport.session());
 
 
 //user signIn & SignUp
-
 user_route.get('/signUp', auth.isLogout, userController.loadSignUp);
 user_route.post('/signIn', auth.isLogout, userController.addUser);
 user_route.post('/signUp', userController.verifyLogin);
@@ -37,16 +36,17 @@ user_route.delete('/dashboard/deleteAddress', auth.isLogin, addressController.de
 user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
 
 // order
-
-
 user_route.post('/orders', auth.isLogin, checkOutController.orders);
+user_route.get('/orderTracking', auth.isLogin, userController.loadOrderTracking );
+user_route.post('/cancelOrder/:orderId', auth.isLogin , checkOutController.cancelOreder)
 
 // cart
 user_route.get('/cart', auth.isLogin,cartController.loadcart);
 user_route.get('/checkOut' , auth.isLogin ,checkOutController.loadCheckOut);
 user_route.get('/loadsuccessPage', auth.isLogin, checkOutController.loadsuccessPage);
 user_route.post('/cart', auth.isLogin,cartController.addToCart);
-user_route.post('/updateCount' , auth.isLogin, cartController.updateqQuantity)
+user_route.post('/updateCount' , auth.isLogin, cartController.updateqQuantity);
+user_route.delete('/cart/deleteCartItem/:productId', auth.isLogin , cartController.deleteCartItem);
 
 
 //forgot password
@@ -87,7 +87,8 @@ user_route.get('/failure' , userController.failureGoogleLogin);
 
 user_route.get('/resend-otp', userController.resendOtp);
 
-user_route.post('/shop', userController.filter)
+user_route.post('/shop', userController.filter);
+user_route.post('/sort' , userController.sortShop);
 
 // for address managment
 user_route.post('/address' , auth.isLogin, addressController.addAddress);

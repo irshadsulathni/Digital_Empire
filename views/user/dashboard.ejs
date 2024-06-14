@@ -86,23 +86,17 @@
         }
 
         .order-details {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 20px;
+            flex-direction: column;
         }
 
-        .order-details:last-child {
-            border-bottom: none;
-        }
-
-        .order-details-content {
-            flex-grow: 1;
-        }
-
-        .order-details h2 {
+        .order-details h2,
+        .order-details h6 {
             margin-bottom: 10px;
             color: #555;
         }
@@ -110,6 +104,16 @@
         .order-details p {
             margin: 5px 0;
             color: #777;
+        }
+
+        .order-details table {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-details .btn {
+            margin-top: 10px;
         }
 
         .cancel-button {
@@ -123,7 +127,6 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            animation: fadeIn 0.5s ease;
             margin-left: 20px;
         }
 
@@ -131,30 +134,43 @@
             background-color: #cc0000;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
         @media (max-width: 768px) {
-            .container {
+            .order-container {
                 padding: 30px;
             }
 
             .order-details {
-                flex-direction: column;
-                align-items: flex-start;
+                padding: 15px;
             }
 
             .cancel-button {
                 margin-left: 0;
                 margin-top: 10px;
             }
+        }
+
+        /* Modal Content */
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        /* Modal Header */
+        .modal-header {
+            background-color: #007bff;
+            color: #fff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        /* Modal Body */
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Modal Footer */
+        .modal-footer {
+            justify-content: flex-end;
+            border-top: none;
         }
     </style>
 
@@ -169,7 +185,6 @@
 
 
         <%- include('../layouts/pageHeader') %>
-
 
 
             <main class="main">
@@ -245,44 +260,59 @@
                                             aria-labelledby="tab-orders-link">
                                             <div id="order-container">
                                                 <div class="container order-container">
-                                                    <h1>Order Details</h1>
-                                                    <% if (orderData.length > 0) { %>
-                                                        <% orderData.forEach(element => { %>
+                                                    <h3 style="display: flex; justify-content: center;">Order Details
+                                                    </h3>
+                                                    <% if (orderData.length> 0) { %>
+                                                        <% orderData.forEach(element=> { %>
                                                             <div class="order-details">
-                                                                <div class="order-details-content">
-                                                                    <h2>Order #<%= element.orderNumber %></h2>
-                                                                    <p><strong>Order ID:</strong> <%= element.orderId %></p>
-                                                                    <p><strong>Products:</strong></p>
-                                                                    <ul>
-                                                                        <% element.product.forEach(product => { %>
-                                                                            <li>
-                                                                                <p><strong>Product ID:</strong> <%= product.productId %></p>
-                                                                                <p><strong>Quantity:</strong> <%= product.quantity %></p>
-                                                                                <p><strong>SubTotal:</strong> $<%= product.subTotal %></p>
-                                                                            </li>
-                                                                        <% }) %>
-                                                                    </ul>
-                                                                    <p><strong>Cart Total:</strong> $<%= element.cartTotal %></p>
-                                                                    <p><strong>Address:</strong> <%= element.selectedAddress %></p>
-                                                                    <p><strong>Payment Method:</strong> <%= element.paymentMethod %></p>
-                                                                    <p><strong>Status:</strong> <%= element.status %></p>
-                                                                    <p><strong>Order Time:</strong> <%= element.timeStamp.toDateString() %></p>
-                                                                </div>
-                                                                <button class="cancel-button" onclick="cancelOrder('<%= element.orderId %>')">Cancel Order</button>
-                                                            </div>
-                                                        <% }) %>
-                                                    <% } else { %>
-                                                        <p>No order has been made yet.</p>
-                                                                            <a href="/shop"
-                                                                                class="btn btn-outline-primary-2"><span>GO
-                                                                                    SHOP</span><i
-                                                                                    class="icon-long-arrow-right"></i></a>
-                                                    <% } %>
+                                                                <p><strong>Date:</strong>
+                                                                    <%= new Date(element.timeStamp).toDateString() %>
+                                                                </p>
+                                                                <h6>Order #<%= element.orderNumber %>
+                                                                </h6>
+                                                                <table class="table table-bordered">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Product</th>
+                                                                            <th>Price</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <% element.product.forEach(product=> { %>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <%= product.productId.productName %>
+                                                                                </td>
+                                                                                <td>$<%= product.productId.varientId.variantPrice
+                                                                                        %>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% }) %>
+                                                                    </tbody>
+                                                                </table>
+                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %>
+                                                                </p>
 
-                                                                            
+                                                                <a href="/orderTracking?orderId=<%= element._id %>"
+                                                                    class="btn btn-primary">View Details</a>
+                                                                <button class="btn btn-danger"
+                                                                    onclick="cancelOrder('<%= element._id %>')">Cancel
+                                                                    Order</button>
+                                                            </div>
+                                                            <% }) %>
+                                                                <% } else { %>
+                                                                    <p>No orders have been made yet.</p>
+                                                                    <a href="/shop"
+                                                                        class="btn btn-outline-primary-2"><span>GO
+                                                                            SHOP</span><i
+                                                                            class="icon-long-arrow-right"></i></a>
+                                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
+
+
+
 
 
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
@@ -480,16 +510,11 @@
 
 
 
-    <!--  for the footer of the page 
-        
-        
-        
-        
-        
-        
-        
-        
-        -->
+    <!--  for the footer of the page -->
+
+
+
+
     <%- include('../layouts/pageFooter') %>
 
 
@@ -516,9 +541,9 @@
                     <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
                     <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
                     <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
-                </div><!-- End .social-icons -->
-            </div><!-- End .mobile-menu-wrapper -->
-        </div><!-- End .mobile-menu-container -->
+                </div> <!-- End .social-icons -->
+            </div> <!-- End .mobile-menu-wrapper -->
+        </div> <!-- End .mobile-menu-container -->
         <script>
             document.getElementById('logoutButton').addEventListener('click', function () {
                 Swal.fire({
@@ -684,6 +709,59 @@
                     icon.classList.add("fa-eye");
                 }
             }
+
+
+
+
+            // for cancel the order
+
+            function cancelOrder(orderId) {
+                console.log('orderId', orderId);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you really want to cancel this order?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, cancel it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Create URL-encoded form data
+                        const params = new URLSearchParams();
+                        params.append('orderId', orderId);
+
+                        // Proceed with canceling the order using fetch
+                        fetch(`/cancelOrder/${orderId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: params
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Success:', data);
+                                Swal.fire(
+                                    'Cancelled!',
+                                    'Your order has been cancelled.',
+                                    'success'
+                                );
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                                Swal.fire(
+                                    'Error!',
+                                    'There was a problem cancelling your order.',
+                                    'error'
+                                );
+                            });
+                    }
+                });
+            }
+
+
 
         </script>
 

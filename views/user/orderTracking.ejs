@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- molla/dashboard.html  22 Nov 2019 10:03:13 GMT -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Digital Empire</title>
+    <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Molla - Bootstrap eCommerce Template">
+    <meta name="author" content="p-themes">
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/userAssets/images/icons/apple-touch-icon.png">
+    <link rel="icon" type="favicon/jpg" sizes="32x32" href="/userAssets/images/icons/icon.jpg">
+    <link rel="icon" type="favicon/jpg" sizes="16x16" href="/userAssets/images/icons/icon.jpg">
+    <link rel="manifest" href="/userAssets/images/icons/site.html">
+    <link rel="mask-icon" href="/userAssets/images/icons/safari-pinned-tab.svg" color="#666666">
+    <link rel="shortcut icon" href="/userAssets/images/icons/icon.jpg">
+    <meta name="apple-mobile-web-app-title" content="Molla">
+    <meta name="application-name" content="Molla">
+    <meta name="msapplication-TileColor" content="#cc9966">
+    <meta name="msapplication-config" content="Assets/images/icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="/userAssets/vendor/line-awesome/line-awesome/line-awesome/css/line-awesome.min.css">
+    <!-- Plugins CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="/userAssets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/userassets/images/order-tracking-bg.jpg');
+            /* Background Image URL */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+            margin-top: 50px;
+        }
+
+        .page-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb-item {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .breadcrumb-item.active {
+            color: #007bff;
+        }
+
+        .order-details {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .order-details h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .order-line {
+            margin-bottom: 10px;
+        }
+
+        .product-item {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .product-item h4 {
+            margin-top: 0;
+        }
+
+        .product-info p {
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-delivered {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .status-processing {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .status-cancelled {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        /* New styles for product layout */
+        .product-details {
+            margin-top: 20px;
+        }
+
+        .address {
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            width: 300px;
+            /* Adjust width as needed */
+        }
+
+        .address h2 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .address p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- page header ejs -->
+
+
+
+    <%- include('../layouts/pageHeader') %>
+
+        <div class="container mt-5">
+            <div class="card p-4">
+                <h3 class="text-center mb-4">Order Tracking - <span>Digi</span></h3>
+                <% orderData.forEach(element=> { %>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="card-title">Order #<%= element.orderNumber %>
+                                    </h2>
+                                    <!-- <div class="card-text mb-4"><strong>Order ID:</strong> 7890</div> -->
+                                    <div class="card-text mb-4"><strong>Address:</strong>
+
+                                        <div class="address">
+                                            <h2><%= element.selectedAddress.addressLine1 %></h2>
+                                            <h2><%= element.selectedAddress.phoneNumber %></h2>
+                                            <p> <%= element.selectedAddress.city %></p>
+                                            <p><%= element.selectedAddress.state %></p>
+                                            <p><%= element.selectedAddress.country %></p>
+                                          </div>
+
+                                    </div>
+                                    <div class="card-text mb-4"><strong>Payment Method:</strong>
+                                        <%= element.paymentMethod %>
+                                    </div>
+                                    <div class="card-text mb-4"><strong>Status:</strong> <span
+                                            class="badge badge-success">
+                                            <%= element.status %>
+                                        </span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-details">
+                                <h3>Products:</h3>
+                                <% element.product.forEach(product=> { %>
+                                    <div class="product-item">
+                                        <h4>
+                                            <%= product.productId.productName %>
+                                        </h4>
+                                        <p><strong>Price:</strong>
+                                            <%= product.productId.varientId.variantPrice %>
+                                        </p>
+                                        <p><strong>Quantity:</strong>
+                                            <%= product.quantity %>
+                                        </p>
+                                    </div>
+                                    <% }) %>
+                                        <!-- Add more product items here if needed -->
+                            </div>
+                            <a onclick="goBack()" class="btn btn-primary btn-block mt-4">Back</a>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+        <!--  for the footer of the page -->
+
+
+
+
+        <%- include('../layouts/pageFooter') %>
+
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script>
+                function goBack() {
+                    window.history.back();
+                }
+            </script>
+</body>
+
+</html>

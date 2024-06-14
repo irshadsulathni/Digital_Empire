@@ -30,6 +30,9 @@
     <link rel="stylesheet" href="/userAssets/css/plugins/owl-carousel/owl.carousel.css">
     <link rel="stylesheet" href="/userAssets/css/plugins/magnific-popup/magnific-popup.css">
     <link rel="stylesheet" href="/userAssets/css/plugins/nouislider/nouislider.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 </head>
 
 <body>
@@ -72,14 +75,23 @@
 
                             <div class="toolbox-right">
                                 <div class="toolbox-sort">
-                                    <label for="sortby">Sort by:</label>
-                                    <div class="select-custom">
-                                        <select name="sortby" id="sortby" class="form-control">
-                                            <option value="popularity" selected="selected">Most Popular</option>
-                                            <option value="rating">Most Rated</option>
-                                            <option value="date">Date</option>
-                                        </select>
-                                    </div>
+                                    <form action="">
+                                        <label for="sortby">Sort by:</label>
+                                        <div class="select-custom">
+                                            <select name="sortby" id="sortby" class="form-control"
+                                                onchange="sortProducts()">
+                                                <option value="popularity" selected="selected">Most Popular</option>
+                                                <!-- <option value="rating">Most Rated</option> -->
+                                                <!-- <option value="avg">Average Rated</option> -->
+                                                <option value="newArrival">New Arrival</option>
+                                                <option value="lowToHigh">Price: Low - High</option>
+                                                <option value="HighToLow">Price: High - Low</option>
+                                                <option value="AtoZ">A - Z</option>
+                                                <option value="ZtoA">Z - A</option>
+                                                <option value="date">Date</option>
+                                            </select>
+                                        </div>
+                                    </form>
                                 </div><!-- End .toolbox-sort -->
                             </div><!-- End .toolbox-right -->
                         </div><!-- End .toolbox -->
@@ -344,7 +356,7 @@
                                     </div><!-- End .product-body 
                                 </div><!-- End .product 
                             </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-                            </div><!-- End .row -->
+                         </div><!-- End .row -->
 
                             <!-- <div class="load-more-container text-center">
                                 <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i
@@ -637,18 +649,18 @@
                     if (checkbox.name === 'category') {
                         selectedCategory.push(checkbox.value);
                     } else if (checkbox.name === 'ram') {
-                        selectedRam.push(checkbox.value); 
-                    }else if( checkbox.name === 'processor' ){
+                        selectedRam.push(checkbox.value);
+                    } else if (checkbox.name === 'processor') {
                         selectedProcessor.push(checkbox.value);
-                    }else if(checkbox.name === 'color'){
+                    } else if (checkbox.name === 'color') {
                         selectedColor.push(checkbox.value);
                     }
-                    else if(checkbox.name === 'brand'){
+                    else if (checkbox.name === 'brand') {
                         selectedBrand.push(checkbox.value);
-                    }else if(checkbox.name === 'gpu'){
+                    } else if (checkbox.name === 'gpu') {
                         selectedGPU.push(checkbox.value)
                     }
-                     else {
+                    else {
                         allFormData.push({ [checkbox.name]: checkbox.value });
                     }
                 }
@@ -662,27 +674,26 @@
                 allFormData.push({ ram: selectedRam }); // Add selected RAM values as array
             }
 
-            if(selectedProcessor.length >0){
-                allFormData.push({processor: selectedProcessor})
+            if (selectedProcessor.length > 0) {
+                allFormData.push({ processor: selectedProcessor })
             }
-            if(selectedColor.length > 0){
-                allFormData.push({color : selectedColor})
+            if (selectedColor.length > 0) {
+                allFormData.push({ color: selectedColor })
             }
-            if(selectedBrand.length > 0){
-                allFormData.push({brand:selectedBrand})
+            if (selectedBrand.length > 0) {
+                allFormData.push({ brand: selectedBrand })
             }
-            if(selectedGPU.length > 0){
-                allFormData.push({gpu:selectedGPU})
+            if (selectedGPU.length > 0) {
+                allFormData.push({ gpu: selectedGPU })
             }
 
             console.log('all', allFormData);
 
             const priceRangeElement = document.getElementById('filter-price-range');
             if (priceRangeElement) {
-                allFormData.push({  'priceRange': priceRangeElement.innerText });
+                allFormData.push({ 'priceRange': priceRangeElement.innerText });
             }
 
-            console.log('form', JSON.stringify(allFormData));
 
             fetch('/shop', {
                 method: 'POST',
@@ -693,8 +704,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.message === 'completed' ){
-                        console.log('Form data sent successfully:',data.filteredData);
+                    if (data.message === 'completed') {
+                        console.log('Form data sent successfully:', data.filteredData);
                         displayProduct(data.filteredData)
                     }
                 })
@@ -705,15 +716,16 @@
         }
 
         function displayProduct(filteredData) {
-    const productAfterFilter = document.querySelector('.products .row');
-    productAfterFilter.innerHTML = '';
+            const productAfterFilter = document.querySelector('.products .row');
+            console.log('data filter',filteredData);
+            productAfterFilter.innerHTML = '';
 
-    
 
-    filteredData.forEach((element, index) => {
-        const productElement = document.createElement('div');
-        productElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
-        productElement.innerHTML = `
+
+            filteredData.forEach((element, index) => {
+                const productElement = document.createElement('div');
+                productElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
+                productElement.innerHTML = `
             <div class="product">
                 <figure class="product-media">
                     <a href="productPage?productId=${element._id}">
@@ -734,7 +746,7 @@
                     </div>
                     <h3 class="product-title"><a href="product.html">${element.productName}</a></h3>
                     <div class="product-price">
-                        ₹ ${filteredData[index].variantPrice}
+                        ₹ ${filteredData[index].varientId.variantPrice}
                     </div>
                     <div class="ratings-container">
                         <div class="ratings">
@@ -744,9 +756,90 @@
                     </div>
                 </div>
             </div>`;
-        productAfterFilter.appendChild(productElement);
+                productAfterFilter.appendChild(productElement);
+            });
+        }
+
+
+        function sortProducts() {
+            var selectedOption = $("#sortby").val();
+
+            fetch('/sort', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sortby: selectedOption })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received from server:", data);
+                    if (data.success) {
+                        console.log('Sorted Data Sent Successfully ', data.sortedData);
+                        displayProductAfterSorting(data.sortedData);
+                    } else {
+                        console.error('Error in response data:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error sending sorting option to backend:", error);
+                });
+        }
+
+        function displayProductAfterSorting(sortedData) {
+    console.log('hjuk', sortedData);
+    const productAfterSort = document.querySelector('.products .row');
+    if(!productAfterSort){
+        console.log('not getting');
+    }
+    productAfterSort.innerHTML = ''
+    
+            console.log('hello',productAfterSort);
+    sortedData.forEach((element, index) => {
+        const sortedElement = document.createElement('div');
+        sortedElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
+        sortedElement.innerHTML = `
+            <div class="product">
+                <figure class="product-media">
+                    <a href="productPage?productId=${element._id}">
+                        <img src="${element.productImage[0]}" alt="Product image" class="product-image">
+                    </a>
+                    <div class="product-action-vertical">
+                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                    </div>
+                    <div class="product-action action-icon-top">
+                        <a href="/cart" class="btn-product btn-cart"><span>add to cart</span></a>
+                        <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
+                        <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
+                    </div>
+                </figure>
+                <div class="product-body">
+                    <div class="product-cat">
+                        <a href="#">Accessories</a>
+                    </div>
+                    <h3 class="product-title"><a href="product.html">${element.productName}</a></h3>
+                    <div class="product-price">
+                        ₹ ${sortedData[index].varientId.variantPrice}
+                    </div>
+                    <div class="ratings-container">
+                        <div class="ratings">
+                            <div class="ratings-val" style="width: 80%;"></div>
+                        </div>
+                        <span class="ratings-text">( 11 Reviews )</span>
+                    </div>
+                </div>
+            </div>`;
+        productAfterSort.appendChild(sortedElement);
     });
 }
+
+
+
     </script>
 
 

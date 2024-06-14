@@ -11,7 +11,7 @@ const addressSchema = new mongoose.Schema({
         required: true,
     },
     phoneNumber: {
-        type: String,
+        type: Number,
         required: true,
     },
     email: {

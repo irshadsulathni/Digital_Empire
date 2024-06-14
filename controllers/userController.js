@@ -36,10 +36,10 @@ const load404 = async (req, res) => {
 // Load user Home page for a Preview
 const loadHome = async (req, res) => {
     try {
-        const userId= req.session.user_id;
-        const userData = await User.findOne({_id:userId});
+        const userId = req.session.user_id;
+        const userData = await User.findOne({ _id: userId });
         const productData = await Product.findOne({ list: false });
-        const categeryData = await Category.findOne({ list:false })
+        const categeryData = await Category.findOne({ list: false })
         const variantData = await Variant.find({});
         const cartData = await Cart.findOne({ userId: userId })
             .populate({
@@ -47,8 +47,8 @@ const loadHome = async (req, res) => {
                 populate: {
                     path: 'varientId'
                 }
-            });        
-        res.render('user/home', { productData, variantData,categeryData,userData });
+            });
+        res.render('user/home', { productData, variantData, categeryData, userData });
     } catch (error) {
         console.log(error.message);
     }
@@ -217,11 +217,16 @@ const logout = async (req, res) => {
 const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const orderData = await Order.find({userId:userId});
-        const userData = await User.findOne({_id:userId});
-        const addressData = await Address.find({userId:userId}); 
-        
-        res.render('user/dashboard', { userData: userData, addressData: addressData ,orderData: orderData});
+        const orderData = await Order.find({ userId: userId }).populate({
+            path: 'product.productId',
+            populate: {
+                path: 'varientId'
+            }
+        });;
+        const userData = await User.findOne({ _id: userId });
+        const addressData = await Address.find({ userId: userId });
+
+        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData });
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
@@ -288,11 +293,11 @@ const resendOtp = async (req, res) => {
 const loadAuth = (req, res) => {
     try {
         const data = req.session.userData
-    res.render('auth')
+        res.render('auth')
     } catch (error) {
         console.log(error.message);
     }
-    
+
 }
 const successGoogleLogin = async (req, res) => {
     try {
@@ -305,14 +310,14 @@ const successGoogleLogin = async (req, res) => {
         const existingUser = await User.findOne({ email: email });
 
         if (existingUser) {
-            req.session.user_id = email; 
-            return res.render('user/home'); 
+            req.session.user_id = email;
+            return res.render('user/home');
         }
 
         const newUser = new User({
             name: given_name,
             email: email,
-            is_verifed: 1 
+            is_verifed: 1
         });
 
         await newUser.save();
@@ -339,8 +344,8 @@ const loadShop = async (req, res) => {
 
         if (search) {
             productData = await Product.find({
-                $or:[
-                    { productName: { $regex: '.*' + search + '.*', $options: 'i' }}
+                $or: [
+                    { productName: { $regex: '.*' + search + '.*', $options: 'i' } }
                 ]
             }).populate('productCategory').populate('varientId');
         } else {
@@ -379,12 +384,12 @@ const passwordUpdate = async (req, res) => {
         const { currentPassword, newPassword, confirmPassword } = req.body;
         const userId = req.session.user_id;
         const userData = await User.findById({ _id: userId });
-    
+
         const passwordMatch = await bcrypt.compare(currentPassword, userData.password);
         if (!passwordMatch) {
             return res.status(200).json({ message: 'Current password is incorrect' });
         }
-    
+
         // Validation for new password
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!passwordRegex.test(newPassword)) {
@@ -392,22 +397,22 @@ const passwordUpdate = async (req, res) => {
                 message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
             });
         }
-    
+
         // checking the new pass and confirm pass
         if (newPassword !== confirmPassword) {
             return res.status(200).json({ message: 'Passwords do not match' });
         }
 
-        const spassword = await bcrypt.hash(newPassword,10);
+        const spassword = await bcrypt.hash(newPassword, 10);
 
-       const passwordUpdate = await User.findOneAndUpdate({_id:userId},{password:spassword})
-    
+        const passwordUpdate = await User.findOneAndUpdate({ _id: userId }, { password: spassword })
+
         return res.status(200).json({ success: true, message: 'Password updated successfully' });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
-    
+
 };
 
 const filter = async (req, res) => {
@@ -471,12 +476,73 @@ const filter = async (req, res) => {
                 console.log('Invalid price range:');
             }
         }
-        res.status(200).json({ message: 'completed', filteredData :filteredData });
+        res.status(200).json({ message: 'completed', filteredData: filteredData });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error filtering products', error });
     }
 };
+
+
+const loadOrderTracking = async (req, res) => {
+    try {
+        const { orderId } = req.query;
+        const orderData = await Order.find({ _id: orderId }).populate({
+            path: 'product.productId',
+            populate: {
+                path: 'varientId'
+            }
+        }).populate('selectedAddress');
+
+        console.log('Order Data:', orderData);
+
+        res.render('user/orderTracking', { orderData: orderData });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const sortShop = async (req, res) => {
+    try {
+        const { sortby } = req.body;
+
+        let products;
+
+        // Fetch all products that match the criteria first
+        products = await Product.find({ list: false }).populate({
+            path: 'varientId',
+            model: 'Variant',
+            select: 'variantPrice',
+        });
+
+        // Perform sorting based on the sortby value
+        let sortedData;
+
+        if (sortby === 'popularity') {
+            sortedData = products.sort((a, b) => b.count - a.count);
+        } else if (sortby === 'newArrival') {
+            sortedData = products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        } else if (sortby === 'lowToHigh') {
+            sortedData = products.sort((a, b) => a.varientId.variantPrice - b.varientId.variantPrice);
+        } else if (sortby === 'HighToLow') {
+            sortedData = products.sort((a, b) => b.varientId.variantPrice - a.varientId.variantPrice);
+        } else if (sortby === 'AtoZ') {
+            sortedData = products.sort((a, b) => a.productName.localeCompare(b.productName));
+        } else if (sortby === 'ZtoA') {
+            sortedData = products.sort((a, b) => b.productName.localeCompare(a.productName));
+        } else if (sortby === 'date') {
+            sortedData = products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        } else {
+            return res.status(400).json({ success: false, message: 'Invalid sort parameter' });
+        }
+
+        res.status(200).json({ success: true, sortedData: sortedData });
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ success: false, 'Server Error': error });
+    }
+}
 
 
 
@@ -500,5 +566,7 @@ module.exports = {
     loadShop,
     loadHowShop,
     passwordUpdate,
-    filter
+    filter,
+    loadOrderTracking,
+    sortShop
 }

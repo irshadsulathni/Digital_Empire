@@ -112,6 +112,14 @@ const blockOrUnblockUser = async (req, res) => {
     }
 };
 
+const loadOrder = async (req, res)=>{
+    try {
+        res.render('admin/order',{activeOrderMessage:'active'})
+    } catch (error) {
+        
+    }
+}
+
 
 
 module.exports = {
@@ -120,5 +128,6 @@ module.exports = {
     verifyLogin,
     loadUserList,
     blockOrUnblockUser,
-    adminLogout
+    adminLogout,
+    loadOrder
 }

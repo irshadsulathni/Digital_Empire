@@ -34,6 +34,10 @@ const productSchema = new mongoose.Schema({
     list:{
         type:Boolean,
         default:false
+    },
+    count:{
+        type:Number,
+        default:0
     }
 
 })

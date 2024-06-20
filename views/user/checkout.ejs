@@ -323,31 +323,49 @@
             };
 
             axios.post('/orders', orderData)
-                .then(function (response) {
-                    window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
-                })
-                .catch(function (error) {
-                    if (error.response && error.response.status === 500 && error.response.data.message === 'Insufficient stock for product') {
-                        const { name, stock, qty } = error.response.data;
-                        Toastify({
-                            text: `Insufficient stock for ${name}. Stock available: ${stock}. Requested quantity: ${qty}`,
-                            duration: 3000,
-                            gravity: "top",
-                            backgroundColor: "red",
-                            onClose: function () {
-                                window.location.href = "/cart"; // Redirect to the cart page after showing the error
-                            }
-                        }).showToast();
-                    } else {
-                        console.log(error);
-                        Toastify({
-                            text: "Failed to place order. Please try again.",
-                            duration: 3000,
-                            gravity: "bottom",
-                            backgroundColor: "red"
-                        }).showToast();
+    .then(function (response) {
+        window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
+    })
+    .catch(function (error) {
+        if (error.response) {
+            if (error.response.status === 500 && error.response.data.message === 'Insufficient stock for product') {
+                const { name, stock, qty } = error.response.data;
+                Toastify({
+                    text: `Insufficient stock for ${name}. Stock available: ${stock}. Requested quantity: ${qty}`,
+                    duration: 3000,
+                    gravity: "top",
+                    backgroundColor: "red",
+                    onClose: function () {
+                        window.location.href = "/cart"; // Redirect to the cart page after showing the error
                     }
-                });
+                }).showToast();
+            } else if (error.response.status === 404 && error.response.data === "Cart data not found") {
+                Toastify({
+                    text: "Your cart is empty. Please add items to your cart before placing an order.",
+                    duration: 3000,
+                    gravity: "bottom",
+                    backgroundColor: "orange"
+                }).showToast();
+            } else {
+                console.log(error);
+                Toastify({
+                    text: "Failed to place order. Please try again later.",
+                    duration: 3000,
+                    gravity: "bottom",
+                    backgroundColor: "red"
+                }).showToast();
+            }
+        } else {
+            console.log(error);
+            Toastify({
+                text: "An unexpected error occurred. Please try again later.",
+                duration: 3000,
+                gravity: "bottom",
+                backgroundColor: "red"
+            }).showToast();
+        }
+    });
+
         }
     </script>
 </body>

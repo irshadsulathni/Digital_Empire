@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Nest Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .badge {
+            padding: 3px 6px;
+            border-radius: 3px;
+            display: inline-block;
+            font-size: 0.75rem;
+            line-height: 1;
+            background-color: #6c757d;
+            color: #ffffff;
+        }
+
+        .badge.Pending {
+            background-color: #ffc107;
+            color: #000000;
+        }
+
+        .badge.Shipped {
+            background-color: #17a2b8;
+            color: #ffffff;
+        }
+
+        .badge.Delivered {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .badge.Canceled {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+        .badge.RefundAccepted {
+                background-color: #6610f2;
+                color: #ffffff;
+            }
+    </style>
+
+
+</head>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+    // for side nav bar
+
+    <%- include('../layouts/adminSide') %>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <!-- <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form> -->
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+
+                </div>
+                <div class="card mb-4">
+                    <header class="card-header">
+                        <!-- <div class="row gx-3">
+                            <div class="col-lg-4 col-md-6 me-auto">
+                                <input type="text" placeholder="Search..." class="form-control" />
+                            </div>
+                            
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Status</option>
+                                    <option>Active</option>
+                                    <option>Disabled</option>
+                                    <option>Show all</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-6 col-md-3">
+                                <select class="form-select">
+                                    <option>Show 20</option>
+                                    <option>Show 30</option>
+                                    <option>Show 40</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </header>
+                    <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="text-align: center;">
+                                <thead>
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Reason</th>
+                                        <th scope="col" class="text">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    <% returnData.forEach(element=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= element.orderId.orderNumber %>
+                                            </td>
+                                            <td>
+                                                <%= element.from.email %>
+                                            </td>
+                                            <td>
+                                                <%= element.reason %>
+                                            </td>
+                                            <td class="text">
+                                                <div class="btn-group">
+                                                    <% if (element.orderId.status == 'Refund Accepted') { %>
+                                                        <button class="btn btn-success btn-sm font-sm" disabled>Accepted</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-success btn-sm font-sm"
+                                                            onclick="acceptReturn('<%= element.orderId._id %>')">Accept</button>
+                                                    <% } %>
+                                            
+                                                    <% if (element.orderId.status == 'Denied') { %>
+                                                        <button class="btn btn-danger btn-sm font-sm" disabled>Denied</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-danger btn-sm font-sm"
+                                                            onclick="denyReturn('<%= element.orderId._id %>')">Deny</button>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                        <% }) %>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- table-responsive //end -->
+                </div>
+                <!-- card-body end// -->
+                </div>
+                <!-- card end// -->
+
+
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Irshad Sulthani .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            async function acceptReturn(orderId) {
+                try {
+                    const response = await axios.post('/admin/acceptReturn', { orderId: orderId });
+                    console.log(response.data);
+
+                    Toastify({
+                        text: "Return accepted and refund processed successfully!",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "green",
+                    }).showToast();
+
+                    // Optionally, update the UI to reflect the refund status
+                } catch (error) {
+                    console.error("Error processing refund:", error);
+
+                    Toastify({
+                        text: "Failed to process refund. Please try again.",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "red",
+                    }).showToast();
+                }
+            }
+
+
+            function denyReturn(orderId) {
+                axios.post('/admin/denyReturn', {
+                    orderId: orderId
+                })
+                    .then(function (response) {
+                        console.log(response.data);
+                        Toastify({
+                            text: "Return denied successfully!",
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "green",
+                        }).showToast();
+                    })
+                    .catch(function (error) {
+                        console.error("Error denying return:", error);
+                        Toastify({
+                            text: "Failed to deny return. Please try again.",
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "red",
+                        }).showToast();
+                    });
+            }
+        </script>
+</body>
+
+</html>

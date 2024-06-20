@@ -10,7 +10,9 @@ const userRoute = require('./routes/userRoute');
 
 
 
-mongoose.connect(process.env.mongo_id);
+mongoose.connect(process.env.mongo_id)
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error(err));
 
 const app = express();
 

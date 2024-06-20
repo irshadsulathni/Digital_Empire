@@ -32,7 +32,9 @@
     <link rel="stylesheet" href="/userAssets/css/plugins/nouislider/nouislider.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 </head>
 
 <body>
@@ -152,18 +154,18 @@
                                                     </a>
 
                                                     <div class="product-action-vertical">
-                                                        <a href="#"
-                                                            class="btn-product-icon btn-wishlist btn-expandable"><span>add
+                                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"
+                                                            onclick="addToWishlist('<%= element._id %>','<%= element.varientId._id %>')"><span>add
                                                                 to wishlist</span></a>
                                                     </div><!-- End .product-action -->
 
                                                     <div class="product-action action-icon-top">
-                                                        <a href="/cart" class="btn-product btn-cart"><span>add to
+                                                        <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>','<%= element._id %>')" class="btn-product btn-cart"><span>add to
                                                                 cart</span></a>
-                                                        <a href="popup/quickView.html" class="btn-product btn-quickview"
-                                                            title="Quick view"><span>quick view</span></a>
-                                                        <a href="#" class="btn-product btn-compare"
-                                                            title="Compare"><span>compare</span></a>
+                                                        <!-- <a href="popup/quickView.html" class="btn-product btn-quickview"
+                                                            title="Quick view"><span>quick view</span></a> -->
+                                                        <!-- <a href="#" class="btn-product btn-compare"
+                                                            title="Compare"><span>compare</span></a> -->
                                                     </div><!-- End .product-action -->
                                                 </figure><!-- End .product-media -->
 
@@ -574,6 +576,42 @@
                 </div><!-- End .page-content -->
             </main><!-- End .main -->
 
+
+            <div class="pagination-container">
+                <ul class="pagination justify-content-center">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a href="/shop?page=1&q=<%= search %>" class="page-link">&laquo; First</a>
+                        </li>
+                        <li class="page-item">
+                            <a href="/shop?page=<%= currentPage - 1 %>&q=<%= search %>" class="page-link">&lsaquo;
+                                Prev</a>
+                        </li>
+                        <% } %>
+
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a href="/shop?page=<%= i %>&q=<%= search %>" class="page-link">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a href="/shop?page=<%= currentPage + 1 %>&q=<%= search %>"
+                                                class="page-link">Next &rsaquo;</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a href="/shop?page=<%= totalPages %>&q=<%= search %>"
+                                                class="page-link">Last &raquo;</a>
+                                        </li>
+                                        <% } %>
+                </ul>
+            </div>
+
+
+
             <!--  for the footer of the page 
         
         
@@ -795,7 +833,6 @@
             const productAfterSort = document.querySelector('.products .row');
             productAfterSort.innerHTML = ''
 
-            console.log('hello', productAfterSort);
             sortedData.forEach((element, index) => {
                 const sortedElement = document.createElement('div');
                 sortedElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
@@ -834,6 +871,101 @@
             });
         }
 
+
+        // function addToWishlist(productId) {
+
+        //     axios.post('/addTowishlist', { productId: productId })
+        //         .then(response => {
+        //             console.log('Success:', response.data);
+        //             Swal.fire({
+        //                 title: 'Success!',
+        //                 text: 'Product added to wishlist',
+        //                 icon: 'success',
+        //                 confirmButtonText: 'OK'
+        //             });
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             Swal.fire({
+        //                 title: 'Error!',
+        //                 text: 'An error occurred',
+        //                 icon: 'error',
+        //                 confirmButtonText: 'OK'
+        //             });
+        //         });
+        // }
+
+
+        function addToWishlist(productId,varientId) {
+            console.log('productId',productId);
+            console.log('varientId',varientId);
+            axios.post('/addTowishlist', { 
+                productId: productId,
+                varientId:varientId 
+            })
+            
+                .then(response => {
+                    console.log('Success:', response.data);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Product added to wishlist',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    let errorMessage = 'An error occurred';
+                    let alertConfig = {
+                        title: 'Oops...',
+                        text: errorMessage,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    };
+
+                    if (error.response && error.response.data && error.response.data.error) {
+                        // User-specific error
+                        errorMessage = error.response.data.error;
+                        alertConfig.text = errorMessage;
+                    } else if (error.message) {
+                        // System error
+                        errorMessage = error.message;
+                        alertConfig = {
+                            title: 'System Error',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        };
+                    }
+
+                    Swal.fire(alertConfig);
+                });
+        }
+
+
+        //for add to Cart
+
+        function addToCart(variantPrice, productId) {
+            console.log('price',variantPrice);
+            console.log('id', productId);
+        const price = Number(variantPrice);
+        const qty = 1; // Set the quantity to 1 for simplicity
+        const subtotal = qty * price; // Calculate subtotal
+
+        // Send a POST request using Axios
+        axios.post('/cart', {
+            productId: productId,
+            quantity: qty,
+            subtotal: subtotal
+        })
+            .then(function (success) {
+                window.location.href = '/cart';
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        }
 
 
     </script>

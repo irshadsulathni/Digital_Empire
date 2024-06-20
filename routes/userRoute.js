@@ -10,7 +10,8 @@ const addressController = require('../controllers/addressController');
 const forgetPasswordControll = require('../controllers/forgetPasswordControll');
 const cartController = require('../controllers/cartController');
 const checkOutController = require('../controllers/checkOutController');
-const orderController = require('../controllers/orderController')
+const orderController = require('../controllers/orderController');
+const wishlistController = require('../controllers/wishlistController')
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -40,6 +41,13 @@ user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
 user_route.post('/orders', auth.isLogin, orderController.orders);
 user_route.get('/orderTracking', auth.isLogin, userController.loadOrderTracking );
 user_route.post('/cancelOrder/:orderId', auth.isLogin , orderController.cancelOreder);
+user_route.post('/returnOrder', auth.isLogin, orderController.returnOrder)
+
+// wishlist
+user_route.get('/wishlist', auth.isLogin ,wishlistController.loadWishlist);
+user_route.post('/addTowishlist',  wishlistController.addTowishlist);
+user_route.delete('/wishlist/deleteWishlistItem/:productId', auth.isLogin, wishlistController.removeWishlistItem)
+
 
 
 // cart
@@ -94,7 +102,13 @@ user_route.post('/sort' , userController.sortShop);
 
 // for address managment
 user_route.post('/address' , auth.isLogin, addressController.addAddress);
-user_route.post('/editAddress', auth.isLogin, addressController.editAddress)
+user_route.post('/editAddress', auth.isLogin, addressController.editAddress);
+
+
+// for 404 page 
+
+
+// user_route.get('*' ,userController.load404)
 
 
 module.exports = user_route;

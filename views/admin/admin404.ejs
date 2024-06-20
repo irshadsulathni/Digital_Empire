@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Nest Dashboard - Page Not Found</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="404 Page Not Found" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="404 Page Not Found" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .content-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .error-container {
+            max-width: 500px;
+            margin: auto;
+        }
+        .error-container img {
+            width: 100%;
+            max-width: 300px;
+        }
+        .error-container h3 {
+            font-size: 2.5rem;
+            margin-top: 20px;
+            color: #ff6f61;
+        }
+        .error-container p {
+            font-size: 1.1rem;
+            margin: 15px 0 30px;
+            color: #666;
+        }
+        .btn-primary {
+            background-color: #ff6f61;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #ff856e;
+        }
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+
+    <!-- Side nav bar -->
+    <%- include('../layouts/adminSide') %>
+
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                        <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products"></option>
+                        <option value="New orders"></option>
+                        <option value="Apple iphone"></option>
+                        <option value="Ahmed Hassan"></option>
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"><i class="material-icons md-nights_stay"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="error-container">
+                <img src="/adminAssets/imgs/theme/404.png" alt="Page Not Found" />
+                <h3>Oops! Page not found</h3>
+                <p>It's looking like you may have taken a wrong turn. Don't worry... it happens to the best of us. Here's a little tip that might help you get back on track.</p>
+                <a href="/admin/adminHome" class="btn btn-primary"><i class="material-icons md-keyboard_return"></i> Back to main</a>
+            </div>
+        </section>
+        <footer class="main-footer font-xs">
+            <div>
+                <script>
+                    document.write(new Date().getFullYear());
+                </script>
+                &copy; Irshad Sulthani. All rights reserved.
+            </div>
+        </footer>
+    </main>
+    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+</body>
+</html>

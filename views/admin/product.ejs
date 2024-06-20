@@ -184,19 +184,16 @@
 
                 <div class="pagination-area mt-30 mb-50">
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                
+                        <ul class="pagination justify-content-center">
                             <% if(currentPage > 1){ %>
                                 <li class="page-item">
-                                    <a class="page-link" href="/admin/product?page=1">1</a>
+                                    <a class="page-link" href="/admin/product?page=1" aria-label="First">
+                                        <i class="fas fa-angle-double-left"></i> First
+                                    </a>
                                 </li>
-                            <% } else  { %>
-                                <li class="page-item active">
-                                    <a class="page-link" href="javascript:void(0);">1</a>
-                                </li>
-                            <% }  %>
+                            <% } %>
                 
-                            <% for(let i = 2; i <= totalPage; i++) { %>
+                            <% for(let i = 1; i <= totalPage; i++) { %>
                                 <li class="page-item <%= i === currentPage ? 'active' : '' %>">
                                     <a class="page-link" href="/admin/product?page=<%= i %>"><%= i %></a>
                                 </li>
@@ -204,18 +201,15 @@
                 
                             <% if(currentPage < totalPage){ %>
                                 <li class="page-item">
-                                    <a class="page-link" href="/admin/product?page=<%= currentPage + 1 %>"><i class="material-icons md-chevron_right"></i></a>
-                                </li>
-                            <% }else{ %>
-                                <li class="page-item">
-                                    <a class="page-link" href="javascript:void(0);"><i class="material-icons md-chevron_right"></i></a>
+                                    <a class="page-link" href="/admin/product?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        Next <i class="fas fa-angle-double-right"></i>
+                                    </a>
                                 </li>
                             <% } %>
-                
-                            <!-- Other pagination items like next/previous buttons can be added here -->
                         </ul>
                     </nav>
                 </div>
+                
                 
                 
             </section>

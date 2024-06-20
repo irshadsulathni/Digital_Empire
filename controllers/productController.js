@@ -157,10 +157,10 @@ const removeProductImage = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {   
 
-        const addressCount = await Address.countDocuments({ userId: userId });
-        if (addressCount >= 5) {
-            return res.status(400).json({ message: 'Maximum address limit reached' });
-        }
+        // const addressCount = await Address.countDocuments({ userId: userId });
+        // if (addressCount >= 5) {
+        //     return res.status(400).json({ message: 'Maximum address limit reached' });
+        // }
 
         const productId = req.session.productId;
 

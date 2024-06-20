@@ -34,7 +34,7 @@ const isLogout = async (req, res, next) => {
                 req.session.destroy()
                 return res.status(403).send('Your account is blocked.');
             }
-            res.render('user/signUp');
+            res.redirect('/');
         } else {
             next();
         }

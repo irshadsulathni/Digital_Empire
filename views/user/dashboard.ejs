@@ -172,9 +172,9 @@
             justify-content: flex-end;
             border-top: none;
         }
-     
-          /* Define badge styles */
-          .badge {
+
+        /* Define badge styles */
+        .badge {
             padding: 5px 10px;
             border-radius: 3px;
         }
@@ -213,6 +213,67 @@
             /* Secondary color */
             color: #ffffff;
             /* Text color */
+        }
+
+        /* modal css */
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            /* Adjust this width to your preference */
+            max-width: 400px;
+            /* Maximum width of the modal */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        #submitCancellation {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #submitCancellation:hover {
+            background-color: #da190b;
         }
     </style>
 
@@ -298,32 +359,30 @@
                                             </p>
                                         </div><!-- .End .tab-pane -->
 
-                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-                                            <div id="order-container">
-                                                <div class="container order-container">
-                                                    <h3 style="display: flex; justify-content: center;">Order Details</h3>
-                                                    <% if (orderData.length > 0) { %>
-                                                        <% orderData.forEach(element => { %>
-                                                            <div class="order-details">
-                                                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                                    <p><strong>Date:</strong> <%= new Date(element.timeStamp).toDateString() %></p>
+                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel"
+                                            aria-labelledby="tab-orders-link">
+                                            <div id="order-container" style="width: 100%; margin: 0 55px;">
+                                                <div class="container order-container"
+                                                    style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;">
+                                                    <h3 style="width: 100%; text-align: center;">Order Details</h3>
+                                                    <% if (orderData.length> 0) { %>
+                                                        <% orderData.forEach(element=> { %>
+                                                            <div class="order-details"
+                                                                style="width: calc(50% - 20px); margin-bottom: 20px;">
+                                                                <div
+                                                                    style="display: flex; justify-content: space-between; align-items: center;">
+                                                                    <p><strong>Date:</strong>
+                                                                        <%= new Date(element.timeStamp).toDateString()
+                                                                            %>
+                                                                    </p>
                                                                     <div class="status-badge">
                                                                         <span class="badge <%= element.status %>">
-                                                                            <% if (element.status === 'Pending') { %>
-                                                                                <%= element.status %>
-                                                                            <% } else if (element.status === 'Shipped') { %>
-                                                                                <%= element.status %>
-                                                                            <% } else if (element.status === 'Delivered') { %>
-                                                                                <%= element.status %>
-                                                                            <% } else if (element.status === 'Canceled') { %>
-                                                                                <%= element.status %>
-                                                                            <% } else { %>
-                                                                                <%= element.status %>
-                                                                            <% } %>
+                                                                            <%= element.status %>
                                                                         </span>
                                                                     </div>
                                                                 </div>
-                                                                <h6>Order #<%= element.orderNumber %></h6>
+                                                                <h6>Order #<%= element.orderNumber %>
+                                                                </h6>
                                                                 <table class="table table-bordered">
                                                                     <thead>
                                                                         <tr>
@@ -332,34 +391,47 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        <% element.product.forEach(product => { %>
+                                                                        <% element.product.forEach(product=> { %>
                                                                             <tr>
-                                                                                <td><%= product.productId.productName %></td>
-                                                                                <td>$<%= product.productId.varientId.variantPrice %></td>
+                                                                                <td>
+                                                                                    <%= product.productId.productName %>
+                                                                                </td>
+                                                                                <td>$<%= product.productId.varientId.variantPrice
+                                                                                        %>
+                                                                                </td>
                                                                             </tr>
-                                                                        <% }) %>
+                                                                            <% }) %>
                                                                     </tbody>
                                                                 </table>
-                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %></p>
-                                                                <a href="/orderTracking?orderId=<%= element._id %>" class="btn btn-primary">View Details</a>
-                                                                <% if (element.status !== 'Canceled') { %>
-                                                                    <% if (element.status !== 'Delivered') { %>
-                                                                        <button class="btn btn-danger" onclick="cancelOrder('<%= element._id %>')">Cancel Order</button>
-                                                                    <% } else { %>
-                                                                        <button class="btn btn-danger" onclick="returnOrder('<%= element._id %>')">Return Order</button>
-                                                                    <% } %>
-                                                                <% } %>
-                                                                
+                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %>
+                                                                </p>
+                                                                <a href="/orderTracking?orderId=<%= element._id %>"
+                                                                    class="btn btn-primary">View Details</a>
+                                                                <% if (element.status !=='Canceled' && element.status
+                                                                    !=='Delivered' ) { %>
+                                                                    <button class="btn btn-danger"
+                                                                        onclick="cancelOrder('<%= element._id %>')">Cancel
+                                                                        Order</button>
+                                                                    <% } else if (element.status==='Delivered' ) { %>
+                                                                        <button class="btn btn-danger"
+                                                                            onclick="openModal('<%= element._id %>')">Return
+                                                                            Order</button>
+                                                                        <% } %>
                                                             </div>
-                                                        <% }) %>
-                                                    <% } else { %>
-                                                        <p>No orders have been made yet.</p>
-                                                        <a href="/shop" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-                                                    <% } %>
+                                                            <% }) %>
+                                                                <% } else { %>
+                                                                    <p style="width: 100%; text-align: center;">No
+                                                                        orders have been made yet.</p>
+                                                                    <a href="/shop" class="btn btn-outline-primary-2"
+                                                                        style="margin: 0 auto;"><span>GO SHOP</span><i
+                                                                            class="icon-long-arrow-right"></i></a>
+                                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
+
+
 
 
 
@@ -558,6 +630,16 @@
     </main><!-- End .main -->
 
 
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Reason for Cancellation</h2>
+            <textarea id="cancellationReason" rows="4" cols="50"></textarea>
+            <button id="submitCancellation">Submit</button>
+        </div>
+    </div>
+
+
 
     <!--  for the footer of the page -->
 
@@ -593,6 +675,20 @@
                 </div> <!-- End .social-icons -->
             </div> <!-- End .mobile-menu-wrapper -->
         </div> <!-- End .mobile-menu-container -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButton = document.getElementById('submitCancellation');
+            submitButton.addEventListener('click', function () {
+                var reason = document.getElementById('cancellationReason').value;
+                // Replace this with your SweetAlert code
+                swal("Submitted!", "Reason: " + reason, "success");
+            });
+        });
+    </script>
+
         <script>
             document.getElementById('logoutButton').addEventListener('click', function () {
                 Swal.fire({
@@ -765,7 +861,6 @@
             // for cancel the order
 
             function cancelOrder(orderId) {
-                console.log('orderId', orderId);
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -781,7 +876,6 @@
                         const params = new URLSearchParams();
                         params.append('orderId', orderId);
 
-                        // Proceed with canceling the order using fetch
                         fetch(`/cancelOrder/${orderId}`, {
                             method: 'POST',
                             headers: {
@@ -791,14 +885,14 @@
                         })
                             .then(response => response.json())
                             .then(data => {
-                                if(data.success == 'success'){
+                                if (data.success == 'success') {
                                     Swal.fire(
-                                    'Cancelled!',
-                                    'Your order has been cancelled.',
-                                    'success'
-                                );
-                                }   
-                            }).then(()=>{
+                                        'Cancelled!',
+                                        'Your order has been cancelled.',
+                                        'success'
+                                    );
+                                }
+                            }).then(() => {
                                 window.location.reload();
                             })
                             .catch((error) => {
@@ -813,6 +907,42 @@
                 });
             }
 
+            // Function to open modal
+            function openModal(orderId) {
+                var modal = document.getElementById("myModal");
+                var span = document.getElementsByClassName("close")[0];
+                
+                modal.style.display = "block";
+
+                span.onclick = function () {
+                    modal.style.display = "none";
+                }
+
+                window.onclick = function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+                // Handle submission of cancellation reason
+                document.getElementById("submitCancellation").onclick = function () {
+                    var reason = document.getElementById("cancellationReason").value;
+                    console.log("Reason for cancellation:", reason);
+
+                    axios.post('/returnOrder', {
+                        orderId: orderId,
+                        reason: reason
+                    })
+                        .then(function (response) {
+                            console.log(response.data);
+                        })
+                        .catch(function (error) {
+                            console.error("Error cancelling order:", error);
+                        });
+
+                    modal.style.display = "none";
+                }
+            }
 
 
         </script>

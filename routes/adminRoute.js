@@ -62,21 +62,27 @@ admin_route.get('/varient', auth.isLogin , varientController.loadVarient);
 admin_route.get('/product/deleteProduct', auth.isLogin , productController.deleteProduct);
 admin_route.get('/editVarient', auth.isLogin, varientController.loadEditVarient);
 admin_route.get('/order', orderController.loadOrder);
-admin_route.get('/orderDeatail',  orderController.adminOrderControl);
-admin_route.patch('/updateOrderStatus',   orderController.updateOrderStatus)
+admin_route.get('/orderDeatail', auth.isLogin, orderController.adminOrderControl);
+admin_route.patch('/updateOrderStatus',   orderController.updateOrderStatus);
+admin_route.get('/returnDeatiles', auth.isLogin, orderController.loadReturnOrder);
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
-admin_route.post('/userList', auth.isLogin, adminController.blockOrUnblockUser);
-admin_route.post('/category', auth.isLogin, categoryController.addCategories);
-admin_route.post('/category/list', auth.isLogin, categoryController.listOrUnlist);
-admin_route.post('/editCategory', auth.isLogin, categoryController.updateCategory);
-admin_route.post('/addProduct', auth.isLogin, upload.array('croppedImages', 10), productController.addProduct);
-admin_route.post('/product/list', auth.isLogin, productController.listorUnlistOfProduct);
-admin_route.post('/editProduct', auth.isLogin, upload.array('croppedImages', 10), productController.updateProduct)
-admin_route.post('/varient', auth.isLogin , varientController.addVarient);
-admin_route.post('/removeProductImage' , auth.isLogin , productController.removeProductImage);
-admin_route.post('/editVarient' , auth.isLogin , varientController.updateVarient);
+admin_route.post('/userList',  adminController.blockOrUnblockUser);
+admin_route.post('/category',  categoryController.addCategories);
+admin_route.post('/category/list',  categoryController.listOrUnlist);
+admin_route.post('/editCategory',  categoryController.updateCategory);
+admin_route.post('/addProduct',  upload.array('croppedImages', 10), productController.addProduct);
+admin_route.post('/product/list',  productController.listorUnlistOfProduct);
+admin_route.post('/editProduct',  upload.array('croppedImages', 10), productController.updateProduct);
+admin_route.post('/varient',  varientController.addVarient);
+admin_route.post('/removeProductImage',  productController.removeProductImage);
+admin_route.post('/editVarient',  varientController.updateVarient);
+admin_route.post('/acceptReturn', orderController.acceptReturn);
+admin_route.post('/denyReturn', orderController.denyReturn);
 
 
+
+
+admin_route.get('*', adminController.adminLoad404);
 
 module.exports = admin_route; 

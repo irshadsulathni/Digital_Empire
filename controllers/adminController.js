@@ -108,6 +108,14 @@ const blockOrUnblockUser = async (req, res) => {
 };
 
 
+const adminLoad404 = async (req, res) =>{
+    try {
+        res.render('admin/admin404')
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -117,5 +125,6 @@ module.exports = {
     verifyLogin,
     loadUserList,
     blockOrUnblockUser,
-    adminLogout
+    adminLogout,
+    adminLoad404
 }

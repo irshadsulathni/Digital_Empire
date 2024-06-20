@@ -5,6 +5,7 @@ const Counter = require("../models/counterModel");
 const Cart = require('../models/cartModal');
 const { model } = require("mongoose");
 const { findOne, populate } = require("../models/userModel");
+const Return = require('../models/returnOrder');
 
 const loadOrder = async (req, res) => {
     try {
@@ -63,8 +64,61 @@ const adminOrderControl = async (req, res)=>{
     }
 } 
 
+const loadReturnOrder = async (req, res)=>{
+    try {
+        const returnData = await Return.find({})
+        .populate({
+            path:'from',
+            model:'User'
+        }).populate('orderId');
+        res.render('admin/returnDeatiles',{returnData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const acceptReturn = async (req, res)=>{
+    try {   
+        const {  orderId } = req.body
+
+        if(!orderId){
+            return res.status(400).json({error:'Order ID is required'})
+        }
+
+        const updateOrderStatus = await Order.findOneAndUpdate({_id:orderId},
+            {$set:{status:"Refund Accepted"}}
+        );
 
 
+        if(!updateOrderStatus){
+            return res.status(404).json({error:'Order not found'})
+        }
+
+        res.status(200).json({success:'success'})
+        
+    } catch (error) {   
+        console.log(error.message);
+    }
+}
+
+const denyReturn = async (req, res)=>{
+    try {
+        
+        const { orderId } = req.body
+
+        if(!orderId){
+            return res.status(400).json({error:'Order is not found'})
+        }
+
+        const updateDenyStatus = await Order.findOneAndUpdate({_id:orderId},
+            {$set: {status:"Denied"}}
+        )
+
+        return res.status(200).json({success:'success'})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 
@@ -82,6 +136,12 @@ const adminOrderControl = async (req, res)=>{
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  *
  *                   User Side
  *
@@ -180,10 +240,12 @@ const orders = async (req, res) => {
             },
         });
 
-        if (!cartData) {
+
+        if (cartData.product.length === 0) {
             return res.status(404).send("Cart data not found");
         }
 
+        // for checking the stock
         for (const item of cartData.product) {
             if (item.productId && item.productId.varientId) {
                 const currentStock = item.productId.varientId.variantQuantity;
@@ -281,7 +343,7 @@ const updateOrderStatus = async (req, res) =>{
     try {
         const { productId, status } = req.body;
 
-        if(status == 'delivered'){
+        if(status == 'Delivered'){
       
         const order = await Order.findOneAndUpdate({_id:productId},{ status }, { new: true });
         
@@ -297,7 +359,6 @@ const updateOrderStatus = async (req, res) =>{
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
-console.log('order:::',order);
         if (status === 'Canceled') {
             const updatePromises = order.product.map(async (productItem) => {
                 const variant = await Variant.findById(productItem.productId.varientId);
@@ -322,10 +383,36 @@ console.log('order:::',order);
     }
 }
 
+const returnOrder = async (req, res) =>{
+    try {
+
+        const userId = req.session.user_id;
+        const { orderId, reason} = req.body;
+
+        await Order.findOneAndUpdate({ _id: orderId }, { status: 'Return Processing' });
+
+        const  returnInstance = new Return ({
+            from:userId,
+            orderId:orderId,
+            reason:reason
+        });
+
+        await returnInstance.save()
+
+        return res.status(200).json({message:'Order return requested submitted'})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
     loadOrder,
     orders,
     cancelOreder,
     adminOrderControl,
-    updateOrderStatus
+    updateOrderStatus,
+    returnOrder,
+    loadReturnOrder,
+    acceptReturn,
+    denyReturn
 };

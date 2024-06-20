@@ -117,12 +117,13 @@
                                                             <%= element.subTotal %>
                                                         </td>
                                                         <td class="remove-col">
-                                                            <button class="btn-remove"
-                                                                data-product-id="<%= element.productId._id %>">
-                                                                <i class="icon-close"
-                                                                    onclick="removeCartItem(this)"></i>
-                                                            </button>
+                                                          
+                                                                <button class="btn-remove" data-product-id="<%= element.productId._id %>">
+                                                                    <i class="icon-close" onclick="removeCartItem(this)"></i>
+                                                                </button>
+                                                           
                                                         </td>
+                                                        
                                                     </tr>
 
                                                     <% }); %>

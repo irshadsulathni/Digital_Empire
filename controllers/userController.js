@@ -8,7 +8,9 @@ const bcrypt = require('bcrypt');
 const { name } = require('ejs');
 const Category = require('../models/categoryModel');
 const Cart = require('../models/cartModal');
-const Order = require('../models/orderModel')
+const Order = require('../models/orderModel');
+const Coupen  = require ('../models/coupenModel');
+const Wallet = require('../models/walletModel')
 
 
 // Password Hashing for security & threating from Hackers
@@ -221,11 +223,16 @@ const loadDashBoard = async (req, res) => {
             populate: {
                 path: 'varientId'
             }
-        });
+        }).sort({_id:-1});
+        const coupenData = await Coupen.find({})
         const userData = await User.findOne({ _id: userId });
         const addressData = await Address.find({ userId: userId });
+        const walletData = await Wallet.findOne({ userId: userId }).lean();
+        if (walletData && walletData.history) {
+            walletData.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        }
 
-        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData });
+        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData,coupons:coupenData ,walletData});
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');

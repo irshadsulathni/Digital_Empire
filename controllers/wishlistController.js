@@ -5,10 +5,10 @@ const Wishlist = require('../models/wishlistModal');
 const loadWishlist = async (req, res)=>{
     try {
 
-        const userId = req.session.user_id
+        const userId = req.session.user_id;
 
         if(!userId){
-            return res.redirect('/user/signUp')
+            return res.redirect('/user/signUp');
         }
 
         const wishlistData = await Wishlist.findOne({userId}).populate('products.productId').populate('products.varientId')

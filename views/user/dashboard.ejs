@@ -36,6 +36,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/path/to/your/styles.css">
 
     <style>
         .password-container {
@@ -275,6 +276,146 @@
         #submitCancellation:hover {
             background-color: #da190b;
         }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .coupon-expiry {
+            font-weight: bold;
+        }
+
+        .coupon-expiry.expired {
+            color: red;
+        }
+
+        .btn {
+            margin-top: auto;
+        }
+
+        @media (max-width: 767px) {
+            .card-title {
+                font-size: 1.15rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+        }
+
+        .wallet-balance {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.wallet-balance h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.balance-info {
+    margin-bottom: 20px;
+}
+
+.balance-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.balance-amount {
+    font-size: 28px;
+    color: #27ae60;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+}
+
+.wallet-balance {
+    margin-top: 20px;
+}
+
+.wallet-balance {
+    margin-top: 20px;
+}
+
+.transactions {
+    list-style: none;
+    padding: 0;
+}
+
+.transactions li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.transaction-type {
+    width: 100px; /* Set equal width */
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: #fff;
+    background-color: green; /* Default background color for transaction type */
+}
+
+.debit {
+    background-color: #dc3545;
+}
+
+.credit {
+    background-color: #28a745;
+    color: #000; /* Black text for visibility on white background */
+}
+
+.cancellation {
+    background-color: #ffc107;
+    color: #000; /* Black text for visibility on white background */
+}
+
+.transaction-amount,
+.transaction-date {
+    margin-left: auto;
+    color: #555;
+}
+
+
     </style>
 
 </head>
@@ -325,7 +466,7 @@
                                         <li class="nav-item">
                                             <a class="nav-link" id="tab-downloads-link" data-toggle="tab"
                                                 href="#tab-downloads" role="tab" aria-controls="tab-downloads"
-                                                aria-selected="false">Downloads</a>
+                                                aria-selected="false">Coupen</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="tab-address-link" data-toggle="tab"
@@ -350,13 +491,50 @@
                                             <p>Hello <span class="font-weight-normal text-dark">
                                                     <%= userData.name %>
                                                 </span>
-                                                <br>
-                                                From your account dashboard you can view your <a href="#tab-orders"
-                                                    class="tab-trigger-link link-underline">recent orders</a>, manage
-                                                your <a href="#tab-address" class="tab-trigger-link">shipping and
-                                                    billing addresses</a>, and <a href="#tab-account"
-                                                    class="tab-trigger-link">edit your password and account details</a>.
                                             </p>
+
+                                            <form id="password-update-form">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <label>Full Name </label>
+                                                        <input type="text" value="<%= userData.name %>"
+                                                            class="form-control" required>
+                                                    </div><!-- End .col-sm-6 -->
+                                                    <div class="col-sm-6">
+                                                        <label>Phone</label>
+                                                        <input type="text" value="<%= userData.mobile %>"
+                                                            class="form-control" required>
+                                                    </div>
+                                                </div><!-- End .row -->
+
+                                                <label>Current password (leave blank to leave unchanged)</label>
+                                                <div class="password-container">
+                                                    <input id="current-password" type="password" class="form-control">
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('current-password')"></i>
+                                                </div>
+
+                                                <label>New password (leave blank to leave unchanged)</label>
+                                                <div class="password-container">
+                                                    <input id="new-password" type="password" class="form-control">
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('new-password')"></i>
+                                                </div>
+
+                                                <label>Confirm new password</label>
+                                                <div class="password-container">
+                                                    <input id="confirm-password" type="password"
+                                                        class="form-control mb-2">
+                                                    <i class="fa fa-eye eye-icon"
+                                                        onclick="togglePassword('confirm-password')"></i>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-outline-primary-2">
+                                                    <span>SAVE CHANGES</span>
+                                                    <i class="icon-long-arrow-right"></i>
+                                                </button>
+                                            </form>
+
                                         </div><!-- .End .tab-pane -->
 
                                         <div class="tab-pane fade" id="tab-orders" role="tabpanel"
@@ -430,63 +608,101 @@
                                             </div>
                                         </div>
 
-
-
-
-
-
-
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
                                             aria-labelledby="tab-downloads-link">
-                                            <p>No downloads available yet.</p>
-                                            <a href="category.html" class="btn btn-outline-primary-2"><span>GO
-                                                    SHOP</span><i class="icon-long-arrow-right"></i></a>
-                                        </div><!-- .End .tab-pane -->
-
-                                        <div class="tab-pane fade" id="tab-account" role="tabpanel"
-                                            aria-labelledby="tab-account-link">
-                                            <form id="password-update-form">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label>Full Name </label>
-                                                        <input type="text" value="<%= userData.name %>"
-                                                            class="form-control" required>
-                                                    </div><!-- End .col-sm-6 -->
-                                                    <div class="col-sm-6">
-                                                        <label>Phone</label>
-                                                        <input type="text" value="<%= userData.mobile %>"
-                                                            class="form-control" required>
-                                                    </div>
-                                                </div><!-- End .row -->
-
-                                                <label>Current password (leave blank to leave unchanged)</label>
-                                                <div class="password-container">
-                                                    <input id="current-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('current-password')"></i>
+                                            <div class="container coupon-container">
+                                                <h3 class="text-start mb-4" style="padding-left: 35rem;">Available
+                                                    Coupons</h3>
+                                                <div class="row justify-content-start">
+                                                    <% if (coupons.length> 0) { %>
+                                                        <% coupons.forEach(function(coupon) { %>
+                                                            <div class="col-6 mb-4 w-50">
+                                                                <div class="card h-100 w-75">
+                                                                    <div class="card-body">
+                                                                        <h5 class="card-title">
+                                                                            <%= coupon.name %>
+                                                                        </h5>
+                                                                        <ul class="list-unstyled">
+                                                                            <li><strong>Amount:</strong>
+                                                                                <%= coupon.amount %>
+                                                                            </li>
+                                                                            <li><strong>Coupon Code:</strong>
+                                                                                <%= coupon.coupenCode %>
+                                                                            </li>
+                                                                            <li>
+                                                                                <strong>Expires:</strong>
+                                                                                <% if (coupon.expired) { %>
+                                                                                    <span
+                                                                                        class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
+                                                                                        <%= coupon.expired.toDateString()
+                                                                                            %>
+                                                                                    </span>
+                                                                                    <% } else { %>
+                                                                                        <span
+                                                                                            class="text-muted">N/A</span>
+                                                                                        <% } %>
+                                                                            </li>
+                                                                        </ul>
+                                                                        <button
+                                                                            class="btn btn-primary btn-sm copy-coupon"
+                                                                            data-coupon="<%= coupon.coupenCode %>">Copy
+                                                                            Coupon Code</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <% }); %>
+                                                                <% } else { %>
+                                                                    <div class="col-12">
+                                                                        <p class="text-center"
+                                                                            style="padding-left: 40rem;">No coupons
+                                                                            available at
+                                                                            the moment.</p>
+                                                                    </div>
+                                                                    <% } %>
                                                 </div>
+                                            </div>
+                                        </div>
 
-                                                <label>New password (leave blank to leave unchanged)</label>
-                                                <div class="password-container">
-                                                    <input id="new-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('new-password')"></i>
-                                                </div>
+                                        <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+    <div class="wallet-balance">
+        <% if (walletData && walletData.balance != null) { %>
+            <h3>My Wallet</h3>
+            <div class="balance-info">
+                <span class="balance-label">Current Balance:</span>
+                <span class="balance-amount">₹ <%= walletData.balance %></span>
+            </div>
+            <div class="transaction-history">
+                <h4>Transaction History</h4>
+                <% if (walletData.history && walletData.history.length > 0) { %>
+                    <ul class="transactions">
+                        <% walletData.history.forEach(function(transaction) { %>
+                            <li>
+                                <span class="transaction-type <%= transaction.type %>">
+                                    <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+                                </span>
+                                <span class="transaction-amount <%= transaction.type === 'debit' ? 'debit-amount' : 'credit-amount' %>">
+                                    <%= transaction.type === 'debit' ? '-' : '+' %> ₹<%= transaction.amount %>
+                                </span>
+                                <span class="transaction-date">
+                                    <%= new Date(transaction.timestamp).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
+                                </span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>No transactions found.</p>
+                <% } %>
+            </div>
+        <% } else { %>
+            <p>No Wallet</p>
+        <% } %>
+    </div>
+</div><!-- .End .tab-pane -->
 
-                                                <label>Confirm new password</label>
-                                                <div class="password-container">
-                                                    <input id="confirm-password" type="password"
-                                                        class="form-control mb-2">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('confirm-password')"></i>
-                                                </div>
 
-                                                <button type="submit" class="btn btn-outline-primary-2">
-                                                    <span>SAVE CHANGES</span>
-                                                    <i class="icon-long-arrow-right"></i>
-                                                </button>
-                                            </form>
-                                        </div><!-- .End .tab-pane -->
+
+
+
 
                                         <div class="tab-pane fade" id="tab-address" role="tabpanel"
                                             aria-labelledby="tab-address-link">
@@ -678,16 +894,16 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var submitButton = document.getElementById('submitCancellation');
-            submitButton.addEventListener('click', function () {
-                var reason = document.getElementById('cancellationReason').value;
-                // Replace this with your SweetAlert code
-                swal("Submitted!", "Reason: " + reason, "success");
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var submitButton = document.getElementById('submitCancellation');
+                submitButton.addEventListener('click', function () {
+                    var reason = document.getElementById('cancellationReason').value;
+                    // Replace this with your SweetAlert code
+                    swal("Submitted!", "Reason: " + reason, "success");
+                });
             });
-        });
-    </script>
+        </script>
 
         <script>
             document.getElementById('logoutButton').addEventListener('click', function () {
@@ -911,7 +1127,7 @@
             function openModal(orderId) {
                 var modal = document.getElementById("myModal");
                 var span = document.getElementsByClassName("close")[0];
-                
+
                 modal.style.display = "block";
 
                 span.onclick = function () {
@@ -944,6 +1160,38 @@
                 }
             }
 
+
+
+
+            // for copying coupen code
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const copyButtons = document.querySelectorAll('.copy-coupon');
+                copyButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const coupenCode = this.getAttribute('data-coupon');
+                        copyToClipboard(coupenCode);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Copied!',
+                            text: 'Coupon code copied to clipboard: ' + coupenCode,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    });
+                });
+
+                function copyToClipboard(text) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+            });
 
         </script>
 

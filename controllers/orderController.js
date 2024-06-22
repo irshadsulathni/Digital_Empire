@@ -6,6 +6,8 @@ const Cart = require('../models/cartModal');
 const { model } = require("mongoose");
 const { findOne, populate } = require("../models/userModel");
 const Return = require('../models/returnOrder');
+const Wallet = require('../models/walletModel')
+
 
 const loadOrder = async (req, res) => {
     try {
@@ -314,17 +316,20 @@ const orders = async (req, res) => {
 
 
 
-const cancelOreder = async (req, res) => {
+const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
+        const userId = req.session.user_id;
 
         const order = await Order.findOne({ _id: orderId });
 
-        const statusUpdation = await Order.findOneAndUpdate(
+        // Update order status to "Canceled"
+        await Order.findOneAndUpdate(
             { _id: orderId },
             { $set: { status: "Canceled" } }
         );
 
+        // Return the stock to the inventory
         for (const item of order.product) {
             const variant = await Variant.findOne({ productId: item.productId });
             if (variant) {
@@ -333,11 +338,59 @@ const cancelOreder = async (req, res) => {
             }
         }
 
-        res.status(200).json({ success: "success" });
+        // Get the payment method from the order
+        const paymentMethod = order.paymentMethod;
+
+        if (paymentMethod === 'Razorpay') {
+            const total = order.orderTotal;
+
+            let userWallet = await Wallet.findOne({ userId: userId });
+
+            if (!userWallet) {
+                userWallet = new Wallet({ userId: userId, balance: 0 });
+                console.log('Created new wallet for user:', userWallet);
+            } else if (isNaN(userWallet.balance)) {
+                userWallet.balance = 0;
+                console.log('Invalid balance found. Resetting to 0.');
+            }
+
+            userWallet.balance += total;
+
+            userWallet.history.push({
+                type: 'Credit',
+                amount: total, 
+                description: 'Order cancellation refund'
+            });
+
+            await userWallet.save();
+        } else if(paymentMethod === 'Wallet'){
+            let userWallet = await Wallet.findOne({ userId: userId });
+
+            if (!userWallet) {
+                userWallet = new Wallet({ userId: userId });
+            }
+
+            const totalRefundAmount = order.orderTotal;
+
+            userWallet.balance += totalRefundAmount;
+
+            userWallet.history.push({
+                type: "Cancellation",
+                amount: totalRefundAmount,
+                description: "Order cancellation refund",
+            });
+            await userWallet.save();
+        }
+        
+        res.status(200).json({ success: "Order canceled successfully" });
     } catch (error) {
-        console.log(error.message);
+        console.error('Error canceling order:', error.message);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+
 
 const updateOrderStatus = async (req, res) =>{
     try {
@@ -408,7 +461,7 @@ const returnOrder = async (req, res) =>{
 module.exports = {
     loadOrder,
     orders,
-    cancelOreder,
+    cancelOrder,
     adminOrderControl,
     updateOrderStatus,
     returnOrder,

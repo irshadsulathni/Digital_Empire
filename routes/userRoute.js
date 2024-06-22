@@ -11,7 +11,8 @@ const forgetPasswordControll = require('../controllers/forgetPasswordControll');
 const cartController = require('../controllers/cartController');
 const checkOutController = require('../controllers/checkOutController');
 const orderController = require('../controllers/orderController');
-const wishlistController = require('../controllers/wishlistController')
+const wishlistController = require('../controllers/wishlistController');
+const coupenController = require('../controllers/coupenController')
 
 user_route.use(session({secret:process.env.session_secret}));
 user_route.use(passport.initialize());
@@ -40,7 +41,7 @@ user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
 // order
 user_route.post('/orders', auth.isLogin, orderController.orders);
 user_route.get('/orderTracking', auth.isLogin, userController.loadOrderTracking );
-user_route.post('/cancelOrder/:orderId', auth.isLogin , orderController.cancelOreder);
+user_route.post('/cancelOrder/:orderId', auth.isLogin , orderController.cancelOrder);
 user_route.post('/returnOrder', auth.isLogin, orderController.returnOrder)
 
 // wishlist
@@ -58,6 +59,9 @@ user_route.post('/cart', auth.isLogin,cartController.addToCart);
 user_route.post('/updateCount' , auth.isLogin, cartController.updateqQuantity);
 user_route.delete('/cart/deleteCartItem/:productId', auth.isLogin , cartController.deleteCartItem);
 
+// coupen 
+
+user_route.post('/applyCoupon' , auth.isLogin , coupenController.applyCoupen);
 
 //forgot password
 user_route.get('/forgetPassword', forgetPasswordControll.forget);
@@ -104,11 +108,9 @@ user_route.post('/sort' , userController.sortShop);
 user_route.post('/address' , auth.isLogin, addressController.addAddress);
 user_route.post('/editAddress', auth.isLogin, addressController.editAddress);
 
-
-// for 404 page 
-
-
-// user_route.get('*' ,userController.load404)
+user_route.post('/createOrder', auth.isLogin, checkOutController.createOrder);
+user_route.post('/verifyPayment', auth.isLogin, checkOutController.verifyOrder);
+user_route.post('/createWalletOrder', auth.isLogin, checkOutController.createWalletOrder)
 
 
 module.exports = user_route;

@@ -9,7 +9,8 @@ const path = require('path')
 const multer = require('multer');
 const fs = require('fs')
 const varientController = require('../controllers/varientController');
-const orderController = require('../controllers/orderController')
+const orderController = require('../controllers/orderController');
+const coupenController = require('../controllers/coupenController')
 
 const uploadDirectory = path.join(__dirname, '../public/publicImages');
 if (!fs.existsSync(uploadDirectory)) {
@@ -65,6 +66,9 @@ admin_route.get('/order', orderController.loadOrder);
 admin_route.get('/orderDeatail', auth.isLogin, orderController.adminOrderControl);
 admin_route.patch('/updateOrderStatus',   orderController.updateOrderStatus);
 admin_route.get('/returnDeatiles', auth.isLogin, orderController.loadReturnOrder);
+admin_route.get('/coupen', auth.isLogin, coupenController.loadCoupen);
+admin_route.get('/coupen/deleteCoupen', coupenController.deleteCoupen)
+
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList',  adminController.blockOrUnblockUser);
@@ -79,10 +83,9 @@ admin_route.post('/removeProductImage',  productController.removeProductImage);
 admin_route.post('/editVarient',  varientController.updateVarient);
 admin_route.post('/acceptReturn', orderController.acceptReturn);
 admin_route.post('/denyReturn', orderController.denyReturn);
+admin_route.post('/addCoupen', coupenController.addCoupen);
+admin_route.post('/checkCouponCode', coupenController.checkCouponCode)
 
 
-
-
-admin_route.get('*', adminController.adminLoad404);
 
 module.exports = admin_route; 

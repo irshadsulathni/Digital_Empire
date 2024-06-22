@@ -1,12 +1,19 @@
 const Admin = require('../models/adminModel')
 const  mongo  = require('mongoose')
 const User = require('../models/userModel')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const Return = require('../models/returnOrder')
 
 // Admin Home page load
 const loadAdminHome = async (req, res) => {
     try {
-        res.render('admin/adminHome' , {activeDashboardMessage: 'active'});
+        const returnData = await Return.find({})
+        .populate({
+            path:'from',
+            model:'User'
+        }).populate('orderId');
+
+        res.render('admin/adminHome' , {activeDashboardMessage: 'active',returnData});
     } catch (error) {
         console.log(error)
     }

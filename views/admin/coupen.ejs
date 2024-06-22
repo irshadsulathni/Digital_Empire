@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Nest Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
+    <!-- Template CSS -->
+    <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+</head>
+
+<body class="dark">
+    <div class="screen-overlay"></div>
+    // for side nav bar
+
+    <%- include('../layouts/adminSide') %>
+
+
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Coupen</h2>
+                        <p>Add coupen</p>
+                    </div>
+                    <!-- <div>
+                        <input type="text" placeholder="Search Categories" class="form-control bg-white" />
+                    </div> -->
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <% if (typeof message !=='undefined' ) { %>
+                                    <p style="color: red;" class="d-inline-flex p-2 ">
+                                        <%= message %>*
+                                    </p>
+                                    <% } %>
+                                        <form id="coupenForm" method="post">
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Name</label>
+                                                <input type="text" placeholder="Type here" class="form-control"
+                                                    id="coupenName" name="coupenName" required />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Code</label>
+                                                <input type="text" placeholder="Type here" class="form-control"
+                                                    id="coupenCode" name="coupenCode" required />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Min Amount</label>
+                                                <input type="text" placeholder="Type here" class="form-control"
+                                                    id="minAmount" name="minAmount" required />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Amount</label>
+                                                <input type="text" placeholder="Type here" class="form-control"
+                                                    id="coupenAmount" name="coupenAmount" required />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="product_name" class="form-label">Expired</label>
+                                                <input type="date" placeholder="Type here" class="form-control"
+                                                    id="coupenExpired" name="coupenExpired" required />
+                                            </div>
+                                            <div class="d-grid">
+                                                <button class="btn btn-primary" type="submit">Create Coupen</button>
+                                            </div>
+                                        </form>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Code</th>
+                                                <th>Min Amount</th>
+                                                <th>Amount</th>
+                                                <th>Expired</th>
+                                                <th>status</th>
+                                                <th class="text-end">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% coupen.forEach(element=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= element.name %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.coupenCode %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.minimumAmount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= element.amount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= new Date(element.expired).toLocaleDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <% if (new Date(element.expired) < new Date()) { %>
+                                                            <span class="text-danger">Expired</span>
+                                                            <% } else { %>
+                                                                <span class="text-success">Active</span>
+                                                                <% } %>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="">
+                                                            <a href="#" data-bs-toggle="dropdown"
+                                                                class="btn btn-light rounded btn-sm font-sm">
+                                                                <i class="material-icons md-more_horiz"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu">
+                                                                <!-- <a class="dropdown-item" href="#">View detail</a> -->
+
+                                                                <!-- <a class="dropdown-item" id="edit"
+                                                                    href="/admin/editCoupen?coupenId=<%= element._id %>">Edit
+                                                                    Coupon</a> -->
+                                                                <a class="dropdown-item text-danger"
+                                                                    href="/admin/coupen/deleteCoupen?coupenId=<%= element._id %>">Delete</a>
+                                                            </div>
+                                                        </div>
+                                                        <!-- dropdown //end -->
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- .col// -->
+                        </div>
+                        <!-- .row // -->
+                    </div>
+                    <!-- card body .// -->
+                </div>
+                <!-- card .// -->
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+            </footer>
+        </main>
+        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/adminAssets/js/vendors/select2.min.js"></script>
+        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+
+        <script>
+            document.getElementById('coupenForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+        
+                const coupenName = document.getElementById('coupenName').value.trim();
+                const coupenCode = document.getElementById('coupenCode').value.trim();
+                const coupenAmount = document.getElementById('coupenAmount').value.trim();
+                const coupenExpired = document.getElementById('coupenExpired').value.trim();
+                const minAmount = document.getElementById('minAmount').value.trim();
+        
+                // Frontend validation
+        
+                if (!coupenName) {
+                    showErrorToast("Coupon name is required.");
+                    return;
+                }
+        
+                if (!/^[a-zA-Z0-9]+$/.test(coupenCode)) {
+                    showErrorToast("Coupon code should be alphanumeric.");
+                    return;
+                }
+        
+                if (isNaN(coupenAmount) || coupenAmount <= 0) {
+                    showErrorToast("Coupon amount should be a positive number.");
+                    return;
+                }
+        
+                if (isNaN(minAmount) || minAmount <= 0) {
+                    showErrorToast("Minimum amount should be a positive number.");
+                    return;
+                }
+        
+                const currentDate = new Date().toISOString().split('T')[0];
+                if (coupenExpired < currentDate) {
+                    showErrorToast("Coupon expiration date should not be in the past.");
+                    return;
+                }
+        
+                // Check if coupon code already exists
+                fetch('/admin/checkCouponCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupenCode: coupenCode })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(result => {
+                    if (result.exists) {
+                        showErrorToast("Coupon code already exists.");
+                    } else {
+                        // If coupon code doesn't exist, proceed with coupon creation
+                        const data = {
+                            coupenName: coupenName,
+                            coupenCode: coupenCode,
+                            coupenAmount: coupenAmount,
+                            coupenExpired: coupenExpired,
+                            minAmount: minAmount
+                        };
+                        fetch('/admin/addCoupen', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })
+                        .then(responce => responce.json())
+                        .then(result => {
+                            showSuccessToast("Coupon created successfully!");
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            showErrorToast(error.message || "Error creating coupon.");
+                        });
+                    }
+                })
+                .catch(error => {
+                    showErrorToast(error.message || "Error checking coupon code.");
+                });
+            });
+        
+            function showErrorToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#FF0000",
+                }).showToast();
+            }
+        
+            function showSuccessToast(message) {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    backgroundColor: "#00C851",
+                }).showToast();
+            }
+        </script>
+        
+
+</body>
+
+</html>

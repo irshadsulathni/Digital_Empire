@@ -1,4 +1,6 @@
 const Coupen = require('../models/coupenModel');
+const Order = require('../models/orderModel');
+const Cart = require('../models/cartModal')
 
 
 const loadCoupen = async (req, res) => {
@@ -6,7 +8,7 @@ const loadCoupen = async (req, res) => {
 
         const coupenData = await Coupen.find({})
 
-        res.render('admin/coupen', { activeCoupenMessage: 'active',coupen:coupenData})
+        res.render('admin/coupen', { activeCoupenMessage: 'active', coupen: coupenData })
     } catch (error) {
         console.log(error.message);
     }
@@ -41,10 +43,10 @@ const addCoupen = async (req, res) => {
             return res.status(400).json({ message: 'Coupon code should be alphanumeric.' });
         }
 
-        const exisitingCoupen = await Coupen.findOne({coupenCode:coupenCode});
+        const exisitingCoupen = await Coupen.findOne({ coupenCode: coupenCode });
 
-        if(exisitingCoupen){
-            return res.status(400).json({message:'Coupen code is already in use'})
+        if (exisitingCoupen) {
+            return res.status(400).json({ message: 'Coupen code is already in use' })
         }
 
         if (!coupenAmount || isNaN(coupenAmount) || coupenAmount <= 0) {
@@ -60,11 +62,11 @@ const addCoupen = async (req, res) => {
         }
 
         const coupen = new Coupen({
-            name:coupenName,
-            amount:coupenAmount,
-            coupenCode:coupenCode,
-            expired:coupenExpired,
-            minimumAmount:minAmount
+            name: coupenName,
+            amount: coupenAmount,
+            coupenCode: coupenCode,
+            expired: coupenExpired,
+            minimumAmount: minAmount
         });
 
         await coupen.save()
@@ -76,10 +78,10 @@ const addCoupen = async (req, res) => {
     }
 }
 
-const deleteCoupen = async (req, res)=>{
+const deleteCoupen = async (req, res) => {
     try {
         const { coupenId } = req.query;
-        await Coupen.findOneAndDelete({_id:coupenId})
+        await Coupen.findOneAndDelete({ _id: coupenId })
 
         return res.redirect('/admin/coupen')
     } catch (error) {
@@ -104,23 +106,99 @@ const deleteCoupen = async (req, res)=>{
 
 const applyCoupen = async (req, res) => {
     try {
-        const { couponCode,cartTotal } = req.body;
+        const userId = req.session.user_id;
+
+        if (!userId) {
+            return res.status(400).json({ success: false, message: 'User ID not found in session' });
+        }
+
+        const { couponCode, cartTotal } = req.body;
 
         const coupon = await Coupen.findOne({ coupenCode: couponCode });
+
         if (!coupon) {
             return res.status(400).json({ success: false, message: 'Invalid coupon code' });
         }
 
-        // Apply coupon logic here (e.g., calculate discount, update order total)
+        const currentDate = new Date();
+        if (currentDate > coupon.expired) {
+            return res.status(400).json({ success: false, message: 'Coupon has expired' });
+        }
 
-        // Assuming coupon is successfully applied, send a success response
-        return res.status(200).json({ success: true, message: 'Coupon applied successfully' });
+        if (cartTotal < coupon.minimumAmount) {
+            return res.status(400).json({ success: false, message: `Minimum cart total of ₹${coupon.minimumAmount} required to apply this coupon` });
+        }
+
+        const userCouponIndex = coupon.usersList.findIndex(userCoupon => userCoupon.userId && userCoupon.userId.equals(userId));
+        if (userCouponIndex !== -1) {
+            return res.status(400).json({ success: false, message: 'Coupon already used' });
+        }
+
+        coupon.usersList.push({ userId: userId, coupenUsed: true });
+        await coupon.save();
+
+        const discount = coupon.amount;
+        const newCartTotal = cartTotal - discount;
+
+        // Update cart with new total and discount
+        await Cart.updateOne({ userId: userId }, { $set: { cartTotal: newCartTotal, discount: discount } });
+
+        // Store discount in session
+        req.session.discount = discount;
+
+        return res.status(200).json({
+            success: true,
+            message: 'Coupon applied successfully!',
+            cartTotal: newCartTotal,
+            total: newCartTotal,
+            discount: discount
+        });
     } catch (error) {
-        // If an error occurs, log it and send an error response
+        console.error(error.message);
+        return res.status(500).json({ success: false, message: 'An error occurred. Please try again later.' });
+    }
+};
+
+
+
+
+
+
+const removeCoupon = async (req, res) => {
+    try {
+        const userId = req.session.user_id; 
+        const { cartTotal } = req.body;
+
+        const coupon = await Coupen.findOne({ usersList: { $elemMatch: { userId: userId } } });
+
+        if (!coupon) {
+            return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
+        }
+        // its for the coupen code
+        coupon.usersList = coupon.usersList.filter(userCoupon => !userCoupon.userId.equals(userId));
+
+        await coupon.save();
+
+        let discount = 0;
+        if (coupon) {
+            discount = coupon.amount; 
+        }
+        const newCartTotal = cartTotal + discount; 
+        const total = newCartTotal;
+
+        return res.status(200).json({
+            success: true,
+            message: 'Coupon removed successfully!',
+            cartTotal: newCartTotal,
+            total: total,
+            discount: discount
+        });
+    } catch (error) {
         console.error(error.message);
         return res.status(500).json({ success: false, message: 'An error occurred. Please try again later.' });
     }
 }
+
 
 
 module.exports = {
@@ -128,5 +206,6 @@ module.exports = {
     checkCouponCode,
     addCoupen,
     deleteCoupen,
-    applyCoupen
+    applyCoupen,
+    removeCoupon
 }

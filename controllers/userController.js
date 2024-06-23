@@ -215,6 +215,30 @@ const logout = async (req, res) => {
 
 
 // Loading dashboard
+// const loadDashBoard = async (req, res) => {
+//     try {
+//         const userId = req.session.user_id;
+//         const orderData = await Order.find({ userId: userId }).populate({
+//             path: 'product.productId',
+//             populate: {
+//                 path: 'varientId'
+//             }
+//         }).sort({_id:-1});
+//         const coupenData = await Coupen.find({})
+//         const userData = await User.findOne({ _id: userId });
+//         const addressData = await Address.find({ userId: userId });
+//         const walletData = await Wallet.findOne({ userId: userId }).lean();
+//         if (walletData && walletData.history) {
+//             walletData.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+//         }
+
+//         res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData,coupons:coupenData ,walletData});
+//     } catch (error) {
+//         console.error('Error loading dashboard:', error);
+//         res.render('user/404');
+//     }
+// };
+
 const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
@@ -224,7 +248,20 @@ const loadDashBoard = async (req, res) => {
                 path: 'varientId'
             }
         }).sort({_id:-1});
-        const coupenData = await Coupen.find({})
+        const coupenData = await Coupen.find({}).lean(); // Use lean() for better performance
+
+        // Ensure usersList is always an array and each userCoupon has a userId
+        coupenData.forEach(coupon => {
+            if (!Array.isArray(coupon.usersList)) {
+                coupon.usersList = [];
+            }
+            coupon.usersList.forEach(userCoupon => {
+                if (!userCoupon.userId) {
+                    userCoupon.userId = null;
+                }
+            });
+        });
+
         const userData = await User.findOne({ _id: userId });
         const addressData = await Address.find({ userId: userId });
         const walletData = await Wallet.findOne({ userId: userId }).lean();
@@ -232,12 +269,13 @@ const loadDashBoard = async (req, res) => {
             walletData.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
 
-        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData,coupons:coupenData ,walletData});
+        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData, coupons: coupenData, walletData });
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
     }
 };
+
 
 
 // Load otp page

@@ -62,6 +62,7 @@ user_route.delete('/cart/deleteCartItem/:productId', auth.isLogin , cartControll
 // coupen 
 
 user_route.post('/applyCoupon' , auth.isLogin , coupenController.applyCoupen);
+user_route.post('/removeCoupon', auth.isLogin, coupenController.removeCoupon)
 
 //forgot password
 user_route.get('/forgetPassword', forgetPasswordControll.forget);

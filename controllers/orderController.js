@@ -6,7 +6,8 @@ const Cart = require('../models/cartModal');
 const { model } = require("mongoose");
 const { findOne, populate } = require("../models/userModel");
 const Return = require('../models/returnOrder');
-const Wallet = require('../models/walletModel')
+const Wallet = require('../models/walletModel');
+const Coupen = require('../models/counterModel')
 
 
 const loadOrder = async (req, res) => {
@@ -155,81 +156,7 @@ const denyReturn = async (req, res)=>{
  *
  * ********************************************/
 
-// const orders = async (req, res) => {
-//     try {
-//         console.log('its coming');
-//         const userId = req.session.user_id;
 
-//         const cartData = await Cart.findOne({ userId:userId }).populate({
-//             path: "product.productId",
-//             populate: {
-//                 path: "varientId",
-//             },
-//         });
-
-//         console.log('cart ',cartData);
-
-//         // const currentStock = cartData.product.productId.varientId.variantQuantity;
-
-//         console.log('stock ',cartData.product._id);
-
-//         if (!cartData) {
-//             return res.status(404).send("Cart data not found");
-//         }
-
-//         const { selectedAddress, paymentMethod } = req.body;
-
-//         const products = Array.isArray(cartData.product) ? cartData.product : [];
-
-//         let counter = await Counter.findById("orderNumber");
-//         if (!counter) {
-//             counter = new Counter({
-//                 _id: "orderNumber",
-//                 seq: 1000,
-//             });
-//             await counter.save();
-//         }
-
-//         counter.seq++;
-//         await counter.save();
-
-//         const newOrder = new Order({
-//             userId,
-//             product: products.map((item) => ({
-//                 productId: item.productId,
-//                 quantity: item.quantity,
-//                 subTotal: item.subTotal,
-//             })),
-//             orderTotal: cartData.cartTotal,
-//             selectedAddress,
-//             paymentMethod,
-//             orderNumber: counter.seq,
-//         });
-
-//         const orderData = await newOrder.save();
-
-//         for (const item of products) {
-//             await Variant.updateOne(
-//                 { _id: item.productId.varientId },
-//                 { $inc: { variantQuantity: -item.quantity } }
-//             );
-//             // for getting product count
-//             await Product.updateOne(
-//                 { _id: item.productId },
-//                 { $inc: { count: item.quantity } }
-//             );
-//         }
-
-//         await Cart.deleteOne({ userId });
-
-//         res
-//             .status(200)
-//             .json({ message: "Order placed successfully", orderId: orderData._id });
-//     } catch (error) {
-//         console.log(error.message);
-//         res.status(500).send("Failed to place order");
-//     }
-// };
 
 const orders = async (req, res) => {
     try {
@@ -242,12 +169,11 @@ const orders = async (req, res) => {
             },
         });
 
-
         if (cartData.product.length === 0) {
             return res.status(404).send("Cart data not found");
         }
 
-        // for checking the stock
+        // Check for stock availability
         for (const item of cartData.product) {
             if (item.productId && item.productId.varientId) {
                 const currentStock = item.productId.varientId.variantQuantity;
@@ -256,15 +182,18 @@ const orders = async (req, res) => {
                     const stock = currentStock;
                     const qty = item.quantity;
                     return res.status(500).send({
-                        message: 'Insufficient stock for product' ,name,stock,qty
+                        message: 'Insufficient stock for product', name, stock, qty
                     });
                 }
             }
         }
 
         const { selectedAddress, paymentMethod } = req.body;
-
         const products = Array.isArray(cartData.product) ? cartData.product : [];
+
+        // Retrieve the discount from the session if applied
+        let orderTotal = cartData.cartTotal;
+        let discount = req.session.discount || 0;
 
         let counter = await Counter.findById("orderNumber");
         if (!counter) {
@@ -285,7 +214,8 @@ const orders = async (req, res) => {
                 quantity: item.quantity,
                 subTotal: item.subTotal,
             })),
-            orderTotal: cartData.cartTotal,
+            orderTotal,
+            discount,
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
@@ -313,7 +243,6 @@ const orders = async (req, res) => {
         res.status(500).send("Failed to place order");
     }
 };
-
 
 
 const cancelOrder = async (req, res) => {
@@ -415,7 +344,6 @@ const updateOrderStatus = async (req, res) =>{
         if (status === 'Canceled') {
             const updatePromises = order.product.map(async (productItem) => {
                 const variant = await Variant.findById(productItem.productId.varientId);
-                ;console.log('variant:',variant);
                 if (variant) {
                     variant.variantQuantity += productItem.quantity;
                     await variant.save();

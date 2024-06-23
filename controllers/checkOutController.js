@@ -65,7 +65,9 @@ const createOrder = async (req, res) => {
         if (!productData) {
             return res.status(404).send("Cart not found");
         }
-        
+
+        // Retrieve discount from session or Cart model
+        const discount = productData.discount || req.session.discount || 0;
         const amount = productData.cartTotal;
         const currency = 'INR';
         const receipt = generateReceiptId();
@@ -128,7 +130,8 @@ const createOrder = async (req, res) => {
                 subTotal: item.subTotal,
                 _id: item._id 
             })),
-            orderTotal: cartData.cartTotal,
+            orderTotal: amount,
+            discount: discount,
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
@@ -147,6 +150,7 @@ const createOrder = async (req, res) => {
         res.status(500).json({ error: 'Something went wrong on our end. Please try again later.' });
     }
 };
+
 
 
 
@@ -189,20 +193,27 @@ const createWalletOrder = async (req, res) => {
             return res.status(404).json({ error: 'Wallet not found' });
         }
 
-        // Fetch user's existing order to calculate order total
-        const order = await Order.findOne({ userId });
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found' });
+        // Fetch user's existing cart to calculate order total and discount
+        const cartData = await Cart.findOne({ userId }).populate({
+            path: "product.productId",
+            populate: { path: "varientId" }
+        });
+        if (!cartData || cartData.product.length === 0) {
+            return res.status(404).json({ error: 'Cart not found or empty' });
         }
 
+        // Retrieve discount from session
+        let discount = req.session.discount || 0;
+        let orderTotal = cartData.cartTotal;
+
         // Verify wallet balance is sufficient for the order
-        if (wallet.balance < order.orderTotal) {
+        if (wallet.balance < orderTotal) {
             return res.status(400).json({ error: 'Insufficient wallet balance' });
         }
 
         // Deduct order amount from wallet balance
-        wallet.balance -= order.orderTotal;
-        wallet.history.push({ type: 'debit', amount: order.orderTotal, description: 'Order Payment' });
+        wallet.balance -= orderTotal;
+        wallet.history.push({ type: 'debit', amount: orderTotal, description: 'Order Payment' });
         await wallet.save();
 
         // Increment order number from the counter
@@ -212,6 +223,7 @@ const createWalletOrder = async (req, res) => {
                 _id: "orderNumber",
                 seq: 1000,
             });
+            await counter.save();
         }
 
         counter.seq++;
@@ -220,16 +232,23 @@ const createWalletOrder = async (req, res) => {
         // Create the order with the incremented order number
         const newOrder = new Order({
             userId,
-            product: order.product,
-            orderTotal: order.orderTotal,
+            product: cartData.product.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                subTotal: item.subTotal,
+                _id: item._id 
+            })),
+            orderTotal: orderTotal,
+            discount: discount,
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
+            paymentStatus:true
         });
         const orderData = await newOrder.save();
 
         // Update product and variant quantities, delete cart items
-        for (const item of order.product) {
+        for (const item of cartData.product) {
             await Variant.updateOne(
                 { _id: item.productId.varientId },
                 { $inc: { variantQuantity: -item.quantity } }
@@ -241,12 +260,17 @@ const createWalletOrder = async (req, res) => {
         }
         await Cart.deleteOne({ userId });
 
+        // Clear discount from session after order is placed
+        delete req.session.discount;
+
         res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
 
 
 

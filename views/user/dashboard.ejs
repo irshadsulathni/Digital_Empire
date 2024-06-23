@@ -614,7 +614,7 @@
                                                 <h3 class="text-start mb-4" style="padding-left: 35rem;">Available
                                                     Coupons</h3>
                                                 <div class="row justify-content-start">
-                                                    <% if (coupons.length> 0) { %>
+                                                    <% if (coupons.length > 0) { %>
                                                         <% coupons.forEach(function(coupon) { %>
                                                             <div class="col-6 mb-4 w-50">
                                                                 <div class="card h-100 w-75">
@@ -623,42 +623,35 @@
                                                                             <%= coupon.name %>
                                                                         </h5>
                                                                         <ul class="list-unstyled">
-                                                                            <li><strong>Amount:</strong>
-                                                                                <%= coupon.amount %>
-                                                                            </li>
-                                                                            <li><strong>Coupon Code:</strong>
-                                                                                <%= coupon.coupenCode %>
-                                                                            </li>
-                                                                            <li>
-                                                                                <strong>Expires:</strong>
+                                                                            <li><strong>Amount:</strong> <%= coupon.amount %></li>
+                                                                            <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                                <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
+                                                                            <% } %>
+                                                                            <li><strong>Expires:</strong> 
                                                                                 <% if (coupon.expired) { %>
-                                                                                    <span
-                                                                                        class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
-                                                                                        <%= coupon.expired.toDateString()
-                                                                                            %>
+                                                                                    <span class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
+                                                                                        <%= coupon.expired.toDateString() %>
                                                                                     </span>
-                                                                                    <% } else { %>
-                                                                                        <span
-                                                                                            class="text-muted">N/A</span>
-                                                                                        <% } %>
+                                                                                <% } else { %>
+                                                                                    <span class="text-muted">N/A</span>
+                                                                                <% } %>
                                                                             </li>
                                                                         </ul>
-                                                                        <button
-                                                                            class="btn btn-primary btn-sm copy-coupon"
-                                                                            data-coupon="<%= coupon.coupenCode %>">Copy
-                                                                            Coupon Code</button>
+                                                                        <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                            <button class="btn btn-primary btn-sm copy-coupon" data-coupon="<%= coupon.coupenCode %>">Copy Coupon Code</button>
+                                                                        <% } else { %>
+                                                                            <p class="text-muted">Coupon already used</p>
+                                                                        <% } %>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <% }); %>
-                                                                <% } else { %>
-                                                                    <div class="col-12">
-                                                                        <p class="text-center"
-                                                                            style="padding-left: 40rem;">No coupons
-                                                                            available at
-                                                                            the moment.</p>
-                                                                    </div>
-                                                                    <% } %>
+                                                        <% }); %>
+                                                    <% } else { %>
+                                                        <div class="col-12">
+                                                            <p class="text-center" style="padding-left: 40rem;">No coupons available at the moment.</p>
+                                                        </div>
+                                                    <% } %>
+
                                                 </div>
                                             </div>
                                         </div>

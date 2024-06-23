@@ -229,7 +229,9 @@ const createWalletOrder = async (req, res) => {
         counter.seq++;
         await counter.save();
 
-        /////
+        /////iu67yukjhykuyhmkhjjk,uk,jul,iul,oij.lik.l;kl.j,kuikykuymuykiykiuikuiky7ihmjhmuyiuymiyikmb
+        /////iu67yukjhykuyhmkhjjk,uk,jul,iul,oij.lik.l;kl.j,kuikykuymuykiykiuikuiky7ihmjhmuyiuymiyikmb
+
         // console.log();
         // Create the order with the incremented order number
         const newOrder = new Order({

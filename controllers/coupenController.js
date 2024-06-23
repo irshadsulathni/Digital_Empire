@@ -1,6 +1,7 @@
+const mongoose = require('mongoose')
 const Coupen = require('../models/coupenModel');
 const Order = require('../models/orderModel');
-const Cart = require('../models/cartModal')
+const Cart = require('../models/cartModal');
 
 
 const loadCoupen = async (req, res) => {
@@ -135,7 +136,7 @@ const applyCoupen = async (req, res) => {
         }
 
         coupon.usersList.push({ userId: userId, coupenUsed: true });
-        await coupon.save();
+       // await coupon.save();
 
         const discount = coupon.amount;
         const newCartTotal = cartTotal - discount;
@@ -166,24 +167,32 @@ const applyCoupen = async (req, res) => {
 
 const removeCoupon = async (req, res) => {
     try {
-        const userId = req.session.user_id; 
+        const userId = req.session.user_id;
         const { cartTotal } = req.body;
 
-        const coupon = await Coupen.findOne({ usersList: { $elemMatch: { userId: userId } } });
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
+        }
+
+        const coupon = await Coupen.findOne({ 'usersList.userId': userId });
 
         if (!coupon) {
             return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
         }
-        // its for the coupen code
-        coupon.usersList = coupon.usersList.filter(userCoupon => !userCoupon.userId.equals(userId));
+
+        const userCouponIndex = coupon.usersList.findIndex(userCoupon => userCoupon.userId.equals(userId));
+        if (userCouponIndex === -1) {
+            return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
+        }
+
+        const discount = coupon.amount;
+
+        // Remove the user from the usersList
+        coupon.usersList.splice(userCouponIndex, 1);
 
         await coupon.save();
 
-        let discount = 0;
-        if (coupon) {
-            discount = coupon.amount; 
-        }
-        const newCartTotal = cartTotal + discount; 
+        const newCartTotal = cartTotal + discount;
         const total = newCartTotal;
 
         return res.status(200).json({
@@ -194,10 +203,11 @@ const removeCoupon = async (req, res) => {
             discount: discount
         });
     } catch (error) {
-        console.error(error.message);
+        console.error('Error removing coupon:', error.message);
         return res.status(500).json({ success: false, message: 'An error occurred. Please try again later.' });
     }
 }
+
 
 
 

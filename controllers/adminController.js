@@ -2,7 +2,8 @@ const Admin = require('../models/adminModel')
 const  mongo  = require('mongoose')
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt');
-const Return = require('../models/returnOrder')
+const Return = require('../models/returnOrder');
+const Order = require('../models/orderModel')
 
 // Admin Home page load
 const loadAdminHome = async (req, res) => {
@@ -115,6 +116,68 @@ const blockOrUnblockUser = async (req, res) => {
 };
 
 
+const salesReport = async (req, res) => {
+    try {
+        const orderData = await Order.find().populate('userId').populate('selectedAddress');
+
+        const deliveredOrders = await Order.find({ status: 'Delivered' }).populate('userId').populate('selectedAddress');
+
+        let totalOrderAmount = 0;
+        let totalDiscount = 0;
+
+        deliveredOrders.forEach(order => {
+            totalOrderAmount += order.orderTotal;
+            totalDiscount += order.discount;
+        });
+        
+        res.render('admin/salesReport', { activeStaticsMessage:'active', orderData, deliveredOrders, totalOrderAmount, totalDiscount });
+    } catch (error) {
+        console.error('Error fetching sales report data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+const salesReportFilter = async (req, res) => {
+    try {
+        let query = {};
+        const { reportType, startDate, endDate } = req.body;
+
+        if (reportType === "custom" && startDate && endDate) {
+            query.timeStamp = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            };
+        } else if (reportType === "today") {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            query.timeStamp = {
+                $gte: today,
+                $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+            };
+        } else if (reportType === "last7days") {
+            const last7days = new Date();
+            last7days.setDate(last7days.getDate() - 7);
+            query.timeStamp = {
+                $gte: last7days
+            };
+        } else if (reportType === "last30days") {
+            const last30days = new Date();
+            last30days.setDate(last30days.getDate() - 30);
+            query.timeStamp = {
+                $gte: last30days
+            };
+        }
+
+        const orderData = await Order.find(query).populate('userId');
+
+        res.status(200).json({ orderData });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error });
+    }
+};
+
+
+
 const adminLoad404 = async (req, res) =>{
     try {
         res.render('admin/admin404')
@@ -133,5 +196,7 @@ module.exports = {
     loadUserList,
     blockOrUnblockUser,
     adminLogout,
-    adminLoad404
+    adminLoad404,
+    salesReport,
+    salesReportFilter
 }

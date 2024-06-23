@@ -223,6 +223,8 @@ const orders = async (req, res) => {
 
         const orderData = await newOrder.save();
 
+        console.log('orderData orderData',orderData,'orderData orderData');
+
         for (const item of products) {
             await Variant.updateOne(
                 { _id: item.productId.varientId },

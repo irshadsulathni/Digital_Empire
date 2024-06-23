@@ -537,30 +537,20 @@
 
                                         </div><!-- .End .tab-pane -->
 
-                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel"
-                                            aria-labelledby="tab-orders-link">
+                                        <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
                                             <div id="order-container" style="width: 100%; margin: 0 55px;">
-                                                <div class="container order-container"
-                                                    style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;">
+                                                <div class="container order-container" style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;">
                                                     <h3 style="width: 100%; text-align: center;">Order Details</h3>
-                                                    <% if (orderData.length> 0) { %>
-                                                        <% orderData.forEach(element=> { %>
-                                                            <div class="order-details"
-                                                                style="width: calc(50% - 20px); margin-bottom: 20px;">
-                                                                <div
-                                                                    style="display: flex; justify-content: space-between; align-items: center;">
-                                                                    <p><strong>Date:</strong>
-                                                                        <%= new Date(element.timeStamp).toDateString()
-                                                                            %>
-                                                                    </p>
+                                                    <% if (orderData.length > 0) { %>
+                                                        <% orderData.forEach(element => { %>
+                                                            <div class="order-details" style="width: calc(50% - 20px); margin-bottom: 20px;">
+                                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                    <p><strong>Date:</strong> <%= new Date(element.timeStamp).toDateString() %></p>
                                                                     <div class="status-badge">
-                                                                        <span class="badge <%= element.status %>">
-                                                                            <%= element.status %>
-                                                                        </span>
+                                                                        <span class="badge <%= element.status %>"><%= element.status %></span>
                                                                     </div>
                                                                 </div>
-                                                                <h6>Order #<%= element.orderNumber %>
-                                                                </h6>
+                                                                <h6>Order #<%= element.orderNumber %></h6>
                                                                 <table class="table table-bordered">
                                                                     <thead>
                                                                         <tr>
@@ -569,44 +559,41 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                        <% element.product.forEach(product=> { %>
+                                                                        <% element.product.forEach(product => { %>
                                                                             <tr>
                                                                                 <td>
-                                                                                    <%= product.productId.productName %>
+                                                                                    <% if (product.productId) { %>
+                                                                                        <%= product.productId.productName %>
+                                                                                    <% } else { %>
+                                                                                        <!-- Handle the case where productId is null or undefined -->
+                                                                                        Product ID not available
+                                                                                    <% } %>
                                                                                 </td>
-                                                                                <td>$<%= product.productId.varientId.variantPrice
-                                                                                        %>
+                                                                                <td>
+                                                                                    $<%= product.productId && product.productId.varientId ? product.productId.varientId.variantPrice : '' %>
                                                                                 </td>
                                                                             </tr>
-                                                                            <% }) %>
+                                                                        <% }) %>
                                                                     </tbody>
                                                                 </table>
-                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %>
-                                                                </p>
-                                                                <a href="/orderTracking?orderId=<%= element._id %>"
-                                                                    class="btn btn-primary">View Details</a>
-                                                                <% if (element.status !=='Canceled' && element.status
-                                                                    !=='Delivered' ) { %>
-                                                                    <button class="btn btn-danger"
-                                                                        onclick="cancelOrder('<%= element._id %>')">Cancel
-                                                                        Order</button>
-                                                                    <% } else if (element.status==='Delivered' ) { %>
-                                                                        <button class="btn btn-danger"
-                                                                            onclick="openModal('<%= element._id %>')">Return
-                                                                            Order</button>
-                                                                        <% } %>
+                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %></p>
+                                                                <a href="/orderTracking?orderId=<%= element._id %>" class="btn btn-primary">View Details</a>
+                                                                <% if (element.status !== 'Canceled' && element.status !== 'Delivered' && element.status !== 'Refund' && element.status !== 'Return Processing' && element.status !== 'Refund Accepted' ) { %>
+                                                                    <button class="btn btn-danger" onclick="cancelOrder('<%= element._id %>')">Cancel Order</button>
+                                                                <% } else if (element.status === 'Delivered') { %>
+                                                                    <button class="btn btn-danger" onclick="openModal('<%= element._id %>')">Return Order</button>
+                                                                <% } %>
+
                                                             </div>
-                                                            <% }) %>
-                                                                <% } else { %>
-                                                                    <p style="width: 100%; text-align: center;">No
-                                                                        orders have been made yet.</p>
-                                                                    <a href="/shop" class="btn btn-outline-primary-2"
-                                                                        style="margin: 0 auto;"><span>GO SHOP</span><i
-                                                                            class="icon-long-arrow-right"></i></a>
-                                                                    <% } %>
+                                                        <% }) %>
+                                                    <% } else { %>
+                                                        <p style="width: 100%; text-align: center;">No orders have been made yet.</p>
+                                                        <a href="/shop" class="btn btn-outline-primary-2" style="margin: 0 auto;"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                         </div>
+                                        
 
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
                                             aria-labelledby="tab-downloads-link">
@@ -624,6 +611,7 @@
                                                                         </h5>
                                                                         <ul class="list-unstyled">
                                                                             <li><strong>Amount:</strong> <%= coupon.amount %></li>
+                                                                            <li><strong>Minimum Purchase Amount:</strong> <%= coupon.minimumAmount %></li> <!-- Add this line -->
                                                                             <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
                                                                                 <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
                                                                             <% } %>
@@ -643,6 +631,7 @@
                                                                             <p class="text-muted">Coupon already used</p>
                                                                         <% } %>
                                                                     </div>
+                                                                    
                                                                 </div>
                                                             </div>
                                                         <% }); %>
@@ -657,40 +646,40 @@
                                         </div>
 
                                         <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-    <div class="wallet-balance">
-        <% if (walletData && walletData.balance != null) { %>
-            <h3>My Wallet</h3>
-            <div class="balance-info">
-                <span class="balance-label">Current Balance:</span>
-                <span class="balance-amount">₹ <%= walletData.balance %></span>
-            </div>
-            <div class="transaction-history">
-                <h4>Transaction History</h4>
-                <% if (walletData.history && walletData.history.length > 0) { %>
-                    <ul class="transactions">
-                        <% walletData.history.forEach(function(transaction) { %>
-                            <li>
-                                <span class="transaction-type <%= transaction.type %>">
-                                    <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
-                                </span>
-                                <span class="transaction-amount <%= transaction.type === 'debit' ? 'debit-amount' : 'credit-amount' %>">
-                                    <%= transaction.type === 'debit' ? '-' : '+' %> ₹<%= transaction.amount %>
-                                </span>
-                                <span class="transaction-date">
-                                    <%= new Date(transaction.timestamp).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
-                                </span>
-                            </li>
-                        <% }); %>
-                    </ul>
-                <% } else { %>
-                    <p>No transactions found.</p>
-                <% } %>
-            </div>
-        <% } else { %>
-            <p>No Wallet</p>
-        <% } %>
-    </div>
-</div><!-- .End .tab-pane -->
+                                            <div class="wallet-balance">
+                                                <% if (walletData && walletData.balance != null) { %>
+                                                    <h3>My Wallet</h3>
+                                                    <div class="balance-info">
+                                                        <span class="balance-label">Current Balance:</span>
+                                                        <span class="balance-amount">₹ <%= walletData.balance %></span>
+                                                    </div>
+                                                    <div class="transaction-history">
+                                                        <h4>Transaction History</h4>
+                                                        <% if (walletData.history && walletData.history.length > 0) { %>
+                                                            <ul class="transactions">
+                                                                <% walletData.history.forEach(function(transaction) { %>
+                                                                    <li>
+                                                                        <span class="transaction-type <%= transaction.type %>">
+                                                                            <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+                                                                        </span>
+                                                                        <span class="transaction-amount <%= transaction.type === 'debit' ? 'debit-amount' : 'credit-amount' %>">
+                                                                            <%= transaction.type === 'debit' ? '-' : '+' %> ₹<%= transaction.amount %>
+                                                                        </span>
+                                                                        <span class="transaction-date">
+                                                                            <%= new Date(transaction.timestamp).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
+                                                                        </span>
+                                                                    </li>
+                                                                <% }); %>
+                                                            </ul>
+                                                        <% } else { %>
+                                                            <p>No transactions found.</p>
+                                                        <% } %>
+                                                    </div>
+                                                <% } else { %>
+                                                    <p>No Wallet</p>
+                                                <% } %>
+                                            </div>
+                                        </div><!-- .End .tab-pane -->
 
 
 

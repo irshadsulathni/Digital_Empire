@@ -67,7 +67,8 @@ admin_route.get('/orderDeatail', auth.isLogin, orderController.adminOrderControl
 admin_route.patch('/updateOrderStatus',   orderController.updateOrderStatus);
 admin_route.get('/returnDeatiles', auth.isLogin, orderController.loadReturnOrder);
 admin_route.get('/coupen', auth.isLogin, coupenController.loadCoupen);
-admin_route.get('/coupen/deleteCoupen', coupenController.deleteCoupen)
+admin_route.get('/coupen/deleteCoupen', coupenController.deleteCoupen);
+admin_route.get('/salesReport', auth.isLogin , adminController.salesReport)
 
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
@@ -84,7 +85,8 @@ admin_route.post('/editVarient',  varientController.updateVarient);
 admin_route.post('/acceptReturn', orderController.acceptReturn);
 admin_route.post('/denyReturn', orderController.denyReturn);
 admin_route.post('/addCoupen', coupenController.addCoupen);
-admin_route.post('/checkCouponCode', coupenController.checkCouponCode)
+admin_route.post('/checkCouponCode', coupenController.checkCouponCode);
+admin_route.post('/sales-report', adminController.salesReportFilter)
 
 
 

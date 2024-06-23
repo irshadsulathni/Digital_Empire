@@ -381,41 +381,11 @@ const failureGoogleLogin = (req, res) => {
     res.send("error")
 }
 
-// const loadShop = async (req, res) => {
-//     try {
-//         const search = req.query.q;
-//         let productData; // Declare productData variable here
-
-//         if (search) {
-//             productData = await Product.find({list:false,
-//                 $or: [
-//                     { productName: { $regex: '.*' + search + '.*', $options: 'i' } }
-//                 ]
-//             }).populate('productCategory').populate('varientId');
-//         } else {
-//             productData = await Product.find({ list: false }); // Move this here if there's no search query
-//         }
-
-//         const userId = req.session.user_id;
-//         const userData = await User.find({ _id: userId });
-//         const varientData = await Variant.find({});
-//         const brand = await Product.distinct("productBrand");
-//         const processor = await Variant.distinct("variantProcessor");
-//         const ram = await Variant.distinct("variantRAM");
-//         const gpu = await Variant.distinct("variantGPU");
-//         const color = await Variant.distinct('variantColor');
-//         const categoryData = await Category.find({ list: false });
-//         res.render('user/shop', { productData, varientData, categoryData, userData, brand, processor, ram, gpu, color });
-//     } catch (error) {
-//         console.log(error.message);
-//     }
-// }
-
 const loadShop = async (req, res) => {
     try {
         const search = req.query.q;
         const page = parseInt(req.query.page) || 1; 
-        const limit = 12;
+        const limit = 8;
         let productData; 
 
         let query = { list: false }; 

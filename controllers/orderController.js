@@ -38,7 +38,7 @@ const loadOrder = async (req, res) => {
                     path: 'varientId',
                     model: 'Variant'
                 }
-            });
+            }).sort({_id:-1});
 
         res.render('admin/order', { activeOrderMessage: 'active',orderData,totalPage,currentPage });
     } catch (error) {

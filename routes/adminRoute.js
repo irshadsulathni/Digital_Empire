@@ -48,7 +48,7 @@ admin_route.use(session({ secret: process.env.SESSION_SCECRET }));
 
 
 admin_route.get('/adminLogin', auth.isLogout, adminController.loadLogin);
-admin_route.get('/adminHome', auth.isLogin, adminController.loadAdminHome);
+admin_route.get('/adminHome', auth.isLogin, adminController.loadAdminDashBoard);
 admin_route.get('/userList', auth.isLogin, adminController.loadUserList);
 admin_route.get('/category', auth.isLogin, categoryController.loadCategories);
 admin_route.get('/category/list', categoryController.listOrUnlist);

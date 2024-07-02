@@ -4,21 +4,158 @@ const User = require('../models/userModel')
 const bcrypt = require('bcrypt');
 const Return = require('../models/returnOrder');
 const Order = require('../models/orderModel')
+const Product = require('../models/productModel')
+const Category = require('../models/categoryModel')
 
 // Admin Home page load
-const loadAdminHome = async (req, res) => {
-    try {
-        const returnData = await Return.find({})
-        .populate({
-            path:'from',
-            model:'User'
-        }).populate('orderId');
+// const loadAdminDashBoard = async (req, res) => {
+//     try {
+//         const returnData = await Return.find({})
+//         .populate({
+//             path:'from',
+//             model:'User'
+//         }).populate('orderId');
 
-        res.render('admin/adminHome' , {activeDashboardMessage: 'active',returnData});
+//         res.render('admin/adminHome' , {activeDashboardMessage: 'active',returnData});
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+const loadAdminDashBoard = async (req, res) => {
+    try {
+        // Fetching returns data
+        const returnData = await Return.find({})
+                .populate({
+                    path:'from',
+                    model:'User'
+                }).populate('orderId');
+
+        // Fetching top 10 best selling products with names
+        const topProducts = await Order.aggregate([
+            { $unwind: '$product' },
+            { $group: { _id: '$product.productId', totalQuantity: { $sum: '$product.quantity' } } },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            { $unwind: '$productDetails' },
+            { $project: { productName: '$productDetails.productName', totalQuantity: 1 } }
+        ]);
+
+        const productCount = await Product.countDocuments();
+
+        const orderCount = await Order.countDocuments();
+
+        const categoryCount = await Category.countDocuments()
+
+        // Fetching top 10 best selling categories with names
+        const topCategories = await Order.aggregate([
+            { $unwind: '$product' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product.productId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            { $unwind: '$productDetails' },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'productDetails.productCategory',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
+            },
+            { $unwind: '$categoryDetails' },
+            {
+                $group: {
+                    _id: '$categoryDetails._id',
+                    name: { $first: '$categoryDetails.name' },
+                    totalQuantity: { $sum: '$product.quantity' }
+                }
+            },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 }
+        ]);
+
+        // Fetching top 10 best selling brands
+        const topBrands = await Product.aggregate([
+            {
+                $group: {
+                    _id: '$productBrand',
+                    totalSold: { $sum: '$count' }
+                }
+            },
+            { $sort: { totalSold: -1 } },
+            { $limit: 10 }
+        ]);
+
+        // Fetching monthly sales and revenue
+        const monthlySales = await Order.aggregate([
+            {
+                $group: {
+                    _id: { $dateToString: { format: '%Y-%m', date: '$timeStamp' } },
+                    totalSales: { $sum: '$orderTotal' },
+                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } } // Calculate revenue
+                }
+            },
+            { $sort: { _id: 1 } } // Sort by date ascending
+        ]);
+
+        // Fetching yearly sales and revenue
+        const yearlySales = await Order.aggregate([
+            {
+                $group: {
+                    _id: { $year: '$timeStamp' },
+                    totalSales: { $sum: '$orderTotal' },
+                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } } // Calculate revenue
+                }
+            },
+            { $sort: { _id: 1 } } // Sort by year ascending
+        ]);
+
+        // Extracting labels (months) and data (total sales) for monthly chart
+        const chartLabelsMonth = monthlySales.map(item => item._id);
+        const chartDataMonth = monthlySales.map(item => item.totalSales);
+
+        // Extracting labels (years) and data (total sales) for yearly chart
+        const chartLabelsYear = yearlySales.map(item => item._id.toString()); // Ensure `_id` contains year
+        const chartDataYear = yearlySales.map(item => item.totalSales);
+
+        // Render admin home page with data
+        res.render('admin/adminHome', {
+            activeDashboardMessage: 'active',
+            returnData,
+            topProducts,
+            topCategories,
+            topBrands,
+            chartLabelsMonth: JSON.stringify(chartLabelsMonth), // Ensure data is stringified for EJS
+            chartDataMonth: JSON.stringify(chartDataMonth), // Ensure data is stringified for EJS
+            chartLabelsYear: JSON.stringify(chartLabelsYear), // Ensure data is stringified for EJS
+            chartDataYear: JSON.stringify(chartDataYear), // Ensure data is stringified for EJS
+            productCount,
+            categoryCount,
+            orderCount
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+
+
+
+
 
 
 // Admin Login page load
@@ -190,7 +327,7 @@ const adminLoad404 = async (req, res) =>{
 
 
 module.exports = {
-    loadAdminHome,
+    loadAdminDashBoard,
     loadLogin,
     verifyLogin,
     loadUserList,
@@ -198,5 +335,5 @@ module.exports = {
     adminLogout,
     adminLoad404,
     salesReport,
-    salesReportFilter
+    salesReportFilter,
 }

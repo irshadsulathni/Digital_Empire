@@ -514,6 +514,7 @@ const downloadInvoice = async (req, res) => {
                 {
                     text: 'Thank you for your business!',
                     style: 'footer'
+                    
                 },
                 {
                     text: 'Payment is due within 30 days. Please make checks payable to Digital Empire.',

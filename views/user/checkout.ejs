@@ -213,7 +213,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <button class="btn btn-secondary" id="remove-coupon-button" style="display: none;">Remove Coupon</button>
+                            <!-- <button class="btn btn-secondary" id="remove-coupon-button" style="display: none;">Remove Coupon</button> -->
                             
                             <a href="/dashboard" class="btn btn-link mt-3 d-block text-center">View Available
                                 Coupons</a>
@@ -282,10 +282,16 @@
                                             <tbody id="order-summary">
                                                 <% if (cartData && cartData.product && cartData.product.length > 0) { %>
                                                     <% cartData.product.forEach(element => { %>
-                                                        <tr>
-                                                            <td><a href="#"><%= element.productId.productName %></a></td>
-                                                            <td>₹<%= element.subTotal %></td>
-                                                        </tr>
+                                                        <% if (element.productId) { %>
+                                                            <tr>
+                                                                <td><a href="#"><%= element.productId.productName %></a></td>
+                                                                <td>₹<%= element.subTotal %></td>
+                                                            </tr>
+                                                        <% } else { %>
+                                                            <tr>
+                                                                <td colspan="2">Product information is missing.</td>
+                                                            </tr>
+                                                        <% } %>
                                                     <% }) %>
                                                 <% } else { %>
                                                     <tr>
@@ -296,21 +302,20 @@
                                             <tfoot>
                                                 <tr>
                                                     <td>Subtotal</td>
-                                                    <td id="subtotal">₹<span id="subtotal-value"><%= cartData.cartTotal %></span></td>
+                                                    <td id="subtotal">₹<span id="subtotal-value"><%= cartData && cartData.cartTotal ? cartData.cartTotal : '0.00' %></span></td>
                                                 </tr>
                                                 <tr id="discount-row" style="display: none;">
                                                     <td>Discount</td>
-                                                    <td id="discount-amount">-₹<span id="discount-value">0</span></td>
+                                                    <td id="discount-amount">-₹<span id="discount-value">0.00</span></td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total</td>
-                                                    <td id="total">₹<span id="total-value"><%= cartData.total %></span></td>
+                                                    <td id="total">₹<span id="total-value"><%= cartData && cartData.total ? cartData.total : '0.00' %></span></td>
                                                 </tr>
                                             </tfoot>
-                                            
                                         </table>
                                 
-                                        <div class="accordion-summary" id="accordion-payment">
+                                        <div class="accordion-summary" id="accordion-payment-1">
                                             <div class="card">
                                                 <div class="card-header" id="heading-1">
                                                     <h2 class="card-title">
@@ -320,8 +325,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="accordion-summary" id="accordion-payment">
+                                
+                                        <div class="accordion-summary" id="accordion-payment-2">
                                             <div class="card">
                                                 <div class="card-header" id="heading-2">
                                                     <h2 class="card-title">
@@ -331,8 +336,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="accordion-summary" id="accordion-payment">
+                                
+                                        <div class="accordion-summary" id="accordion-payment-3">
                                             <div class="card">
                                                 <div class="card-header" id="heading-3">
                                                     <h2 class="card-title">
@@ -492,50 +497,60 @@
         });
 }
 
-        function placeOrderAxios(orderData) {
-            axios.post('/orders', orderData)
-                .then(response => {
-                    window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
-                })
-                .catch(error => {
-                    if (error.response) {
-                        if (error.response.status === 500 && error.response.data.message === 'Insufficient stock for product') {
-                            const { name, stock, qty } = error.response.data;
-                            Toastify({
-                                text: `Insufficient stock for ${name}. Stock available: ${stock}. Requested quantity: ${qty}`,
-                                duration: 3000,
-                                gravity: "top",
-                                backgroundColor: "red",
-                                onClose: function () {
-                                    window.location.href = "/cart";
-                                }
-                            }).showToast();
-                        } else if (error.response.status === 404 && error.response.data === "Cart data not found") {
-                            Toastify({
-                                text: "Your cart is empty. Please add items to your cart before placing an order.",
-                                duration: 3000,
-                                gravity: "bottom",
-                                backgroundColor: "orange"
-                            }).showToast();
-                        } else {
-                            Toastify({
-                                text: "Failed to place order. Please try again later.",
-                                duration: 3000,
-                                gravity: "bottom",
-                                backgroundColor: "red"
-                            }).showToast();
+function placeOrderAxios(orderData) {
+    axios.post('/orders', orderData)
+        .then(response => {
+            window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
+        })
+        .catch(error => {
+            if (error.response) {
+                if (error.response.status === 500 && error.response.data.message === 'Amount to want use razorpay or Wallet') {
+                    Toastify({
+                        text: "Amount exceeds, please use razorpay or Wallet.",
+                        duration: 3000,
+                        gravity: "top",
+                        backgroundColor: "red",
+                        onClose: function () {
+                            window.location.href = "/cart";
                         }
-                    } else {
-                        Toastify({
-                            text: "An unexpected error occurred. Please try again later.",
-                            duration: 3000,
-                            gravity: "bottom",
-                            backgroundColor: "red"
-                        }).showToast();
-                    }
-                });
-        }
-    
+                    }).showToast();
+                } else if (error.response.status === 500 && error.response.data.message === 'Insufficient stock for product') {
+                    const { name, stock, qty } = error.response.data;
+                    Toastify({
+                        text: `Insufficient stock for ${name}. Stock available: ${stock}. Requested quantity: ${qty}`,
+                        duration: 3000,
+                        gravity: "top",
+                        backgroundColor: "red",
+                        onClose: function () {
+                            window.location.href = "/cart";
+                        }
+                    }).showToast();
+                } else if (error.response.status === 404 && error.response.data === "Cart data not found") {
+                    Toastify({
+                        text: "Your cart is empty. Please add items to your cart before placing an order.",
+                        duration: 3000,
+                        gravity: "bottom",
+                        backgroundColor: "orange"
+                    }).showToast();
+                } else {
+                    Toastify({
+                        text: "Failed to place order. Please try again later.",
+                        duration: 3000,
+                        gravity: "bottom",
+                        backgroundColor: "red"
+                    }).showToast();
+                }
+            } else {
+                Toastify({
+                    text: "An unexpected error occurred. Please try again later.",
+                    duration: 3000,
+                    gravity: "bottom",
+                    backgroundColor: "red"
+                }).showToast();
+            }
+        });
+}
+
         async function placeOrderWithWallet(orderData) {
         try {
             const response = await axios.post('/createWalletOrder', orderData);
@@ -638,7 +653,7 @@ document.getElementById('coupon-form').addEventListener('submit', function (even
             text: data.message || 'Coupon applied successfully!'
         });
         updateCartDisplay(data.cartTotal, data.total, data.discount);
-        document.getElementById('remove-coupon-button').style.display = 'block';
+        // document.getElementById('remove-coupon-button').style.display = 'block';
     } else {
         Swal.fire({
             icon: 'error',
@@ -658,45 +673,45 @@ document.getElementById('coupon-form').addEventListener('submit', function (even
     });
 });
 
-document.getElementById('remove-coupon-button').addEventListener('click', function () {
-    const cartTotal = parseFloat(document.getElementById('subtotal').innerText.replace('₹', ''));
+// document.getElementById('remove-coupon-button').addEventListener('click', function () {
+//     const cartTotal = parseFloat(document.getElementById('subtotal').innerText.replace('₹', ''));
 
-    fetch('/removeCoupon', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ cartTotal: cartTotal })
-    })
-    .then(response => response.json())
-    .then(data => {
-    if (data.success) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Coupon Removed',
-            text: data.message || 'Coupon removed successfully!'
-        });
-        updateCartDisplay(data.cartTotal, data.total, data.discount);
-        document.getElementById('checkout-discount-input').value = '';
-        document.getElementById('remove-coupon-button').style.display = 'none';
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: data.message || 'Failed to remove coupon'
-        });
-    }
-})
+//     fetch('/removeCoupon', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ cartTotal: cartTotal })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//     if (data.success) {
+//         Swal.fire({
+//             icon: 'success',
+//             title: 'Coupon Removed',
+//             text: data.message || 'Coupon removed successfully!'
+//         });
+//         updateCartDisplay(data.cartTotal, data.total, data.discount);
+//         document.getElementById('checkout-discount-input').value = '';
+//         document.getElementById('remove-coupon-button').style.display = 'none';
+//     } else {
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Error',
+//             text: data.message || 'Failed to remove coupon'
+//         });
+//     }
+// })
 
-    .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while removing the coupon'
-        });
-        console.error('Error:', error);
-    });
-});
+//     .catch(error => {
+//         Swal.fire({
+//             icon: 'error',
+//             title: 'Error',
+//             text: 'An error occurred while removing the coupon'
+//         });
+//         console.error('Error:', error);
+//     });
+// });
 
     </script>
 </body>

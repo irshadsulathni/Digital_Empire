@@ -44,7 +44,7 @@ admin_route.use('/publicImages', express.static(path.join(__dirname, '../public/
 
 
 // for session hendling
-admin_route.use(session({ secret: process.env.session_secret }));
+admin_route.use(session({ secret: process.env.SESSION_SCECRET }));
 
 
 admin_route.get('/adminLogin', auth.isLogout, adminController.loadLogin);

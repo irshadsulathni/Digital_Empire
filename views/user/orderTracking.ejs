@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- molla/dashboard.html  22 Nov 2019 10:03:13 GMT -->
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -144,7 +141,6 @@
             color: #333;
         }
 
-        /* New styles for product layout */
         .product-details {
             margin-top: 20px;
         }
@@ -155,7 +151,6 @@
             padding: 10px;
             border-radius: 5px;
             width: 300px;
-            /* Adjust width as needed */
         }
 
         .address h2 {
@@ -168,148 +163,102 @@
             font-size: 14px;
             line-height: 1.5;
         }
-        
+
         .badge {
-    padding: 5px 10px;
-    border-radius: 3px;
-}
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
 
-/* Styles for different status types */
-.badge.Pending {
-    background-color: #ffc107; /* Warning color for pending */
-    color: #000000; /* Text color */
-}
+        .badge.Pending {
+            background-color: #ffc107;
+            color: #000000;
+        }
 
-.badge.Shipped {
-    background-color: #17a2b8; /* Info color for shipped */
-    color: #ffffff; /* Text color */
-}
+        .badge.Shipped {
+            background-color: #17a2b8;
+            color: #ffffff;
+        }
 
-.badge.Delivered {
-    background-color: #28a745; /* Success color for delivered */
-    color: #ffffff; /* Text color */
-}
+        .badge.Delivered {
+            background-color: #28a745;
+            color: #ffffff;
+        }
 
-.badge.Canceled {
-    background-color: #dc3545; /* Danger color for canceled */
-    color: #ffffff; /* Text color */
-}
+        .badge.Canceled {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
 
-.badge.RefundAccepted {
-    background-color: #007bff; /* Primary color for refund accepted */
-    color: #ffffff; /* Text color */
-}
+        .badge.RefundAccepted {
+            background-color: #007bff;
+            color: #ffffff;
+        }
 
-/* Default style for other statuses */
-.badge {
-    background-color: #6c757d; /* Secondary color */
-    color: #ffffff; /* Text color */
-}
-
+        .badge {
+            background-color: #6c757d;
+            color: #ffffff;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- page header ejs -->
-
-
-
     <%- include('../layouts/pageHeader') %>
 
-        <div class="container mt-5">
-            <div class="card p-4">
-                <h3 class="text-center mb-4">Order Tracking - <span>Digi</span></h3>
-                <% orderData.forEach(element=> { %>
-
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h2 class="card-title">Order #<%= element.orderNumber %>
-                                    </h2>
-                                    <!-- <div class="card-text mb-4"><strong>Order ID:</strong> 7890</div> -->
-                                    <div class="card-text mb-4"><strong>Address:</strong>
-
-                                        <div class="address">
-                                            <h2><%= element.selectedAddress.addressLine1 %></h2>
-                                            <h2><%= element.selectedAddress.phoneNumber %></h2>
-                                            <p> <%= element.selectedAddress.city %></p>
-                                            <p><%= element.selectedAddress.state %></p>
-                                            <p><%= element.selectedAddress.country %></p>
-                                          </div>
-
-                                    </div>
-                                    <div class="card-text mb-4"><strong>Payment Method:</strong>
-                                        <%= element.paymentMethod %>
-                                    </div>
-                                    <div class="card-text mb-4">
-                                        <strong>Status:</strong>
-                                        <span class="badge <%= element.status %>">
-                                            <% if (element.status === 'Pending') { %>
-                                                <% // Use warning color for pending orders %>
-                                                <%= element.status %>
-                                            <% } else if (element.status === 'Shipped') { %>
-                                                <% // Use info color for shipped orders %>
-                                                <%= element.status %>
-                                            <% } else if (element.status === 'Delivered') { %>
-                                                <% // Use success color for delivered orders %>
-                                                <%= element.status %>
-                                            <% } else if (element.status === 'Canceled') { %>
-                                                <% // Use danger color for canceled orders %>
-                                                <%= element.status %>
-                                            <% } else if (element.status === 'Refund Accepted') { %>
-                                                <% // Use primary color for refund accepted orders %>
-                                                <%= element.status %>
-                                            <% } else { %>
-                                                <% // Use secondary color for other statuses %>
-                                                <%= element.status %>
-                                            <% } %>
-                                        </span>
-                                    </div>
-                                    
+    <div class="container mt-5">
+        <div class="card p-4">
+            <h3 class="text-center mb-4">Order Tracking - <span>Digi</span></h3>
+            <% orderData.forEach(element => { %>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Order #<%= element.orderNumber %></h2>
+                            <div class="card-text mb-4"><strong>Address:</strong>
+                                <div class="address">
+                                    <h2><%= element.selectedAddress.fullName %></h2>
+                                    <h2><%= element.selectedAddress.addressLine1 %></h2>
+                                    <h2><%= element.selectedAddress.phoneNumber %></h2>
+                                    <p><%= element.selectedAddress.city %></p>
+                                    <p><%= element.selectedAddress.state %></p>
+                                    <p><%= element.selectedAddress.country %></p>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="product-details">
-                                <h3>Products:</h3>
-                                <% element.product.forEach(product=> { %>
-                                    <div class="product-item">
-                                        <h4>
-                                            <%= product.productId.productName %>
-                                        </h4>
-                                        <p><strong>Price:</strong>
-                                            <%= product.productId.varientId.variantPrice %>
-                                        </p>
-                                        <p><strong>Quantity:</strong>
-                                            <%= product.quantity %>
-                                        </p>
-                                    </div>
-                                    <% }) %>
-                                        <!-- Add more product items here if needed -->
-                            </div>
-                            <a onclick="goBack()" class="btn btn-primary btn-block mt-4">Back</a>
+                            <div class="card-text mb-4"><strong>Payment Method:</strong> <%= element.paymentMethod %></div>
+                            <div class="card-text mb-4"><strong>Status:</strong> <span class="badge <%= element.status %>"><%= element.status %></span></div>
+                            <div class="card-text mb-4"><strong>Order Total:</strong> <%= element.orderTotal %></div>
+                            <div class="card-text mb-4"><strong>Discount:</strong> <%= element.discount %></div>
+                            <a href="/downloadInvoice/<%= element._id %>" class="btn btn-primary btn-block mt-4">Download Invoice</a>
                         </div>
                     </div>
-                    <% }) %>
+                </div>
+                <div class="col-md-4">
+                    <div class="product-details">
+                        <h3>Products:</h3>
+                        <% element.product.forEach(product => { %>
+                        <div class="product-item">
+                            <h4><%= product.productId.productName %></h4>
+                            <p><strong>Price:</strong> <%= product.productId.varientId.variantPrice %></p>
+                            <p><strong>Quantity:</strong> <%= product.quantity %></p>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <a onclick="goBack()" class="btn btn-primary btn-block mt-4">Back</a>
+                </div>
             </div>
+            <% }) %>
         </div>
-        <!--  for the footer of the page -->
+    </div>
 
+    <%- include('../layouts/pageFooter') %>
 
-
-
-        <%- include('../layouts/pageFooter') %>
-
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-            <script>
-                function goBack() {
-                    window.history.back();
-                }
-            </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </body>
 
 </html>

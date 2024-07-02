@@ -16,15 +16,22 @@ const loadcart = async (req, res) => {
                     path: 'varientId'
                 }
             });
-        if (!cart) {
-            return res.render('user/cart',{cartData:'Nothing'})
+
+        let cartCount = 0;
+        if (cart && cart.product) {
+            cartCount = cart.product.length;
         }
-        res.render('user/cart', { cartData:cart });
+
+        if (!cart) {
+            return res.render('user/cart', { cartData: 'Nothing', cartCount });
+        }
+        res.render('user/cart', { cartData: cart, cartCount: cartCount });
     } catch (error) {
         console.error('Error loading cart:', error);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 const addToCart = async (req, res) => {
     try {
@@ -32,7 +39,7 @@ const addToCart = async (req, res) => {
 
         const userId = req.session.user_id;
         if (!userId) {
-            return res.redirect('/signUp');
+            return res.redirect('/user/signUp');
         }
 
         let cart = await Cart.findOne({ userId: userId });

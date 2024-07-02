@@ -14,7 +14,7 @@ const orderController = require('../controllers/orderController');
 const wishlistController = require('../controllers/wishlistController');
 const coupenController = require('../controllers/coupenController')
 
-user_route.use(session({secret:process.env.session_secret}));
+user_route.use(session({secret:process.env.SESSION_SCECRET}));
 user_route.use(passport.initialize());
 user_route.use(passport.session());
 
@@ -42,11 +42,14 @@ user_route.get('/editAddress', auth.isLogin, addressController.loadEditAddress);
 user_route.post('/orders', auth.isLogin, orderController.orders);
 user_route.get('/orderTracking', auth.isLogin, userController.loadOrderTracking );
 user_route.post('/cancelOrder/:orderId', auth.isLogin , orderController.cancelOrder);
-user_route.post('/returnOrder', auth.isLogin, orderController.returnOrder)
+user_route.post('/returnOrder', auth.isLogin, orderController.returnOrder);
+// invoice Download
+
+user_route.get('/downloadInvoice/:orderId', auth.isLogin , orderController.downloadInvoice)
 
 // wishlist
 user_route.get('/wishlist', auth.isLogin ,wishlistController.loadWishlist);
-user_route.post('/addTowishlist',  wishlistController.addTowishlist);
+user_route.post('/addTowishlist', auth.isLogin, wishlistController.addTowishlist);
 user_route.delete('/wishlist/deleteWishlistItem/:productId', auth.isLogin, wishlistController.removeWishlistItem)
 
 
@@ -62,7 +65,7 @@ user_route.delete('/cart/deleteCartItem/:productId', auth.isLogin , cartControll
 // coupen 
 
 user_route.post('/applyCoupon' , auth.isLogin , coupenController.applyCoupen);
-user_route.post('/removeCoupon', auth.isLogin, coupenController.removeCoupon)
+// user_route.post('/removeCoupon', auth.isLogin, coupenController.removeCoupon)
 
 //forgot password
 user_route.get('/forgetPassword', forgetPasswordControll.forget);

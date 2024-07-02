@@ -7,7 +7,8 @@ const Counter = require('../models/counterModel');
 const Product = require('../models/productModel');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
-const Wallet = require('../models/walletModel')
+const Wallet = require('../models/walletModel');
+const { error } = require('console');
 
 var instance = new Razorpay({
     key_id: process.env.KEY_ID,
@@ -26,10 +27,10 @@ const loadCheckOut = async (req, res) => {
                 }
             });
 
-            if(cartData.product.length === 0){
-                return res.redirect('/cart')
-                // return res.status(200).json({ error: 'No Item in the cart' });
-            }
+            // if(cartData.product.length === 0){
+            //     return res.redirect('/cart')
+            //     // return res.status(200).json({ error: 'No Item in the cart' });
+            // }
         const addressData = await Address.find({ userId: userId });
         res.render('user/checkout', { addressData, cartData })
     } catch (error) {
@@ -63,7 +64,7 @@ const createOrder = async (req, res) => {
         const address = req.body.orderData.selectedAddress;
         const productData = await Cart.findOne({ userId });
         if (!productData) {
-            return res.status(404).send("Cart not found");
+            return res.status(404).json({error:"Cart not found"});
         }
 
         // Retrieve discount from session or Cart model
@@ -93,7 +94,7 @@ const createOrder = async (req, res) => {
         });
 
         if (!cartData || cartData.product.length === 0) {
-            return res.status(404).send("Cart data not found");
+            return res.status(400).json({error:"Cart is Empty"});
         }
 
         // Check stock
@@ -142,8 +143,6 @@ const createOrder = async (req, res) => {
         });
 
         const orderData = await newOrder.save();
-
-        console.log('orderData he he he',orderData,'orderData hodskhjg ksdgkh');
 
 
         res.status(200).json({ orderData, razorpayOrder });
@@ -196,20 +195,18 @@ const createWalletOrder = async (req, res) => {
             return res.status(404).json({ error: 'Wallet not found' });
         }
 
-        // Fetch user's existing cart to calculate order total and discount
         const cartData = await Cart.findOne({ userId }).populate({
             path: "product.productId",
             populate: { path: "varientId" }
         });
         if (!cartData || cartData.product.length === 0) {
-            return res.status(404).json({ error: 'Cart not found or empty' });
+            return res.status(404).json({ error: 'Cart is empty' });
         }
 
         // Retrieve discount from session
         let discount = req.session.discount || 0;
         let orderTotal = cartData.cartTotal;
 
-        // Verify wallet balance is sufficient for the order
         if (wallet.balance < orderTotal) {
             return res.status(400).json({ error: 'Insufficient wallet balance' });
         }
@@ -287,5 +284,3 @@ module.exports = {
     verifyOrder,
     createWalletOrder
 }
-
-

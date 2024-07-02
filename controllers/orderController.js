@@ -7,7 +7,11 @@ const { model } = require("mongoose");
 const { findOne, populate } = require("../models/userModel");
 const Return = require('../models/returnOrder');
 const Wallet = require('../models/walletModel');
-const Coupen = require('../models/counterModel')
+const Coupen = require('../models/counterModel');
+const PDFDocument = require('pdfkit');
+const fs = require('fs')
+const path = require('path');
+const pdfMake = require('pdfmake')
 
 
 const loadOrder = async (req, res) => {
@@ -169,6 +173,10 @@ const orders = async (req, res) => {
             },
         });
 
+        if(cartData.cartTotal > 50000){
+            return res.status(500).send({message : "Amount to want use razorpay or Wallet"})
+        }
+
         if (cartData.product.length === 0) {
             return res.status(404).send("Cart data not found");
         }
@@ -222,8 +230,6 @@ const orders = async (req, res) => {
         });
 
         const orderData = await newOrder.save();
-
-        console.log('orderData orderData',orderData,'orderData orderData');
 
         for (const item of products) {
             await Variant.updateOne(
@@ -388,6 +394,191 @@ const returnOrder = async (req, res) =>{
     }
 }
 
+
+
+
+
+const fonts = {
+    DejaVuSans: {
+        normal: path.join(__dirname, '../public/fonts/DejaVuSans.ttf'),
+        bold: path.join(__dirname, '../public/fonts/DejaVuSans-Bold.ttf'),
+        italics: path.join(__dirname, '../public/fonts/DejaVuSans-Oblique.ttf'),
+        bolditalics: path.join(__dirname, '../public/fonts/DejaVuSans-BoldOblique.ttf')
+    }
+};
+
+const printer = new pdfMake(fonts);
+
+const downloadInvoice = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const userId = req.session.user_id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "User Not Found" });
+        }
+
+        const order = await Order.findById(orderId)
+            .populate('userId')
+            .populate({
+                path: 'product.productId',
+                populate: {
+                    path: 'varientId',
+                    model: 'Variant'
+                }
+            })
+            .populate('selectedAddress');
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        // Helper function to format date
+        const formatDate = (date) => {
+            const d = new Date(date);
+            const day = d.getDate().toString().padStart(2, '0');
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+
+        const totalPrice = order.product.reduce((sum, product) => sum + product.quantity * product.productId.varientId.variantPrice, 0);
+        const discount = order.discount || 0;
+        const finalTotal = totalPrice - discount;
+
+        const docDefinition = {
+            content: [
+                {
+                    image: path.join(__dirname, '../public/userAssets/images/icons/new-icon.png'),
+                    width: 60,
+                },
+                {
+                    text: 'Digital Empire',
+                    style: 'header'
+                },
+                {
+                    text: '\ndigitalempire@gmail.com',
+                    style: 'subheader',
+                    alignment: 'right'
+                },
+                {
+                    text: `Invoice #${order.orderNumber}`,
+                    style: 'invoiceTitle',
+                    alignment: 'right'
+                },
+                {
+                    text: `Date: ${formatDate(order.timeStamp)}`,
+                    alignment: 'right'
+                },
+                {
+                    text: `Bill To:\n${order.selectedAddress.fullName}\n${order.selectedAddress.addressLine1}\n${order.selectedAddress.city}, ${order.selectedAddress.state}, ${order.selectedAddress.country}`,
+                    style: 'customerDetails'
+                },
+                {
+                    text: `Payment Method: ${order.paymentMethod}`,
+                    alignment: 'right',
+                    margin: [0, 0, 0, 50]
+                },
+                {
+                    style: 'tableExample',
+                    table: {
+                        body: [
+                            ['Product Name', 'Quantity', 'Price (₹)', 'Subtotal (₹)'],
+                            ...order.product.map(product => {
+                                const productPrice = product.productId.varientId.variantPrice;
+                                const subtotal = product.quantity * productPrice;
+                                return [
+                                    product.productId.productName,
+                                    product.quantity,
+                                    `₹${productPrice.toFixed(2)}`,
+                                    `₹${subtotal.toFixed(2)}`
+                                ];
+                            }),
+                            [{ text: 'Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${totalPrice.toFixed(2)}`],
+                            [{ text: 'Discount', colSpan: 3, alignment: 'right' }, {}, {}, `₹${discount.toFixed(2)}`],
+                            [{ text: 'Final Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${finalTotal.toFixed(2)}`]
+                        ]
+                    },
+                    layout: {
+                        hLineWidth: function (i, node) {
+                            return (i === 0 || i === node.table.body.length) ? 2 : 1;
+                        },
+                        vLineWidth: function (i, node) {
+                            return 0;
+                        },
+                        paddingBottom: function (i, node) {
+                            return 10;
+                        }
+                    }
+                },
+                {
+                    text: 'Thank you for your business!',
+                    style: 'footer'
+                },
+                {
+                    text: 'Payment is due within 30 days. Please make checks payable to Digital Empire.',
+                    style: 'footer'
+                }
+            ],
+            defaultStyle: {
+                font: 'DejaVuSans'
+            },
+            styles: {
+                header: {
+                    fontSize: 20,
+                    bold: true
+                },
+                subheader: {
+                    fontSize: 12,
+                    margin: [0, 10, 0, 0]
+                },
+                invoiceTitle: {
+                    fontSize: 18,
+                    bold: true,
+                    margin: [0, 20, 0, 0]
+                },
+                customerDetails: {
+                    margin: [0, 20, 0, 20]
+                },
+                tableExample: {
+                    margin: [0, 5, 0, 15]
+                },
+                total: {
+                    fontSize: 14,
+                    bold: true,
+                    margin: [0, 10, 0, 10]
+                },
+                footer: {
+                    margin: [0, 10, 0, 0],
+                    fontSize: 10
+                }
+            }
+        };
+
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
+        const filePath = path.join(__dirname, `../public/userInvoices/invoice-${order.orderNumber}.pdf`);
+        
+        const writeStream = fs.createWriteStream(filePath);
+        pdfDoc.pipe(writeStream);
+
+        pdfDoc.end();
+
+        writeStream.on('finish', () => {
+            res.download(filePath, `Digi-invoice-${order.orderNumber}.pdf`, (err) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error downloading the invoice');
+                }
+                fs.unlinkSync(filePath); // Remove the file after download
+            });
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+};
+
 module.exports = {
     loadOrder,
     orders,
@@ -397,5 +588,6 @@ module.exports = {
     returnOrder,
     loadReturnOrder,
     acceptReturn,
-    denyReturn
+    denyReturn,
+    downloadInvoice
 };

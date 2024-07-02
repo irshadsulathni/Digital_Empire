@@ -210,22 +210,32 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% orderData.product.forEach(product=> { %>
-
-
+                                            <% orderData.product.forEach(product => { %>
                                                 <tr>
                                                     <td>
                                                         <a class="itemside" href="#">
                                                             <div class="left">
-                                                                <img src="<%= product.productId.productImage[0] %>"
-                                                                    width="50" height="50" class="img-xs" alt="Item" />
+                                                                <% if (product.productId && product.productId.productImage && product.productId.productImage.length > 0) { %>
+                                                                    <img src="<%= product.productId.productImage[0] %>" width="50" height="50" class="img-xs" alt="Item" />
+                                                                <% } else { %>
+                                                                    <img src="/path/to/default/image.jpg" width="50" height="50" class="img-xs" alt="Item" />
+                                                                <% } %>
                                                             </div>
                                                             <div class="info">
-                                                                <%= product.productId.productName %>
+                                                                <% if (product.productId && product.productId.productName) { %>
+                                                                    <%= product.productId.productName %>
+                                                                <% } else { %>
+                                                                    Product name not available
+                                                                <% } %>
                                                             </div>
                                                         </a>
                                                     </td>
-                                                    <td>₹ <%= product.productId.varientId.variantPrice %>
+                                                    <td>₹
+                                                        <% if (product.productId && product.productId.varientId && product.productId.varientId.variantPrice) { %>
+                                                            <%= product.productId.varientId.variantPrice %>
+                                                        <% } else { %>
+                                                            Price not available
+                                                        <% } %>
                                                     </td>
                                                     <td>
                                                         <%= product.quantity %>
@@ -234,33 +244,15 @@
                                                         <%= product.subTotal %>
                                                     </td>
                                                 </tr>
-                                                <% }) %>
-
-                                                    <tr>
-                                                        <td colspan="4">
-                                                            <article class="float-end">
-                                                                <!-- <dl class="dlist">
-                                                            <dt>Subtotal:</dt>
-                                                            <dd>$973.35</dd>
-                                                        </dl>
-                                                        <dl class="dlist">
-                                                            <dt>Shipping cost:</dt>
-                                                            <dd>$10.00</dd>
-                                                        </dl> -->
-                                                                <!-- <dl class="dlist">
-                                                            <dt>Grand total:</dt>
-                                                            <dd><b class="h5">₹ <%= orderData.product.subTotal %></b></dd>
-                                                        </dl> -->
-                                                                <!-- <dl class="dlist">
-                                                            <dt class="text-muted">Status:</dt>
-                                                            <dd>
-                                                                <span class="badge rounded-pill alert-success text-success">Payment done</span>
-                                                            </dd>
-                                                        </dl> -->
-                                                            </article>
-                                                        </td>
-                                                    </tr>
-                                        </tbody>
+                                            <% }) %>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <article class="float-end">
+                                                        <!-- Additional details can be included here if needed -->
+                                                    </article>
+                                                </td>
+                                            </tr>
+                                        </tbody>                                        
                                     </table>
                                 </div>
                                 <!-- table-responsive// -->

@@ -136,7 +136,7 @@ const applyCoupen = async (req, res) => {
         }
 
         coupon.usersList.push({ userId: userId, coupenUsed: true });
-       // await coupon.save();
+        await coupon.save();
 
         const discount = coupon.amount;
         const newCartTotal = cartTotal - discount;
@@ -165,48 +165,48 @@ const applyCoupen = async (req, res) => {
 
 
 
-const removeCoupon = async (req, res) => {
-    try {
-        const userId = req.session.user_id;
-        const { cartTotal } = req.body;
+// const removeCoupon = async (req, res) => {
+//     try {
+//         const userId = req.session.user_id;
+//         const { cartTotal } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ success: false, message: 'Invalid user ID' });
-        }
+//         if (!mongoose.Types.ObjectId.isValid(userId)) {
+//             return res.status(400).json({ success: false, message: 'Invalid user ID' });
+//         }
 
-        const coupon = await Coupen.findOne({ 'usersList.userId': userId });
+//         const coupon = await Coupen.findOne({ 'usersList.userId': userId });
 
-        if (!coupon) {
-            return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
-        }
+//         if (!coupon) {
+//             return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
+//         }
 
-        const userCouponIndex = coupon.usersList.findIndex(userCoupon => userCoupon.userId.equals(userId));
-        if (userCouponIndex === -1) {
-            return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
-        }
+//         const userCouponIndex = coupon.usersList.findIndex(userCoupon => userCoupon.userId.equals(userId));
+//         if (userCouponIndex === -1) {
+//             return res.status(400).json({ success: false, message: 'Coupon not found for this user' });
+//         }
 
-        const discount = coupon.amount;
+//         const discount = coupon.amount;
 
-        // Remove the user from the usersList
-        coupon.usersList.splice(userCouponIndex, 1);
+//         // Remove the user from the usersList
+//         coupon.usersList.splice(userCouponIndex, 1);
 
-        await coupon.save();
+//         await coupon.save();
 
-        const newCartTotal = cartTotal + discount;
-        const total = newCartTotal;
+//         const newCartTotal = cartTotal + discount;
+//         const total = newCartTotal;
 
-        return res.status(200).json({
-            success: true,
-            message: 'Coupon removed successfully!',
-            cartTotal: newCartTotal,
-            total: total,
-            discount: discount
-        });
-    } catch (error) {
-        console.error('Error removing coupon:', error.message);
-        return res.status(500).json({ success: false, message: 'An error occurred. Please try again later.' });
-    }
-}
+//         return res.status(200).json({
+//             success: true,
+//             message: 'Coupon removed successfully!',
+//             cartTotal: newCartTotal,
+//             total: total,
+//             discount: discount
+//         });
+//     } catch (error) {
+//         console.error('Error removing coupon:', error.message);
+//         return res.status(500).json({ success: false, message: 'An error occurred. Please try again later.' });
+//     }
+// }
 
 
 
@@ -217,5 +217,5 @@ module.exports = {
     addCoupen,
     deleteCoupen,
     applyCoupen,
-    removeCoupon
+    // removeCoupon
 }

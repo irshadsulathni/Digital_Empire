@@ -9,8 +9,8 @@ const userRoute = require('./routes/userRoute');
 const adminController = require('./controllers/adminController');
 const userController = require('./controllers/userController');
 
-mongoose.connect(process.env.mongo_id)
-  .then(() => console.log('MongoDB connected'))
+mongoose.connect(process.env.MONGO_ID)
+  .then(() => console.log('MongoDB connected......'))
   .catch(err => console.error(err));
 
 const app = express();
@@ -39,6 +39,6 @@ app.use((req, res, next) => {
 });
 
 // Start the server
-app.listen(process.env.port, () => {
-  console.log(`Server running on: http://localhost:${process.env.port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on: http://localhost:${process.env.PORT}`);
 });

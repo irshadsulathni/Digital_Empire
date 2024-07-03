@@ -11,6 +11,9 @@
     <meta property="og:url" content="https://yourwebsite.com/admin/sales-report" />
     <link rel="shortcut icon" type="image/x-icon" href="/adminAssets/imgs/theme/favicon.svg" />
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
     <style>
         /* Add your custom styles here */
         .table th, .table td {
@@ -261,8 +264,12 @@
                                         <% orderData.forEach(element => { %>
                                             <tr>
                                                 <td><%= element.orderNumber %></td>
-                                                <td><%= element.userId.name %></td>
-                                                <td><%= element.userId.email %></td>
+                                                <% if (element.userId) { %>
+                                                    <td><%= element.userId.name %></td>
+                                                    <td><%= element.userId.email %></td>
+                                                <% } else { %>
+                                                    <td colspan="2">User not found</td>
+                                                <% } %>
                                                 <td class="price">₹<%= element.orderTotal.toFixed(2) %></td>
                                                 <td class="price">₹<%= element.discount.toFixed(2) %></td>
                                                 <td><span class="badge <%= element.status %>"><%= element.status %></span></td>
@@ -276,6 +283,7 @@
                                         </tr>
                                     <% } %>
                                 </tbody>
+                                
                             </table>
                             
                         </div>
@@ -374,8 +382,8 @@
                         <td>${order.orderNumber}</td>
                         <td>${order.userId.name}</td>
                         <td>${order.userId.email}</td>
-                        <td class="price">₹${order.orderTotal.toFixed(2)}</td>
-                        <td class="price">₹${order.discount.toFixed(2)}</td>
+                        <td class="price">$${order.orderTotal.toFixed(2)}</td>
+                        <td class="price">$${order.discount.toFixed(2)}</td>
                         <td><span class="badge ${order.status}">${order.status}</span></td>
                         <td>${new Date(order.timeStamp).toDateString()}</td>
                         <td>${order.paymentMethod}</td>
@@ -417,13 +425,21 @@
                 }
             });
 
-            doc.save('sales_report.pdf');
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]
+
+            doc.save(`sales_report${formattedDate}.pdf`);
         }
 
         async function generateExcel() {
             const table = document.querySelector('.table');
             const wb = XLSX.utils.table_to_book(table, { sheet: "Sales Report" });
-            XLSX.writeFile(wb, 'sales_report.xlsx');
+
+            // for date
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]
+
+            XLSX.writeFile(wb, `sales_report${formattedDate}.xlsx`);
         }
     </script>
 </body>

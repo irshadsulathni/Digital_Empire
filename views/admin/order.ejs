@@ -140,45 +140,44 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                    
                                     <% if(orderData.length > 0 && orderData) { %>
                                         <% orderData.forEach(element => { %>
-                                         
-                                     
-                                         <tr>
-                                            <td><%= element.orderNumber %></td>
-                                            <td><b><%= element.userId.name %></b></td>
-                                            <td><%= element.userId.email %></td>
-                                            <td><%= element.orderTotal %></td>
-                                            <td><span class="badge <%= element.status %>"><%= element.status %></span></td>
-                                            <td><%= element.timeStamp.getDate() %> -
-                                                <%= element.timeStamp.getMonth()+1 %> -
-                                                <%= element.timeStamp.getFullYear() %> %></td>
-                                            <td><%= element.paymentMethod %> </td>
-                                            
-                    
-                                            <td class="text">
-                                                <a href="/admin/orderDeatail?orderId=<%= element._id %>" class="btn btn-md rounded font-sm">Detail</a>
-                                                <div class="dropdown">
-                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">View detail</a>
-                                                        <a class="dropdown-item" href="#">Edit info</a>
-                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                            <tr>
+                                                <td><%= element.orderNumber %></td>
+                                                <% if(element.userId) { %>
+                                                    <td><b><%= element.userId.name %></b></td>
+                                                    <td><%= element.userId.email %></td>
+                                                <% } else { %>
+                                                    <td colspan="2">User not found</td>
+                                                <% } %>
+                                                <td><%= element.orderTotal %></td>
+                                                <td><span class="badge <%= element.status %>"><%= element.status %></span></td>
+                                                <td><%= element.timeStamp.getDate() %> -
+                                                    <%= element.timeStamp.getMonth()+1 %> -
+                                                    <%= element.timeStamp.getFullYear() %> %></td>
+                                                <td><%= element.paymentMethod %> </td>
+                                
+                                                <td class="text">
+                                                    <a href="/admin/orderDeatail?orderId=<%= element._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                                                    <div class="dropdown">
+                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">View detail</a>
+                                                            <a class="dropdown-item" href="#">Edit info</a>
+                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <!-- dropdown //end -->
-                                            </td>
-                                        </tr>
+                                                    <!-- dropdown //end -->
+                                                </td>
+                                            </tr>
                                         <% }) %>
                                     <% } else { %>
                                         <tr>
                                             <td colspan="8" style="text-align: center;">No Order Data Available</td>
                                         </tr>
-                                    <%  } %>
-                    
-                                   
+                                    <% } %>
                                 </tbody>
+                                
                             </table>
                         </div>
                     </div>

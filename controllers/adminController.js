@@ -31,12 +31,12 @@ const loadAdminDashBoard = async (req, res) => {
                     model:'User'
                 }).populate('orderId');
 
-        // Fetching top 10 best selling products with names
+        // fetching top 5 best selling products with names
         const topProducts = await Order.aggregate([
             { $unwind: '$product' },
             { $group: { _id: '$product.productId', totalQuantity: { $sum: '$product.quantity' } } },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 },
+            { $limit: 5 },
             {
                 $lookup: {
                     from: 'products',
@@ -55,7 +55,7 @@ const loadAdminDashBoard = async (req, res) => {
 
         const categoryCount = await Category.countDocuments()
 
-        // Fetching top 10 best selling categories with names
+        // fetching top selling categories
         const topCategories = await Order.aggregate([
             { $unwind: '$product' },
             {
@@ -84,10 +84,10 @@ const loadAdminDashBoard = async (req, res) => {
                 }
             },
             { $sort: { totalQuantity: -1 } },
-            { $limit: 10 }
+            { $limit: 5 }
         ]);
 
-        // Fetching top 10 best selling brands
+        // fetching top best selling brands
         const topBrands = await Product.aggregate([
             {
                 $group: {
@@ -96,39 +96,54 @@ const loadAdminDashBoard = async (req, res) => {
                 }
             },
             { $sort: { totalSold: -1 } },
-            { $limit: 10 }
+            { $limit: 5 }
         ]);
 
-        // Fetching monthly sales and revenue
+        //  monthly sales and revenue
         const monthlySales = await Order.aggregate([
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m', date: '$timeStamp' } },
                     totalSales: { $sum: '$orderTotal' },
-                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } } // Calculate revenue
+                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } }
                 }
             },
-            { $sort: { _id: 1 } } // Sort by date ascending
+            { $sort: { _id: 1 } }
         ]);
 
-        // Fetching yearly sales and revenue
+        // yearly sales and revenue
         const yearlySales = await Order.aggregate([
             {
                 $group: {
                     _id: { $year: '$timeStamp' },
                     totalSales: { $sum: '$orderTotal' },
-                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } } // Calculate revenue
+                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } }
                 }
             },
-            { $sort: { _id: 1 } } // Sort by year ascending
+            { $sort: { _id: 1 } } 
         ]);
 
-        // Extracting labels (months) and data (total sales) for monthly chart
+        const weeklySales = await Order.aggregate([
+            {
+                $group: {
+                    _id: { $isoWeek: '$timeStamp' },
+                    totalSales: { $sum: '$orderTotal' },
+                    totalRevenue: { $sum: { $multiply: ['$orderTotal', 1 - '$discount'] } }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // Extracting the weekly sales data for the chart
+        const chartLabelsWeek = weeklySales.map(item => `Week ${item._id}`);
+        const chartDataWeek = weeklySales.map(item => item.totalSales);
+        
+        //  extrcting the monthly sales data for the chart
         const chartLabelsMonth = monthlySales.map(item => item._id);
         const chartDataMonth = monthlySales.map(item => item.totalSales);
 
-        // Extracting labels (years) and data (total sales) for yearly chart
-        const chartLabelsYear = yearlySales.map(item => item._id.toString()); // Ensure `_id` contains year
+        // extrcting the yearly sales data for the chart
+        const chartLabelsYear = yearlySales.map(item => item._id.toString()); 
         const chartDataYear = yearlySales.map(item => item.totalSales);
 
         // Render admin home page with data
@@ -138,10 +153,12 @@ const loadAdminDashBoard = async (req, res) => {
             topProducts,
             topCategories,
             topBrands,
-            chartLabelsMonth: JSON.stringify(chartLabelsMonth), // Ensure data is stringified for EJS
-            chartDataMonth: JSON.stringify(chartDataMonth), // Ensure data is stringified for EJS
-            chartLabelsYear: JSON.stringify(chartLabelsYear), // Ensure data is stringified for EJS
-            chartDataYear: JSON.stringify(chartDataYear), // Ensure data is stringified for EJS
+            chartLabelsMonth: JSON.stringify(chartLabelsMonth),
+            chartDataMonth: JSON.stringify(chartDataMonth),
+            chartLabelsYear: JSON.stringify(chartLabelsYear),
+            chartDataYear: JSON.stringify(chartDataYear),
+            chartLabelsWeek:JSON.stringify(chartLabelsWeek),
+            chartDataWeek: JSON.stringify(chartDataWeek),
             productCount,
             categoryCount,
             orderCount

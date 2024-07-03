@@ -486,56 +486,67 @@
 
                                 <div class="col-md-8 col-lg-9">
                                     <div class="tab-content">
-                                        <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
-                                            aria-labelledby="tab-dashboard-link">
+                                        <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
                                             <p>Hello <span class="font-weight-normal text-dark">
                                                     <%= userData.name %>
                                                 </span>
                                             </p>
-
-                                            <form id="password-update-form">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <label>Full Name </label>
-                                                        <input type="text" value="<%= userData.name %>"
-                                                            class="form-control" required>
-                                                    </div><!-- End .col-sm-6 -->
-                                                    <div class="col-sm-6">
-                                                        <label>Phone</label>
-                                                        <input type="text" value="<%= userData.mobile %>"
-                                                            class="form-control" required>
+                                
+                                            <% if (isGoogleUser) { %>
+                                                <!-- Special content for Google users -->
+                                                <div class="google-user-section">
+                                                    <img src="/userAssets/images/instruction/goodOne.png" alt="Google Logo" class="img-fluid" style="max-width: 250px;">
+                                                    <p>Welcome, <%= userData.name %>! You are logged in via Google.</p>
+                                                    <p>Here's some exclusive content for you.</p>
+                                                    <div class="alert alert-success">
+                                                        <p><strong>Google User Special Features:</strong></p>
+                                                        <ul>
+                                                            <li>Access to exclusive offers.</li>
+                                                            <li>Premium support services.</li>
+                                                            <li>Early access to new features.</li>
+                                                        </ul>
                                                     </div>
-                                                </div><!-- End .row -->
-
-                                                <label>Current password (leave blank to leave unchanged)</label>
-                                                <div class="password-container">
-                                                    <input id="current-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('current-password')"></i>
                                                 </div>
-
-                                                <label>New password (leave blank to leave unchanged)</label>
-                                                <div class="password-container">
-                                                    <input id="new-password" type="password" class="form-control">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('new-password')"></i>
-                                                </div>
-
-                                                <label>Confirm new password</label>
-                                                <div class="password-container">
-                                                    <input id="confirm-password" type="password"
-                                                        class="form-control mb-2">
-                                                    <i class="fa fa-eye eye-icon"
-                                                        onclick="togglePassword('confirm-password')"></i>
-                                                </div>
-
-                                                <button type="submit" class="btn btn-outline-primary-2">
-                                                    <span>SAVE CHANGES</span>
-                                                    <i class="icon-long-arrow-right"></i>
-                                                </button>
-                                            </form>
-
+                                            <% } else { %>
+                                                <!-- Content for non-Google users -->
+                                                <form id="password-update-form">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <label>Full Name </label>
+                                                            <input type="text" value="<%= userData.name %>" class="form-control" required>
+                                                        </div><!-- End .col-sm-6 -->
+                                                        <div class="col-sm-6">
+                                                            <label>Phone</label>
+                                                            <input type="text" value="<%= userData.mobile %>" class="form-control" required>
+                                                        </div>
+                                                    </div><!-- End .row -->
+                                
+                                                    <label>Current password (leave blank to leave unchanged)</label>
+                                                    <div class="password-container">
+                                                        <input id="current-password" type="password" class="form-control">
+                                                        <i class="fa fa-eye eye-icon" onclick="togglePassword('current-password')"></i>
+                                                    </div>
+                                
+                                                    <label>New password (leave blank to leave unchanged)</label>
+                                                    <div class="password-container">
+                                                        <input id="new-password" type="password" class="form-control">
+                                                        <i class="fa fa-eye eye-icon" onclick="togglePassword('new-password')"></i>
+                                                    </div>
+                                
+                                                    <label>Confirm new password</label>
+                                                    <div class="password-container">
+                                                        <input id="confirm-password" type="password" class="form-control mb-2">
+                                                        <i class="fa fa-eye eye-icon" onclick="togglePassword('confirm-password')"></i>
+                                                    </div>
+                                
+                                                    <button type="submit" class="btn btn-outline-primary-2">
+                                                        <span>SAVE CHANGES</span>
+                                                        <i class="icon-long-arrow-right"></i>
+                                                    </button>
+                                                </form>
+                                            <% } %>
                                         </div><!-- .End .tab-pane -->
+                                        
 
                                         <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
                                             <div id="order-container" style="width: 100%; margin: 0 55px;">

@@ -36,23 +36,53 @@ const load404 = async (req, res) => {
 }
 
 // Load user Home page for a Preview
+// const loadHome = async (req, res) => {
+//     try {
+//         const userId = req.session.user_id;
+//         const userData = await User.findOne({ _id: userId });
+//         console.log('userData',userId,'userData');
+//         const productData = await Product.findOne({ list: false });
+//         const categeryData = await Category.findOne({ list: false })
+//         const variantData = await Variant.find({});
+//         const cartData = await Cart.findOne({ userId: userId })
+//             .populate({
+//                 path: 'product.productId',
+//                 populate: {
+//                     path: 'varientId'
+//                 }
+//             });
+//         res.render('user/home', { productData, variantData, categeryData, userData:userData });
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// };
+
 const loadHome = async (req, res) => {
     try {
-        const userId = req.session.user_id;
-        const userData = await User.findOne({ _id: userId });
-        const productData = await Product.findOne({ list: false });
-        const categeryData = await Category.findOne({ list: false })
-        const variantData = await Variant.find({});
+        const userId = req.session.user_id; // Assuming user_id is stored in the session
+        const userData = await User.findOne({ _id: userId }); // Fetch user data based on userId
+        const productData = await Product.findOne({ list: false }); // Fetch product data where list is false
+        const categoryData = await Category.findOne({ list: false }); // Fetch category data where list is false
+        const variantData = await Variant.find({}); // Fetch all variants
+
         const cartData = await Cart.findOne({ userId: userId })
             .populate({
                 path: 'product.productId',
                 populate: {
                     path: 'varientId'
                 }
-            });
-        res.render('user/home', { productData, variantData, categeryData, userData });
+            }); // Fetch cart data for the user and populate products with variants
+
+        res.render('user/home', {
+            userData: userData,
+            productData: productData,
+            categoryData: categoryData,
+            variantData: variantData,
+            cartData: cartData
+        });
     } catch (error) {
         console.log(error.message);
+        res.status(500).send('Error loading home page');
     }
 };
 
@@ -242,16 +272,15 @@ const logout = async (req, res) => {
 const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const orderData = await Order.find({ userId: userId }).populate({
+        const orderData = await Order.find({ userId }).populate({
             path: 'product.productId',
             populate: {
                 path: 'varientId'
             }
         }).sort({_id:-1});
-        const coupenData = await Coupen.find({}).lean(); // Use lean() for better performance
+        const couponData = await Coupen.find({}).lean(); // Use lean() for better performance
 
-        // Ensure usersList is always an array and each userCoupon has a userId
-        coupenData.forEach(coupon => {
+        couponData.forEach(coupon => {
             if (!Array.isArray(coupon.usersList)) {
                 coupon.usersList = [];
             }
@@ -262,19 +291,30 @@ const loadDashBoard = async (req, res) => {
             });
         });
 
+
         const userData = await User.findOne({ _id: userId });
-        const addressData = await Address.find({ userId: userId });
-        const walletData = await Wallet.findOne({ userId: userId }).lean();
+        const addressData = await Address.find({ userId });
+        const walletData = await Wallet.findOne({ userId }).lean();
+        
         if (walletData && walletData.history) {
             walletData.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         }
 
-        res.render('user/dashboard', { userData: userData, addressData: addressData, orderData: orderData, coupons: coupenData, walletData });
+        res.render('user/dashboard', { 
+            userData, 
+            addressData, 
+            orderData, 
+            coupons: couponData, 
+            walletData,
+            isGoogleUser: userData && userData.googleId ? true : false // Check if user has googleId
+        });
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
     }
 };
+
+
 
 
 
@@ -349,32 +389,66 @@ const successGoogleLogin = async (req, res) => {
             return res.render('user/404');
         }
 
-        const { given_name, email } = req.user;
+        const { given_name, email, googleId } = req.user; // Assuming googleId is available in req.user
 
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await User.findOne({ email });
+
+        const productData = await Product.findOne({ list: false }); // Fetch product data where list is false
+        const categoryData = await Category.findOne({ list: false }); // Fetch category data where list is false
+        const variantData = await Variant.find({}); // Fetch all variants
+
+        // Assuming userId is derived from session
+        const userId = req.session.user_id;
+
+        const cartData = await Cart.findOne({ userId })
+            .populate({
+                path: 'product.productId',
+                populate: {
+                    path: 'varientId'
+                }
+            });
 
         if (existingUser) {
-            req.session.user_id = email;
-            return res.render('user/home');
+            req.session.user_id = existingUser._id;
+            return res.render('user/home', { 
+                userData: existingUser, 
+                productData, 
+                categoryData, 
+                variantData, 
+                cartData, 
+                isGoogleUser: !!googleId // Check if googleId exists
+            });
         }
 
         const newUser = new User({
             name: given_name,
-            email: email,
-            is_verifed: 1
+            email,
+            googleId:true,
+            is_verified: 1 // Assuming user is verified upon Google login
         });
 
         await newUser.save();
 
-        req.session.user_id = email;
+        req.session.user_id = newUser._id;
 
-        res.render('user/home');
+        res.render('user/home', { 
+            userData: newUser, 
+            productData, 
+            categoryData, 
+            variantData, 
+            cartData, 
+            isGoogleUser: true 
+        });
 
     } catch (error) {
         console.error('Error saving user:', error);
         res.render('user/404');
     }
 };
+
+
+
+
 
 
 const failureGoogleLogin = (req, res) => {

@@ -103,7 +103,7 @@
                         <div class="card card-body mb-4">
                             <article class="icontext">
                                 <span class="icon icon-sm rounded-circle bg-primary-light"><i
-                                        class="text-primary material-icons md-monetization_on"></i></span>
+                                        class="text-primary  ">₹</i></span>
                                 <div class="text">
                                     <h6 class="mb-1 card-title">Revenue</h6>
                                     <span>₹<%= JSON.parse(chartDataYear) %></span>
@@ -143,6 +143,15 @@
                         <div class="card mb-4">
                             <article class="card-body">
                                 <h5 class="card-title">Sales Statistics</h5>
+                                <!-- Dropdown for selecting sales period -->
+                                <div class="form-group">
+                                    <label for="salesPeriod">Select Sales Period:</label>
+                                    <select id="salesPeriod" class="form-control" style="width: 200px; margin-bottom: 20px;">
+                                        <option value="week">Weekly Sales</option>
+                                        <option value="month">Monthly Sales</option>
+                                        <option value="year">Yearly Sales</option>
+                                    </select>
+                                </div>
                                 <!-- Combined Sales Chart -->
                                 <canvas id="combinedSalesChart" width="800" height="400"></canvas>
                             </article>
@@ -151,11 +160,13 @@
                 </div>
                 
                 
+                
+                
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="card mb-4">
                             <article class="card-body">
-                                <h5 class="card-title">Top 10 Best Selling Products</h5>
+                                <h5 class="card-title">Top Best Selling Products</h5>
                                 <ul class="list-unstyled">
                                     <% topProducts.forEach(product => { %>
                                         <li><%= product.productName %>: <%= product.totalQuantity %> units</li>
@@ -168,7 +179,7 @@
                     <div class="col-lg-4">
                         <div class="card mb-4">
                             <article class="card-body">
-                                <h5 class="card-title">Top 10 Best Selling Categories</h5>
+                                <h5 class="card-title">Top Best Selling Categories</h5>
                                 <ul class="list-unstyled">
                                     <% topCategories.forEach(category => { %>
                                         <li><%= category.name %>: <%= category.totalQuantity %> units</li>
@@ -181,7 +192,7 @@
                     <div class="col-lg-4">
                         <div class="card mb-4">
                             <article class="card-body">
-                                <h5 class="card-title">Top 10 Best Selling Brands</h5>
+                                <h5 class="card-title">Top Best Selling Brands</h5>
                                 <ul class="list-unstyled">
                                     <% topBrands.forEach(brand => { %>
                                         <li><%= brand._id %>: <%= brand.totalSold %> units</li>
@@ -283,28 +294,24 @@
     $(document).ready(function() {
         // Combined Sales Chart
         var ctxCombined = document.getElementById('combinedSalesChart').getContext('2d');
+        var chartLabelsWeek = JSON.parse('<%- chartLabelsWeek %>'); // Parse JSON data correctly
+        var chartDataWeek = JSON.parse('<%- chartDataWeek %>'); // Parse JSON data correctly
         var chartLabelsMonth = JSON.parse('<%- chartLabelsMonth %>'); // Parse JSON data correctly
         var chartDataMonth = JSON.parse('<%- chartDataMonth %>'); // Parse JSON data correctly
         var chartLabelsYear = JSON.parse('<%- chartLabelsYear %>'); // Parse JSON data correctly
         var chartDataYear = JSON.parse('<%- chartDataYear %>'); // Parse JSON data correctly
-        
+
+        // Initialize the chart with weekly data
         var combinedSalesChart = new Chart(ctxCombined, {
             type: 'bar',
             data: {
-                labels: chartLabelsMonth,
+                labels: chartLabelsWeek,
                 datasets: [
                     {
-                        label: 'Monthly Sales',
-                        data: chartDataMonth,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Yearly Sales',
-                        data: chartDataYear,
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
+                        label: 'Weekly Sales',
+                        data: chartDataWeek,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1
                     }
                 ]
@@ -313,10 +320,60 @@
                 scales: {
                     y: {
                         beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false
+                        }
+                    }
+                },
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Sales Statistics'
                     }
                 }
             }
         });
+
+        // Update chart based on selected period
+        $('#salesPeriod').change(function() {
+            var period = $(this).val();
+            var labels, data, label, backgroundColor, borderColor;
+
+            if (period === 'week') {
+                labels = chartLabelsWeek;
+                data = chartDataWeek;
+                label = 'Weekly Sales';
+                backgroundColor = 'rgba(75, 192, 192, 0.6)';
+                borderColor = 'rgba(75, 192, 192, 1)';
+            } else if (period === 'month') {
+                labels = chartLabelsMonth;
+                data = chartDataMonth;
+                label = 'Monthly Sales';
+                backgroundColor = 'rgba(54, 162, 235, 0.6)';
+                borderColor = 'rgba(54, 162, 235, 1)';
+            } else if (period === 'year') {
+                labels = chartLabelsYear;
+                data = chartDataYear;
+                label = 'Yearly Sales';
+                backgroundColor = 'rgba(255, 99, 132, 0.6)';
+                borderColor = 'rgba(255, 99, 132, 1)';
+            }
+
+            combinedSalesChart.data.labels = labels;
+            combinedSalesChart.data.datasets[0].label = label;
+            combinedSalesChart.data.datasets[0].data = data;
+            combinedSalesChart.data.datasets[0].backgroundColor = backgroundColor;
+            combinedSalesChart.data.datasets[0].borderColor = borderColor;
+            combinedSalesChart.update();
+        });
     });
 </script>
+
+
 </html>

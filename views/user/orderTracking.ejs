@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Digital Empire</title>
+    <title>Order Tracking - Digital Empire</title>
     <meta name="keywords" content="HTML5 Template">
     <meta name="description" content="Molla - Bootstrap eCommerce Template">
     <meta name="author" content="p-themes">
@@ -29,59 +29,41 @@
     <!-- Main CSS File -->
     <link rel="stylesheet" href="/userAssets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('/userassets/images/order-tracking-bg.jpg');
-            /* Background Image URL */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background: #f8f9fa;
             color: #333;
             margin-top: 50px;
         }
 
-        .page-content {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 30px;
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            background-color: #fff;
+            border: none;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .page-title {
-            font-size: 36px;
-            font-weight: 700;
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-        }
-
-        .breadcrumb {
-            background-color: transparent;
-            padding: 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
-        .breadcrumb-item {
-            font-size: 16px;
-            color: #555;
-        }
-
-        .breadcrumb-item.active {
-            color: #007bff;
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
         }
 
         .order-details {
-            border: 1px solid #ccc;
+            border: 1px solid #e9ecef;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            background-color: #f9f9f9;
+            background-color: #fff;
         }
 
         .order-details h2 {
@@ -92,24 +74,18 @@
             margin-bottom: 20px;
         }
 
-        .order-line {
-            margin-bottom: 10px;
-        }
-
         .product-item {
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #e9ecef;
             padding: 15px;
             border-radius: 10px;
-            background-color: #f9f9f9;
+            background-color: #fff;
         }
 
         .product-item h4 {
             margin-top: 0;
-        }
-
-        .product-info p {
-            margin-bottom: 5px;
+            font-size: 18px;
+            color: #007bff;
         }
 
         .status-badge {
@@ -141,27 +117,25 @@
             color: #333;
         }
 
-        .product-details {
-            margin-top: 20px;
-        }
-
         .address {
-            font-family: Arial, sans-serif;
-            border: 1px solid #ccc;
+            border: 1px solid #e9ecef;
             padding: 10px;
             border-radius: 5px;
-            width: 300px;
+            width: 100%;
+            background-color: #f8f9fa;
         }
 
         .address h2 {
             font-size: 16px;
             margin-bottom: 5px;
+            color: #333;
         }
 
         .address p {
             margin: 0;
             font-size: 14px;
             line-height: 1.5;
+            color: #666;
         }
 
         .badge {
@@ -171,32 +145,52 @@
 
         .badge.Pending {
             background-color: #ffc107;
-            color: #000000;
+            color: #000;
         }
 
         .badge.Shipped {
             background-color: #17a2b8;
-            color: #ffffff;
+            color: #fff;
         }
 
         .badge.Delivered {
             background-color: #28a745;
-            color: #ffffff;
+            color: #fff;
         }
 
         .badge.Canceled {
             background-color: #dc3545;
-            color: #ffffff;
+            color: #fff;
         }
 
         .badge.RefundAccepted {
             background-color: #007bff;
-            color: #ffffff;
+            color: #fff;
         }
 
         .badge {
             background-color: #6c757d;
-            color: #ffffff;
+            color: #fff;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .text-center span {
+            color: #007bff;
         }
     </style>
 </head>
@@ -209,19 +203,18 @@
         <div class="card p-4">
             <h3 class="text-center mb-4">Order Tracking - <span>Digi</span></h3>
             <% orderData.forEach(element => { %>
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-md-8">
-                    <div class="card">
+                    <div class="card order-details">
                         <div class="card-body">
                             <h2 class="card-title">Order #<%= element.orderNumber %></h2>
-                            <div class="card-text mb-4"><strong>Address:</strong>
+                            <div class="card-text mb-4">
+                                <strong>Address:</strong>
                                 <div class="address">
                                     <h2><%= element.selectedAddress.fullName %></h2>
-                                    <h2><%= element.selectedAddress.addressLine1 %></h2>
-                                    <h2><%= element.selectedAddress.phoneNumber %></h2>
-                                    <p><%= element.selectedAddress.city %></p>
-                                    <p><%= element.selectedAddress.state %></p>
-                                    <p><%= element.selectedAddress.country %></p>
+                                    <p><%= element.selectedAddress.addressLine1 %></p>
+                                    <p><%= element.selectedAddress.phoneNumber %></p>
+                                    <p><%= element.selectedAddress.city %>, <%= element.selectedAddress.state %>, <%= element.selectedAddress.country %></p>
                                 </div>
                             </div>
                             <div class="card-text mb-4"><strong>Payment Method:</strong> <%= element.paymentMethod %></div>
@@ -233,17 +226,19 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="product-details">
-                        <h3>Products:</h3>
-                        <% element.product.forEach(product => { %>
-                        <div class="product-item">
-                            <h4><%= product.productId.productName %></h4>
-                            <p><strong>Price:</strong> <%= product.productId.varientId.variantPrice %></p>
-                            <p><strong>Quantity:</strong> <%= product.quantity %></p>
+                    <div class="card product-details">
+                        <div class="card-body">
+                            <h3 class="card-title">Products:</h3>
+                            <% element.product.forEach(product => { %>
+                            <div class="product-item">
+                                <h4><%= product.productId.productName %></h4>
+                                <p><strong>Price:</strong> <%= product.productId.varientId.variantPrice %></p>
+                                <p><strong>Quantity:</strong> <%= product.quantity %></p>
+                            </div>
+                            <% }) %>
+                            <a onclick="goBack()" class="btn btn-primary btn-block mt-4">Back</a>
                         </div>
-                        <% }) %>
                     </div>
-                    <a onclick="goBack()" class="btn btn-primary btn-block mt-4">Back</a>
                 </div>
             </div>
             <% }) %>

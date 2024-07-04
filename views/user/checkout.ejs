@@ -428,74 +428,158 @@
         }
 
     
+        // function createRazorpayOrder(orderData) {
+        //     axios.post('/createOrder', { orderData })
+        //         .then(response => {
+        //             var options = {
+        //                 "key": "rzp_test_ADhVz53VKpu01p",
+        //                 "amount": response.data.razorpayOrder.amount,
+        //                 "currency": "INR",
+        //                 "name": "Your Company",
+        //                 "description": "Order Payment",
+        //                 "image": "https://example.com/your_logo.png",
+        //                 "order_id": response.data.razorpayOrder.id,
+        //                 "handler": function (response) {
+        //                     const paymentData = {
+        //                         razorpay_payment_id: response.razorpay_payment_id,
+        //                         razorpay_order_id: response.razorpay_order_id,
+        //                         razorpay_signature: response.razorpay_signature
+        //                     };
+        //                     axios.post('/verifyPayment', paymentData)
+        //                         .then(response => {
+        //                             Swal.fire({
+        //                                 icon: 'success',
+        //                                 title: 'Success',
+        //                                 text: 'Payment successful and verified!',
+        //                             }).then(() => {
+        //                                 window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
+        //                             });
+        //                         })
+        //                         .catch(err => {
+        //                             console.error(err);
+        //                             Swal.fire({
+        //                                 icon: 'error',
+        //                                 title: 'Error',
+        //                                 text: 'Payment verification failed!',
+        //                             });
+        //                         });
+        //                 },
+        //                 "prefill": {
+        //                     "name": "Customer Name",
+        //                     "email": "customer@example.com",
+        //                     "contact": "9999999999"
+        //                 },
+        //                 "notes": {
+        //                     "address": "Customer Address"
+        //                 },
+        //                 "theme": {
+        //                     "color": "#F37254"
+        //                 }
+        //             };
+        //             var rzp1 = new Razorpay(options);
+                    
+        //             rzp1.on('payment.failed', function (response) {
+        //                 console.error(response.error);
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Error',
+        //                     text: 'Payment failed. Please try again.'
+        //                 });
+        //             });
+        //             rzp1.open();
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: 'Failed to create order. Please try again.'
+        //             });
+        //         });
+        // }
+
+
         function createRazorpayOrder(orderData) {
-    axios.post('/createOrder', { orderData })
-        .then(response => {
-            var options = {
-                "key": "rzp_test_ADhVz53VKpu01p",
-                "amount": response.data.razorpayOrder.amount,
-                "currency": "INR",
-                "name": "Your Company",
-                "description": "Order Payment",
-                "image": "https://example.com/your_logo.png",
-                "order_id": response.data.razorpayOrder.id,
-                "handler": function (response) {
-                    const paymentData = {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature
+            axios.post('/createOrder', { orderData })
+                .then(response => {
+                    var options = {
+                        "key": "rzp_test_ADhVz53VKpu01p",
+                        "amount": response.data.razorpayOrder.amount,
+                        "currency": "INR",
+                        "name": "Your Company",
+                        "description": "Order Payment",
+                        "image": "https://example.com/your_logo.png",
+                        "order_id": response.data.razorpayOrder.id,
+                        "handler": function (response) {
+                            const paymentData = {
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            };
+                            axios.post('/verifyPayment', paymentData)
+                                .then(response => {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: 'Payment successful and verified!',
+                                    }).then(() => {
+                                        window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
+                                    });
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Payment verification failed!',
+                                    });
+                                });
+                        },
+                        "prefill": {
+                            "name": "Customer Name",
+                            "email": "customer@example.com",
+                            "contact": "9999999999"
+                        },
+                        "notes": {
+                            "address": "Customer Address"
+                        },
+                        "theme": {
+                            "color": "#F37254"
+                        }
                     };
-                    axios.post('/verifyPayment', paymentData)
-                        .then(response => {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Payment successful and verified!',
-                            }).then(() => {
-                                window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
-                            });
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Payment verification failed!',
-                            });
+                    var rzp1 = new Razorpay(options);
+
+                    rzp1.on('payment.failed', function (response) {
+                        console.error(response.error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Payment failed. Please try again.'
+                        }).then(() => {
+                            window.location.reload()
                         });
-                },
-                "prefill": {
-                    "name": "Customer Name",
-                    "email": "customer@example.com",
-                    "contact": "9999999999"
-                },
-                "notes": {
-                    "address": "Customer Address"
-                },
-                "theme": {
-                    "color": "#F37254"
-                }
-            };
-            var rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', function (response) {
-                console.error(response.error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Payment failed. Please try again.'
+
+                        axios.post('/paymentFailed', { orderId: response.error.metadata.order_id })
+                            .then(response => {
+                                console.log('Order status updated to Payment Pending and cart cleared');
+                            })
+                            .catch(err => {
+                                console.error('Failed to update order status:', err);
+                            });
+                    });
+
+                    rzp1.open();
+                })
+                .catch(error => {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to create order. Please try again.'
+                    });
                 });
-            });
-            rzp1.open();
-        })
-        .catch(error => {
-            console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Failed to create order. Please try again.'
-            });
-        });
 }
+
 
 function placeOrderAxios(orderData) {
     axios.post('/orders', orderData)

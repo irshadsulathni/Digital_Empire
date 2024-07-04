@@ -9,6 +9,7 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Wallet = require('../models/walletModel');
 const { error } = require('console');
+const { note } = require('pdfkit');
 
 var instance = new Razorpay({
     key_id: process.env.KEY_ID,
@@ -51,9 +52,11 @@ const loadsuccessPage = async (req, res) => {
     }
 }
 
+
+// this controller for razorpay
+
 const createOrder = async (req, res) => {
     try {
-        // Function to generate a unique receipt ID
         function generateReceiptId() {
             const timestamp = Date.now();
             const random = Math.floor(Math.random() * 1000);
@@ -64,10 +67,9 @@ const createOrder = async (req, res) => {
         const address = req.body.orderData.selectedAddress;
         const productData = await Cart.findOne({ userId });
         if (!productData) {
-            return res.status(404).json({error:"Cart not found"});
+            return res.status(404).json({ error: "Cart not found" });
         }
 
-        // Retrieve discount from session or Cart model
         const discount = productData.discount || req.session.discount || 0;
         const amount = productData.cartTotal;
         const currency = 'INR';
@@ -80,7 +82,6 @@ const createOrder = async (req, res) => {
             specialInstructions: "Please gift wrap the items"
         };
 
-        // Create Razorpay order
         const razorpayOrder = await instance.orders.create({
             amount: amount * 100,
             currency: currency,
@@ -94,10 +95,9 @@ const createOrder = async (req, res) => {
         });
 
         if (!cartData || cartData.product.length === 0) {
-            return res.status(400).json({error:"Cart is Empty"});
+            return res.status(400).json({ error: "Cart is Empty" });
         }
 
-        // Check stock
         for (const item of cartData.product) {
             if (item.productId && item.productId.varientId) {
                 const currentStock = item.productId.varientId.variantQuantity;
@@ -122,28 +122,26 @@ const createOrder = async (req, res) => {
         counter.seq++;
         await counter.save();
 
-        // Create MongoDB order
         const newOrder = new Order({
             userId,
             product: products.map((item) => ({
                 productId: item.productId,
                 quantity: item.quantity,
                 subTotal: item.subTotal,
-                _id: item._id 
+                _id: item._id
             })),
             orderTotal: amount,
             discount: discount,
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
-            status: 'Pending', 
-            paymentStatus: false, 
-            timeStamp: new Date(), 
-            razorpayOrderId: razorpayOrder.id 
+            status: 'Confirmed',
+            paymentStatus: false,
+            timeStamp: new Date(),
+            razorpayOrderId: razorpayOrder.id
         });
 
         const orderData = await newOrder.save();
-
 
         res.status(200).json({ orderData, razorpayOrder });
 
@@ -153,7 +151,55 @@ const createOrder = async (req, res) => {
     }
 };
 
+const paymentFailed = async (req, res) => {
+    try {
+        const { orderId } = req.body;
 
+        const order = await Order.findOne({ razorpayOrderId: orderId });
+        if (order) {
+            order.status = 'Payment Pending';
+            order.paymentStatus = false;
+            await order.save();
+
+            // Delete the cart items for the user
+            await Cart.deleteOne({ userId: order.userId });
+
+            res.status(200).send('Order status updated to Payment Pending and cart cleared');
+        } else {
+            res.status(404).send('Order not found');
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const retryPaymentOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const existingOrder = await Order.findOne({ _id: orderId });
+
+        if (!existingOrder) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        const razorpayOrder = await instance.orders.create({
+            amount: existingOrder.orderTotal * 100, // Amount in paise
+            currency: 'INR',
+            receipt: existingOrder.receipt,
+            notes: existingOrder.notes
+        });
+
+        existingOrder.razorpayOrderId = razorpayOrder.id;
+        existingOrder.status = 'Confirmed';
+        await existingOrder.save();
+
+        res.status(200).json({ razorpayOrder });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+};
 
 
 const verifyOrder = async (req, res) => {
@@ -240,6 +286,7 @@ const createWalletOrder = async (req, res) => {
             })),
             orderTotal: orderTotal,
             discount: discount,
+            status :'Confirmed',
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
@@ -271,16 +318,12 @@ const createWalletOrder = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
 module.exports = {
     loadCheckOut,
     loadsuccessPage,
     createOrder,
     verifyOrder,
-    createWalletOrder
+    createWalletOrder,
+    paymentFailed,
+    retryPaymentOrder
 }

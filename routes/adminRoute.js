@@ -89,5 +89,4 @@ admin_route.post('/checkCouponCode', coupenController.checkCouponCode);
 admin_route.post('/sales-report', adminController.salesReportFilter)
 
 
-
 module.exports = admin_route; 

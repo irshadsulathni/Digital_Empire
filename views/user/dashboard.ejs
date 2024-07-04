@@ -38,6 +38,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/path/to/your/styles.css">
 
+    <!-- Include Razorpay Library -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
     <style>
         .password-container {
             position: relative;
@@ -206,6 +210,11 @@
             /* Danger color for canceled */
             color: #ffffff;
             /* Text color */
+        }
+
+        .badge.Confirmed {
+            background-color: #8bc34a;
+            color: #ffffff;
         }
 
         /* Default style for other statuses */
@@ -576,7 +585,6 @@
                                                                                     <% if (product.productId) { %>
                                                                                         <%= product.productId.productName %>
                                                                                     <% } else { %>
-                                                                                        <!-- Handle the case where productId is null or undefined -->
                                                                                         Product ID not available
                                                                                     <% } %>
                                                                                 </td>
@@ -589,12 +597,14 @@
                                                                 </table>
                                                                 <p><strong>SubTotal:</strong> $<%= element.orderTotal %></p>
                                                                 <a href="/orderTracking?orderId=<%= element._id %>" class="btn btn-primary">View Details</a>
-                                                                <% if (element.status !== 'Canceled' && element.status !== 'Delivered' && element.status !== 'Refund' && element.status !== 'Return Processing' && element.status !== 'Refund Accepted' ) { %>
+                                                                <% if (element.status === 'Payment Pending') { %>
+                                                                    <button class="btn btn-warning" onclick="retryPayment('<%= element._id %>')">Retry Payment</button>
+                                                                <% } %>
+                                                                <% if (element.status !== 'Canceled' && element.status !== 'Delivered' && element.status !== 'Payment Pending' && element.status !== 'Refund' && element.status !== 'Return Processing' && element.status !== 'Refund Accepted') { %>
                                                                     <button class="btn btn-danger" onclick="cancelOrder('<%= element._id %>')">Cancel Order</button>
                                                                 <% } else if (element.status === 'Delivered') { %>
                                                                     <button class="btn btn-danger" onclick="openModal('<%= element._id %>')">Return Order</button>
                                                                 <% } %>
-
                                                             </div>
                                                         <% }) %>
                                                     <% } else { %>
@@ -1204,6 +1214,95 @@
                 event.preventDefault();
                 window.location.href = '/address'
             }
+        </script>
+
+
+
+<!-- this for retryPayment from the razorpay -->
+
+
+          <script>
+    function retryPayment(orderId) {
+        console.log(orderId);
+        axios.post('/retryPaymentOrder', { orderId })
+
+        
+            .then(response => {
+                var options = {
+                    "key": "rzp_test_ADhVz53VKpu01p", // Replace with your actual Razorpay key
+                    "amount": response.data.razorpayOrder.amount,
+                    "currency": "INR",
+                    "name": "Your Company",
+                    "description": "Order Payment",
+                    "image": "https://example.com/your_logo.png",
+                    "order_id": response.data.razorpayOrder.id,
+                    "handler": function (response) {
+                        const paymentData = {
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        };
+                        axios.post('/verifyPayment', paymentData)
+                            .then(response => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Payment successful and verified!',
+                                }).then(() => {
+                                    window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
+                                });
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Payment verification failed!',
+                                });
+                            });
+                    },
+                    "prefill": {
+                        "name": "Customer Name",
+                        "email": "customer@example.com",
+                        "contact": "9999999999"
+                    },
+                    "notes": {
+                        "address": "Customer Address"
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+
+                rzp1.on('payment.failed', function (response) {
+                    console.error(response.error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Payment failed. Please try again.'
+                    });
+
+                    axios.post('/paymentFailed', { orderId: response.error.metadata.order_id })
+                        .then(response => {
+                            console.log('Order status updated to Payment Pending and cart cleared');
+                        })
+                        .catch(err => {
+                            console.error('Failed to update order status:', err);
+                        });
+                });
+
+                rzp1.open();
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to create order. Please try again.'
+                });
+            });
+    }
         </script>
 </body>
 

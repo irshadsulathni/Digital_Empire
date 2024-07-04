@@ -112,9 +112,12 @@ user_route.post('/sort' , userController.sortShop);
 user_route.post('/address' , auth.isLogin, addressController.addAddress);
 user_route.post('/editAddress', auth.isLogin, addressController.editAddress);
 
+// razorpay order
 user_route.post('/createOrder', auth.isLogin, checkOutController.createOrder);
 user_route.post('/verifyPayment', auth.isLogin, checkOutController.verifyOrder);
-user_route.post('/createWalletOrder', auth.isLogin, checkOutController.createWalletOrder)
+user_route.post('/paymentFailed', auth.isLogin , checkOutController.paymentFailed);
+user_route.post('/retryPaymentOrder', auth.isLogin ,checkOutController.retryPaymentOrder)
+user_route.post('/createWalletOrder', auth.isLogin, checkOutController.createWalletOrder);
 
 
 module.exports = user_route;

@@ -161,6 +161,7 @@ const denyReturn = async (req, res)=>{
  * ********************************************/
 
 
+// this controller for COD
 
 const orders = async (req, res) => {
     try {
@@ -173,7 +174,7 @@ const orders = async (req, res) => {
             },
         });
 
-        if(cartData.cartTotal > 50000){
+        if(cartData.cartTotal > 10000){
             return res.status(500).send({message : "Amount to want use razorpay or Wallet"})
         }
 
@@ -225,6 +226,7 @@ const orders = async (req, res) => {
             orderTotal,
             discount,
             selectedAddress,
+            status: 'Confirmed',
             paymentMethod,
             orderNumber: counter.seq,
         });
@@ -578,6 +580,7 @@ const downloadInvoice = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
 
 module.exports = {
     loadOrder,

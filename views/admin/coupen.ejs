@@ -122,67 +122,55 @@
                             <div class="col-md-9">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Code</th>
-                                                <th>Min Amount</th>
-                                                <th>Amount</th>
-                                                <th>Expired</th>
-                                                <th>status</th>
-                                                <th class="text-end">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% coupen.forEach(element=> { %>
+                                        <% if (coupen.length <= 0) { %>
+                                            <p style="text-align: center;">No Coupon Created</p>
+                                        <% } else { %>
+                                            <thead>
                                                 <tr>
-                                                    <td>
-                                                        <%= element.name %>
-                                                    </td>
-                                                    <td>
-                                                        <%= element.coupenCode %>
-                                                    </td>
-                                                    <td>
-                                                        <%= element.minimumAmount %>
-                                                    </td>
-                                                    <td>
-                                                        <%= element.amount %>
-                                                    </td>
-                                                    <td>
-                                                        <%= new Date(element.expired).toLocaleDateString() %>
-                                                    </td>
+                                                    <th>Name</th>
+                                                    <th>Code</th>
+                                                    <th>Min Amount</th>
+                                                    <th>Amount</th>
+                                                    <th>Expired</th>
+                                                    <th>Status</th>
+                                                    <th class="text-end">Action</th>
+                                                </tr>
+                                            </thead>
+                                        <% } %>
+                                        <tbody>
+                                            <% coupen.forEach(element => { %>
+                                                <tr>
+                                                    <td><%= element.name %></td>
+                                                    <td><%= element.coupenCode %></td>
+                                                    <td><%= element.minimumAmount %></td>
+                                                    <td><%= element.amount %></td>
+                                                    <td><%= new Date(element.expired).toLocaleDateString() %></td>
                                                     <td>
                                                         <% if (new Date(element.expired) < new Date()) { %>
                                                             <span class="text-danger">Expired</span>
-                                                            <% } else { %>
-                                                                <span class="text-success">Active</span>
-                                                                <% } %>
+                                                        <% } else { %>
+                                                            <span class="text-success">Active</span>
+                                                        <% } %>
                                                     </td>
                                                     <td class="text-end">
-                                                        <div class="">
-                                                            <a href="#" data-bs-toggle="dropdown"
-                                                                class="btn btn-light rounded btn-sm font-sm">
+                                                        <div class="dropdown">
+                                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm">
                                                                 <i class="material-icons md-more_horiz"></i>
                                                             </a>
-                                                            <div class="dropdown-menu">
+                                                            <div class="dropdown-menu dropdown-menu-end">
                                                                 <!-- <a class="dropdown-item" href="#">View detail</a> -->
-
-                                                                <!-- <a class="dropdown-item" id="edit"
-                                                                    href="/admin/editCoupen?coupenId=<%= element._id %>">Edit
-                                                                    Coupon</a> -->
-                                                                <a class="dropdown-item text-danger"
-                                                                    href="/admin/coupen/deleteCoupen?coupenId=<%= element._id %>">Delete</a>
+                                                                <!-- <a class="dropdown-item" id="edit" href="/admin/editCoupen?coupenId=<%= element._id %>">Edit Coupon</a> -->
+                                                                <a class="dropdown-item text-danger" href="/admin/coupen/deleteCoupen?coupenId=<%= element._id %>">Delete</a>
                                                             </div>
                                                         </div>
-                                                        <!-- dropdown //end -->
                                                     </td>
                                                 </tr>
-                                                <% }) %>
+                                            <% }) %>
                                         </tbody>
-
                                     </table>
                                 </div>
                             </div>
+                            
                             <!-- .col// -->
                         </div>
                         <!-- .row // -->

@@ -144,11 +144,18 @@
                                 </thead>
                                 <tbody>
 
-
-                                    <% returnData.forEach(element=> { %>
+                                    <% if (!returnData || returnData.length === 0) { %>
+                                        <p>no Return data</p>
+                                    <% } else  { %>
+                                        
+                                        <% returnData.forEach(element=> { %>
                                         <tr>
                                             <td>
-                                                <%= element.orderId.orderNumber %>
+                                                <% if (element.orderId) { %>
+                                                    <%= element.orderId.orderNumber %>
+                                                <% } else { %>
+                                                    <p>Product is not avalibale</p>
+                                               <% }%>
                                             </td>
                                             <td>
                                                 <%= element.from.email %>
@@ -176,6 +183,10 @@
                                             
                                         </tr>
                                         <% }) %>
+                                        
+                                   <% }%>
+
+                                   
 
 
                                 </tbody>
@@ -227,8 +238,8 @@
                         position: "right",
                         backgroundColor: "green",
                     }).showToast();
+                    window.location.reload();
 
-                    // Optionally, update the UI to reflect the refund status
                 } catch (error) {
                     console.error("Error processing refund:", error);
 
@@ -258,6 +269,7 @@
                             position: "right",
                             backgroundColor: "green",
                         }).showToast();
+                        window.location.reload();
                     })
                     .catch(function (error) {
                         console.error("Error denying return:", error);

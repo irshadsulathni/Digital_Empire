@@ -70,7 +70,8 @@ admin_route.get('/returnDeatiles', auth.isLogin, orderController.loadReturnOrder
 admin_route.get('/coupen', auth.isLogin, coupenController.loadCoupen);
 admin_route.get('/coupen/deleteCoupen', coupenController.deleteCoupen);
 admin_route.get('/salesReport', auth.isLogin , adminController.salesReport)
-admin_route.get('/offer', auth.isLogin, offerController.loadOffer)
+admin_route.get('/offer', auth.isLogin, offerController.loadOffer);
+admin_route.get('/offer/deleteOffer', auth.isLogin, offerController.deleteOffer)
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList',  adminController.blockOrUnblockUser);

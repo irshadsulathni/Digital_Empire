@@ -116,7 +116,10 @@
                                                 <tr>
                                                     <td><%= offer.name %></td>
                                                     <td><%= offer.percentage %></td>
-                                                    <td><%= offer.expireDate %></td>
+                                                    <td><%= offer.expireDate.getDate()%>/
+                                                        <%= offer.expireDate.getMonth() + 1 %>/
+                                                        <%= offer.expireDate.getFullYear() %>
+                                                    </td>
                                                     <td>
                                                         <% if (new Date(offer.expireDate) < new Date()) { %>
                                                             <span class="text-danger">Expired</span>
@@ -130,7 +133,7 @@
                                                                 <i class="material-icons md-more_horiz"></i>
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item text-danger" href="/admin/coupon/deleteCoupon?couponId=<%= offer._id %>">Delete</a>
+                                                                <a class="dropdown-item text-danger" href="/admin/offer/deleteOffer?offerId=<%= offer._id %>">Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>

@@ -4,6 +4,7 @@ const Category = require('../models/categoryModel');
 const Variant = require('../models/varientModel');
 const fs = require('fs');
 const path = require('path')
+const Offer = require('../models/offerModel')
 /*********************************************
  * 
  * 
@@ -38,9 +39,10 @@ const loadProduct = async (req, res) => {
 
         const count = await Product.countDocuments({});
 
-        const totalPage = Math.ceil(count / firstPage)
+        const totalPage = Math.ceil(count / firstPage);
+        const offerData = await Offer.find({})
 
-        res.render('admin/product', { variantData, productData, activeProductMessage: 'active', totalPage, currentPage })
+        res.render('admin/product', { variantData, productData, activeProductMessage: 'active', totalPage, currentPage,offerData })
 
     } catch (error) {
         console.log(error.message);

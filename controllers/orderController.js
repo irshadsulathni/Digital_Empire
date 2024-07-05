@@ -101,6 +101,8 @@ const acceptReturn = async (req, res)=>{
             return res.status(404).json({error:'Order not found'})
         }
 
+        await Return.findOneAndDelete({orderId:orderId})
+
         res.status(200).json({success:'success'})
         
     } catch (error) {   
@@ -120,7 +122,7 @@ const denyReturn = async (req, res)=>{
         const updateDenyStatus = await Order.findOneAndUpdate({_id:orderId},
             {$set: {status:"Denied"}}
         )
-
+        await Return.findOneAndDelete({orderId:orderId})
         return res.status(200).json({success:'success'})
     } catch (error) {
         console.log(error.message);

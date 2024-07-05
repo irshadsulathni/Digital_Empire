@@ -192,13 +192,13 @@
                                     </a>
                                 </li>
                             <% } %>
-                
+
                             <% for(let i = 1; i <= totalPage; i++) { %>
                                 <li class="page-item <%= i === currentPage ? 'active' : '' %>">
                                     <a class="page-link" href="/admin/product?page=<%= i %>"><%= i %></a>
                                 </li>
                             <% } %>
-                
+
                             <% if(currentPage < totalPage){ %>
                                 <li class="page-item">
                                     <a class="page-link" href="/admin/product?page=<%= currentPage + 1 %>" aria-label="Next">
@@ -208,8 +208,8 @@
                             <% } %>
                         </ul>
                     </nav>
-                </div>
-                
+            </div>
+
                 
                 
             </section>

@@ -71,7 +71,8 @@ admin_route.get('/coupen', auth.isLogin, coupenController.loadCoupen);
 admin_route.get('/coupen/deleteCoupen', coupenController.deleteCoupen);
 admin_route.get('/salesReport', auth.isLogin , adminController.salesReport)
 admin_route.get('/offer', auth.isLogin, offerController.loadOffer);
-admin_route.get('/offer/deleteOffer', auth.isLogin, offerController.deleteOffer)
+admin_route.get('/offer/deleteOffer', auth.isLogin, offerController.deleteOffer);
+admin_route.get('/getOffer', auth.isLogin, offerController.getOffer)
 
 admin_route.post('/adminLogin', adminController.verifyLogin);
 admin_route.post('/userList',  adminController.blockOrUnblockUser);
@@ -89,7 +90,8 @@ admin_route.post('/denyReturn', orderController.denyReturn);
 admin_route.post('/addCoupen', coupenController.addCoupen);
 admin_route.post('/checkCouponCode', coupenController.checkCouponCode);
 admin_route.post('/sales-report', adminController.salesReportFilter);
-admin_route.post('/addOffer', offerController.addOffer)
-
+admin_route.post('/addOffer', offerController.addOffer);
+admin_route.post('/applyOffer', offerController.applyOffer)
+admin_route.post('/removeOffer', offerController.removeOffer)
 
 module.exports = admin_route; 

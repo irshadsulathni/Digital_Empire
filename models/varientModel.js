@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 // Define the variant schema
 const variantSchema = new mongoose.Schema({
-    productId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Product',
-        required:true
+    productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
     },
     variantPrice: {
         type: Number,
@@ -34,9 +34,21 @@ const variantSchema = new mongoose.Schema({
     variantColor: {
         type: String,
         required: true
+    },
+    offerApplied: {
+        type: Boolean,
+        default: false 
+    },
+    offerDetails: {
+        priceAfterOfferApplied: {
+            type: Number,
+            default: 0
+        },
+        offerPercentage: {
+            type: Number,
+            default: 0
+        }
     }
 });
 
-
 module.exports = mongoose.model('Variant', variantSchema);
-

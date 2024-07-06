@@ -10,7 +10,8 @@ const Category = require('../models/categoryModel');
 const Cart = require('../models/cartModal');
 const Order = require('../models/orderModel');
 const Coupen  = require ('../models/coupenModel');
-const Wallet = require('../models/walletModel')
+const Wallet = require('../models/walletModel');
+const Offer = require('../models/offerModel')
 
 
 // Password Hashing for security & threating from Hackers
@@ -495,7 +496,7 @@ const loadShop = async (req, res) => {
         const gpu = await Variant.distinct("variantGPU");
         const color = await Variant.distinct('variantColor');
         const categoryData = await Category.find({ list: false });
-
+        const offerData = await Offer.find({})
         res.render('user/shop', {
             productData,
             varientData,
@@ -508,7 +509,7 @@ const loadShop = async (req, res) => {
             color,
             totalPages,
             currentPage: page,
-            search
+            search,offerData
         });
     } catch (error) {
         console.log(error.message);

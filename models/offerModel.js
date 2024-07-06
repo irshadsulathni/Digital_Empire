@@ -1,30 +1,34 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const offerSchma = mongoose.Schema({
-    name :{
-        type:String,
-        required:true
+const offerSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
     },
-    categoryId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Category'
+    offerUsed: [
+        {
+            categoryId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Category'
+            },
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product'
+            }
+        }
+    ],
+    expireDate: {
+        type: Date,
+        required: true
     },
-    productId:{
-        type:mongoose.Types.ObjectId,
-        ref:'Product'
+    timeStamp: {
+        type: Date,
+        default: Date.now
     },
-    expireDate:{
-        type:Date,
-        required:true
-    },
-    timeStamp:{
-        type:Date,
-        default:Date.now()
-    },
-    percentage:{
-        type:Number,
-        required:true
+    percentage: {
+        type: Number,
+        required: true
     }
-})
+});
 
-module.exports = mongoose.model('Offer', offerSchma)
+module.exports = mongoose.model('Offer', offerSchema);

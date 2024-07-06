@@ -48,6 +48,9 @@ const loadProduct = async (req, res) => {
         console.log(error.message);
     }
 }
+
+
+
 const loadAddProduct = async (req, res) => {
     try {
         const productId = req.body.productId

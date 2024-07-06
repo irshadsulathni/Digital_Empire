@@ -74,6 +74,60 @@
         .custom-swal-background {
             background-color: #f8f9fa;
         }
+
+        /* offer showing */
+
+        .img-wrap {
+    position: relative;
+    /* Ensure relative positioning for absolute child elements */
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.image-container img {
+    display: block;
+    max-width: 100%; /* Ensure image fits container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.applyOfferBtn {
+    position: absolute;
+    bottom: 10px; /* Adjust button position */
+    right: 10px; /* Adjust button position */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 10; /* Ensure button is above the image */
+}
+
+.applyOfferBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Adjust button styling as needed */
+
+.removeOfferBtn {
+    position: absolute;
+    bottom: 10px; /* Adjust button position */
+    right: 10px; /* Adjust button position */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 10; /* Ensure button is above the image */
+}
+
+.removeOfferBtn:hover {
+    background-color: #0056b3;
+}
     </style>
 </head>
 
@@ -139,23 +193,49 @@
                                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                                         <div class="card card-product-grid">
                                             <div class="img-wrap">
-                                                <img src="<%= element.productImage[0] %>" name="productImage"
-                                                    multiple />
+                                                <img src="<%= element.productImage[0] %>" name="productImage" multiple />
+                                                
+                                                <!-- Modal -->
+                                                <div id="offerModal-<%= element._id %>" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="close">&times;</span>
+                                                        <h2>Available Offers</h2>
+                                                        <ul id="offerList-<%= element._id %>">
+                                                            <!-- Offer details will be dynamically added here -->
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Apply or Remove Offer Button -->
+                                                <% const variant = variantData.find(variant => variant.productId.toString() === element._id.toString()); %>
+                                                <% if (variant && variant.offerApplied) { %>
+                                                    <button id="removeOfferBtn-<%= element._id %>" class="removeOfferBtn" data-product-id="<%= element._id %>">Remove Offer</button>
+                                                <% } else { %>
+                                                    <button id="applyOfferBtn-<%= element._id %>" class="applyOfferBtn" data-product-id="<%= element._id %>">Apply Offer</button>
+                                                <% } %>
                                             </div>
+                                            
+                                            
+                                            
                                             <div class="info-wrap">
                                                 <a class="title" data-bs-toggle="modal" data-bs-target="#variantModal"
                                                     onclick="updateModal('<%= JSON.stringify(variantData[index]) %>')">
                                                     <%= element.productName %>
                                                 </a>
                                                 <% if (variantData[index]) { %>
-                                                    <div class="price mt-1">₹<%= variantData[index].variantPrice %>
-                                                    </div>
-                                                    <div class="price mt-1">💻<%= variantData[index].variantQuantity %>
-                                                    </div>
+                                                    <% if (variantData[index].offerApplied && variantData[index].offerDetails && typeof variantData[index].offerDetails.priceAfterOfferApplied === 'number') { %>
+                                                        <div class="price mt-1">₹<%= variantData[index].offerDetails.priceAfterOfferApplied.toFixed(2) %></div>
                                                     <% } else { %>
-                                                        <div class="price mt-1">Price Unavailable</div>
-                                                        <div class="price mt-1">Quantity Unavailable</div>
-                                                        <% } %>
+                                                        <div class="price mt-1">₹<%= variantData[index].variantPrice.toFixed(2) %></div>
+                                                    <% } %>
+                                                    <div class="price mt-1">💻<%= variantData[index].variantQuantity %></div>
+                                                <% } else { %>
+                                                    <div class="price mt-1">Price Unavailable</div>
+                                                    <div class="price mt-1">Quantity Unavailable</div>
+                                                <% } %>
+                                                
+                                                
+                                                
                                             </div>
                                             <div class="card-footer p-0">
                                                 <a href="/admin/editProduct?productId=<%= element._id %>"
@@ -324,7 +404,6 @@
 
             function updateModal(datas) {
                 let data = JSON.parse(datas);
-                console.log(data.variantPrice);
                 document.getElementById('variantPrice').value = `₹ ${data.variantPrice}`
                 document.getElementById('variantProcessor').value = data.variantProcessor
                 document.getElementById('variantRAM').value = data.variantRAM
@@ -361,6 +440,168 @@
             }
             
         </script>
+
+
+<script>
+    document.addEventListener('click', async function(event) {
+        if (event.target.classList.contains('applyOfferBtn')) {
+            const productId = event.target.dataset.productId;
+    
+            try {
+                const response = await fetch('/admin/getOffer', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to fetch offers');
+                }
+    
+                const data = await response.json();
+    
+                const { value: offerName } = await Swal.fire({
+                    title: 'Select an Offer',
+                    input: 'select',
+                    inputOptions: Object.fromEntries(data.map(offer => [
+                        offer.name,
+                        `${offer.name} - ${offer.percentage}% (Expires: ${new Date(offer.expireDate).toLocaleDateString()})`
+                    ])),
+                    inputPlaceholder: 'Select an offer',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    },
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to select an offer';
+                        }
+                    }
+                });
+    
+                if (offerName) {
+                    const confirmApply = await Swal.fire({
+                        title: `Apply ${offerName}?`,
+                        text: `Are you sure you want to apply this offer to product`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Apply',
+                        cancelButtonText: 'Cancel',
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        }
+                    });
+    
+                    if (confirmApply.isConfirmed) {
+                        const applyOfferResponse = await fetch('/admin/applyOffer', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ offerName: offerName, productId: productId })
+                        });
+    
+                        if (!applyOfferResponse.ok) {
+                            throw new Error('Failed to apply offer');
+                        }
+    
+                        event.target.style.display = 'none'; // Hide the "Apply Offer" button
+                        const removeOfferBtn = document.createElement('button');
+                        removeOfferBtn.id = `removeOfferBtn-${productId}`;
+                        removeOfferBtn.classList.add('removeOfferBtn');
+                        removeOfferBtn.dataset.productId = productId;
+                        removeOfferBtn.innerText = 'Remove Offer';
+                        event.target.parentElement.appendChild(removeOfferBtn);
+    
+                        Swal.fire({
+                            title: 'Offer Applied!',
+                            text: 'The offer has been successfully applied.',
+                            icon: 'success',
+                            customClass: {
+                                popup: 'custom-swal-background'
+                            }
+                        }).then(() => {
+                            window.location.reload(); // Reload the page after closing the Swal dialog
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching or applying offer:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Failed to fetch or apply offer!',
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    }
+                });
+            }
+        } else if (event.target.classList.contains('removeOfferBtn')) {
+            const productId = event.target.dataset.productId;
+    
+            const confirmRemove = await Swal.fire({
+                title: 'Remove Offer?',
+                text: 'Are you sure you want to remove the offer from this product?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Remove',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'custom-swal-background'
+                }
+            });
+    
+            if (confirmRemove.isConfirmed) {
+                try {
+                    const removeOfferResponse = await fetch('/admin/removeOffer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ productId: productId })
+                    });
+    
+                    if (!removeOfferResponse.ok) {
+                        throw new Error('Failed to remove offer');
+                    }
+    
+                    event.target.style.display = 'none'; // Hide the "Remove Offer" button
+                    const applyOfferBtn = document.createElement('button');
+                    applyOfferBtn.id = `applyOfferBtn-${productId}`;
+                    applyOfferBtn.classList.add('applyOfferBtn');
+                    applyOfferBtn.dataset.productId = productId;
+                    applyOfferBtn.innerText = 'Apply Offer';
+                    event.target.parentElement.appendChild(applyOfferBtn);
+    
+                    Swal.fire({
+                        title: 'Offer Removed!',
+                        text: 'The offer has been successfully removed.',
+                        icon: 'success',
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        }
+                    }).then(() => {
+                        window.location.reload(); // Reload the page after closing the Swal dialog
+                    });
+                } catch (error) {
+                    console.error('Error removing offer:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Failed to remove offer!',
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        }
+                    });
+                }
+            }
+        }
+    });
+</script>
+
+
 
 </body>
 

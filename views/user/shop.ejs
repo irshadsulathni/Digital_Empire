@@ -100,271 +100,66 @@
 
                         <div class="products">
                             <div class="row">
-                                <!-- <div class="col-6 col-md-4 col-lg-4 col-xl-3">
-                                <div class="product">
-                                    <figure class="product-media">
-                                        <span class="product-label label-new">New</span>
-                                        <a href="product.html">
-                                            <img src="/userAssets/images/products/product-1.jpg" alt="Product image" class="product-image">
-                                        </a>
-
-                                        <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action 
-
-                                        <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                                        </div><!-- End .product-action 
-                                    </figure>End .product-media
-
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#">Women</a>
-                                        </div><!-- End .product-cat 
-                                        <h3 class="product-title"><a href="product.html">Nunc dignissim risus</a></h3><!-- End .product-title 
-                                        <div class="product-price">
-                                            $50.00
-                                        </div><!-- End .product-price 
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 0%;"></div><!-- End .ratings-val 
-                                            </div><!-- End .ratings 
-                                            <span class="ratings-text">( 0 Reviews )</span>
-                                        </div><!-- End .rating-container 
-
-                                        <div class="product-nav product-nav-dots">
-                                            <a href="#" style="background: #cc9966;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" class="active" style="background: #ebebeb;"><span class="sr-only">Color name</span></a>
-                                        </div><!-- End .product-nav 
-                                    </div><!-- End .product-body 
-                                </div><!-- End .product 
-                            </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-                                <% if(productData !=='undefined' ){ %>
-                                    <% productData.forEach((element,index)=> { %>
-
-
+                                <% if (productData && productData.length > 0) { %>
+                                    <% productData.forEach((element, index) => { %>
                                         <div class="col-6 col-md-4 col-lg-4 col-xl-3">
                                             <div class="product">
                                                 <figure class="product-media">
                                                     <a href="productPage?productId=<%= element._id %>">
-                                                        <img src="<%= element.productImage[0] %>" alt="Product image"
-                                                            class="product-image">
+                                                        <img src="<%= element.productImage[0] %>" alt="Product image" class="product-image">
                                                     </a>
-
+                        
+                                                    <!-- Display offer label if offerApplied is true -->
+                                                    <% if (element.varientId.offerApplied) { %>
+                                                        <span class="product-label label-sale"><%= element.varientId.offerDetails.offerPercentage %> off</span>
+                                                    <% } %>
+                        
                                                     <div class="product-action-vertical">
-                                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"
-                                                            onclick="addToWishlist('<%= element._id %>','<%= element.varientId._id %>')"><span>add
-                                                                to wishlist</span></a>
+                                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist('<%= element._id %>','<%= element.varientId._id %>')">
+                                                            <span>add to wishlist</span>
+                                                        </a>
                                                     </div><!-- End .product-action -->
-
+                        
                                                     <div class="product-action action-icon-top">
-                                                        <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>','<%= element._id %>')" class="btn-product btn-cart"><span>add to
-                                                                cart</span></a>
-                                                        <!-- <a href="popup/quickView.html" class="btn-product btn-quickview"
-                                                            title="Quick view"><span>quick view</span></a> -->
-                                                        <!-- <a href="#" class="btn-product btn-compare"
-                                                            title="Compare"><span>compare</span></a> -->
+                                                        <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>','<%= element._id %>')" class="btn-product btn-cart">
+                                                            <span>add to cart</span>
+                                                        </a>
+                                                        <!-- <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a> -->
+                                                        <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a> -->
                                                     </div><!-- End .product-action -->
                                                 </figure><!-- End .product-media -->
-
+                        
                                                 <div class="product-body">
                                                     <div class="product-cat">
                                                         <a href="#">Accessories</a>
                                                     </div><!-- End .product-cat -->
-                                                    <h3 class="product-title"><a href="productPage?productId=<%= element._id %>">
-                                                            <%= element.productName %>
-                                                        </a></h3><!-- End .product-title -->
+                                                    <h3 class="product-title">
+                                                        <a href="productPage?productId=<%= element._id %>"><%= element.productName %></a>
+                                                    </h3><!-- End .product-title -->
                                                     <div class="product-price">
-                                                        ₹ <%= element.varientId.variantPrice %>
+                                                        <% if (element.varientId.offerApplied) { %>
+                                                            <span class="new-price">₹ <%= element.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %></span>
+                                                            <span class="old-price">₹ <%= element.varientId.variantPrice.toFixed(2) %></span>
+                                                        <% } else { %>
+                                                            ₹ <%= element.varientId.variantPrice.toFixed(2) %>
+                                                        <% } %>
                                                     </div><!-- End .product-price -->
                                                     <div class="ratings-container">
                                                         <div class="ratings">
-                                                            <div class="ratings-val" style="width: 80%;"></div>
-                                                            <!-- End .ratings-val -->
+                                                            <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
                                                         </div><!-- End .ratings -->
                                                         <span class="ratings-text">( 11 Reviews )</span>
                                                     </div><!-- End .rating-container -->
                                                 </div><!-- End .product-body -->
                                             </div><!-- End .product -->
-                                        </div><!-- End .col-sm-6 col-lg-4 col-xl-3 -->
-                                        <% }); %>
-                                            <% } %>
-
-                                                <!-- <div class="col-6 col-md-4 col-lg-4 col-xl-3">
-                                <div class="product">
-                                    <figure class="product-media">
-                                        <span class="product-label label-sale">30% off</span>
-                                        <a href="product.html">
-                                            <img src="/userAssets/images/products/product-3.jpg" alt="Product image" class="product-image">
-                                        </a>
-
-                                        <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action 
-
-                                        <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                                        </div><!-- End .product-action 
-                                    </figure><!-- End .product-media 
-
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#">Women</a>
-                                        </div><!-- End .product-cat
-                                        <h3 class="product-title"><a href="product.html">Aliquam tincidunt mauris</a></h3><!-- End .product-title
-                                        <div class="product-price">
-                                            <span class="new-price">$50.00</span>
-                                            <span class="old-price">$84.00</span>
-                                        </div><!-- End .product-price 
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 40%;"></div><!-- End .ratings-val
-                                            </div><!-- End .ratings 
-                                            <span class="ratings-text">( 4 Reviews )</span>
-                                        </div><!-- End .rating-container 
-
-                                        <div class="product-nav product-nav-dots">
-                                            <a href="#" class="active" style="background: #cc9966;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #7fc5ed;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #e8c97a;"><span class="sr-only">Color name</span></a>
-                                        </div><!-- End .product-nav 
-                                    </div><!-- End .product-body 
-                                </div><!-- End .product 
-                            </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-
-                                                <!-- <div class="col-6 col-md-4 col-lg-4 col-xl-3">
-                                <div class="product">
-                                    <figure class="product-media">
-                                        <a href="product.html">
-                                            <img src="/userAssets/images/products/product-4.jpg" alt="Product image" class="product-image">
-                                        </a>
-
-                                        <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action 
-
-                                        <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                                        </div><!-- End .product-action 
-                                    </figure><!-- End .product-media 
-
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#">Dresses</a>
-                                        </div><!-- End .product-cat 
-                                        <h3 class="product-title"><a href="product.html">Brown paperbag waist pencil skirt</a></h3><!-- End .product-title
-                                        <div class="product-price">
-                                            $60.00
-                                        </div><!-- End .product-price 
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val
-                                            </div><!-- End .ratings 
-                                            <span class="ratings-text">( 2 Reviews )</span>
-                                        </div><!-- End .rating-container 
-
-                                        <div class="product-nav product-nav-dots">
-                                            <a href="#" class="active" style="background: #cc9966;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #7b5d36;"><span class="sr-only">Color name</span></a>
-                                        </div><!-- End .product-nav 
-                                    </div><!-- End .product-body 
-                                </div><!-- End .product
-                            </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-
-                                                <!-- <div class="col-6 col-md-4 col-lg-4 col-xl-3">
-                                <div class="product">
-                                    <figure class="product-media">
-                                        <span class="product-label label-out">Out of stock</span>
-                                        <a href="product.html">
-                                            <img src="/userAssets/images/products/product-6.jpg" alt="Product image" class="product-image">
-                                        </a>
-
-                                        <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action 
-
-                                        <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                                        </div><!-- End .product-action 
-                                    </figure><!-- End .product-media 
-
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#">Jackets</a>
-                                        </div><!-- End .product-cat 
-                                        <h3 class="product-title"><a href="product.html">Khaki utility boiler jumpsuit</a></h3><!-- End .product-title
-                                        <div class="product-price">
-                                            <span class="out-price">$120.00</span>
-                                        </div><!-- End .product-price 
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val 
-                                            </div><!-- End .ratings 
-                                            <span class="ratings-text">( 6 Reviews )</span>
-                                        </div><!-- End .rating-container 
-                                    </div><!-- End .product-body 
-                                </div><!-- End .product 
-                            </div>End .col-sm-6 col-lg-4 col-xl-3 -->
-
-
-                                                <!-- <div class="col-6 col-md-4 col-lg-4 col-xl-3">
-                                <div class="product">
-                                    <figure class="product-media">
-                                        <span class="product-label label-top">Top</span>
-                                        <a href="product.html">
-                                            <img src="/userAssets/images/products/product-11.jpg" alt="Product image" class="product-image">
-                                        </a>
-
-                                        <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                        </div><!-- End .product-action 
-
-                                        <div class="product-action action-icon-top">
-                                            <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                            <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                                            <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                                        </div><!-- End .product-action 
-                                    </figure><!-- End .product-media 
-
-                                    <div class="product-body">
-                                        <div class="product-cat">
-                                            <a href="#">Shoes</a>
-                                        </div><!-- End .product-cat 
-                                        <h3 class="product-title"><a href="product.html">Light brown studded Wide fit wedges</a></h3><!-- End .product-title
-                                        <div class="product-price">
-                                            $110.00
-                                        </div><!-- End .product-price 
-                                        <div class="ratings-container">
-                                            <div class="ratings">
-                                                <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val 
-                                            </div><!-- End .ratings 
-                                            <span class="ratings-text">( 2 Reviews )</span>
-                                        </div><!-- End .rating-container 
-
-                                        <div class="product-nav product-nav-dots">
-                                            <a href="#" class="active" style="background: #cc9966;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                                            <a href="#" style="background: #dac1a7;"><span class="sr-only">Color name</span></a>
-                                        </div><!-- End .product-nav 
-                                    </div><!-- End .product-body 
-                                </div><!-- End .product 
-                            </div>End .col-sm-6 col-lg-4 col-xl-3 -->
+                                        </div><!-- End .col-6 col-md-4 col-lg-4 col-xl-3 -->
+                                    <% }); %>
+                                <% } else { %>
+                                    <p>No products found.</p>
+                                <% } %>
                             </div><!-- End .row -->
-
-                            <!-- <div class="load-more-container text-center">
-                                <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i
-                                        class="icon-refresh"></i></a>
-                            </div>End .load-more-container -->
                         </div><!-- End .products -->
+                        
 
                         <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
                         <aside class="sidebar-shop sidebar-filter">
@@ -754,38 +549,45 @@
         }
 
         function displayProduct(filteredData) {
-            const productAfterFilter = document.querySelector('.products .row');
-            console.log('data filter', filteredData);
-            productAfterFilter.innerHTML = '';
+    const productContainer = document.querySelector('.products .row');
+    productContainer.innerHTML = ''; // Clear previous product list
 
-
-
-            filteredData.forEach((element, index) => {
-                const productElement = document.createElement('div');
-                productElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
-                productElement.innerHTML = `
+    filteredData.forEach((element) => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
+        productElement.innerHTML = `
             <div class="product">
                 <figure class="product-media">
                     <a href="productPage?productId=${element._id}">
                         <img src="${element.productImage[0]}" alt="Product image" class="product-image">
                     </a>
+                    ${element.varientId.offerApplied ? `<span class="product-label label-sale">${element.varientId.offerDetails.offerPercentage} off</span>` : ''}
+
                     <div class="product-action-vertical">
                         <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
                     </div>
+
                     <div class="product-action action-icon-top">
-                        <a href="/cart" class="btn-product btn-cart"><span>add to cart</span></a>
-                        <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                        <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
+                        <a href="#" class="btn-product btn-cart" onclick="addToCart('${element.varientId.variantPrice}', '${element._id}')"><span>add to cart</span></a>
+                        <!-- <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a> -->
+                        <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a> -->
                     </div>
                 </figure>
+
                 <div class="product-body">
                     <div class="product-cat">
                         <a href="#">Accessories</a>
                     </div>
-                    <h3 class="product-title"><a href="product.html">${element.productName}</a></h3>
+
+                    <h3 class="product-title">
+                        <a href="productPage?productId=${element._id}">${element.productName}</a>
+                    </h3>
+
                     <div class="product-price">
-                        ₹ ${filteredData[index].varientId.variantPrice}
+                        ₹ ${element.varientId.offerApplied ? element.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) : element.varientId.variantPrice.toFixed(2)}
+                        ${element.varientId.offerApplied ? `<span class="old-price">₹ ${element.varientId.variantPrice.toFixed(2)}</span>` : ''}
                     </div>
+
                     <div class="ratings-container">
                         <div class="ratings">
                             <div class="ratings-val" style="width: 80%;"></div>
@@ -794,10 +596,9 @@
                     </div>
                 </div>
             </div>`;
-                productAfterFilter.appendChild(productElement);
-            });
-        }
-
+        productContainer.appendChild(productElement);
+    });
+}
 
         function sortProducts() {
             var selectedOption = $("#sortby").val();
@@ -830,70 +631,79 @@
         }
 
         function displayProductAfterSorting(sortedData) {
+            console.log("Sorted Data Received:", sortedData); // Check sorted data in console
             const productAfterSort = document.querySelector('.products .row');
-            productAfterSort.innerHTML = ''
+            productAfterSort.innerHTML = '';
 
-            sortedData.forEach((element, index) => {
+            sortedData.forEach((element) => {
                 const sortedElement = document.createElement('div');
                 sortedElement.classList.add('col-6', 'col-md-4', 'col-lg-4', 'col-xl-3');
                 sortedElement.innerHTML = `
-            <div class="product">
-                <figure class="product-media">
-                    <a href="productPage?productId=${element._id}">
-                        <img src="${element.productImage[0]}" alt="Product image" class="product-image">
-                    </a>
-                    <div class="product-action-vertical">
-                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                    </div>
-                    <div class="product-action action-icon-top">
-                        <a href="/cart" class="btn-product btn-cart"><span>add to cart</span></a>
-                        <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a>
-                        <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
-                    </div>
-                </figure>
-                <div class="product-body">
-                    <div class="product-cat">
-                        <a href="#">Accessories</a>
-                    </div>
-                    <h3 class="product-title"><a href="product.html">${element.productName}</a></h3>
-                    <div class="product-price">
-                        ₹ ${sortedData[index].varientId.variantPrice}
-                    </div>
-                    <div class="ratings-container">
-                        <div class="ratings">
-                            <div class="ratings-val" style="width: 80%;"></div>
-                        </div>
-                        <span class="ratings-text">( 11 Reviews )</span>
-                    </div>
-                </div>
-            </div>`;
+                    <div class="products">
+                                    <div class="row">
+                                        <% if (productData && productData.length > 0) { %>
+                                            <% productData.forEach((element, index) => { %>
+                                                <div class="col-6 col-md-4 col-lg-4 col-xl-3">
+                                                    <div class="product">
+                                                        <figure class="product-media">
+                                                            <a href="productPage?productId=<%= element._id %>">
+                                                                <img src="<%= element.productImage[0] %>" alt="Product image" class="product-image">
+                                                            </a>
+                                
+                                                            <!-- Display offer label if offerApplied is true -->
+                                                            <% if (element.varientId.offerApplied) { %>
+                                                                <span class="product-label label-sale"><%= element.varientId.offerDetails.offerPercentage %> off</span>
+                                                            <% } %>
+                                
+                                                            <div class="product-action-vertical">
+                                                                <a href="#" class="btn-product-icon btn-wishlist btn-expandable" onclick="addToWishlist('<%= element._id %>','<%= element.varientId._id %>')">
+                                                                    <span>add to wishlist</span>
+                                                                </a>
+                                                            </div><!-- End .product-action -->
+                                
+                                                            <div class="product-action action-icon-top">
+                                                                <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>','<%= element._id %>')" class="btn-product btn-cart">
+                                                                    <span>add to cart</span>
+                                                                </a>
+                                                                <!-- <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a> -->
+                                                                <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a> -->
+                                                            </div><!-- End .product-action -->
+                                                        </figure><!-- End .product-media -->
+                                
+                                                        <div class="product-body">
+                                                            <div class="product-cat">
+                                                                <a href="#">Accessories</a>
+                                                            </div><!-- End .product-cat -->
+                                                            <h3 class="product-title">
+                                                                <a href="productPage?productId=<%= element._id %>"><%= element.productName %></a>
+                                                            </h3><!-- End .product-title -->
+                                                            <div class="product-price">
+                                                                <% if (element.varientId.offerApplied) { %>
+                                                                    <span class="new-price">₹ <%= element.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %></span>
+                                                                    <span class="old-price">₹ <%= element.varientId.variantPrice.toFixed(2) %></span>
+                                                                <% } else { %>
+                                                                    ₹ <%= element.varientId.variantPrice.toFixed(2) %>
+                                                                <% } %>
+                                                            </div><!-- End .product-price -->
+                                                            <div class="ratings-container">
+                                                                <div class="ratings">
+                                                                    <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                                                                </div><!-- End .ratings -->
+                                                                <span class="ratings-text">( 11 Reviews )</span>
+                                                            </div><!-- End .rating-container -->
+                                                        </div><!-- End .product-body -->
+                                                    </div><!-- End .product -->
+                                                </div><!-- End .col-6 col-md-4 col-lg-4 col-xl-3 -->
+                                            <% }); %>
+                                        <% } else { %>
+                                            <p>No products found.</p>
+                                        <% } %>
+                                    </div><!-- End .row -->
+                                </div>`;
                 productAfterSort.appendChild(sortedElement);
             });
         }
 
-
-        // function addToWishlist(productId) {
-
-        //     axios.post('/addTowishlist', { productId: productId })
-        //         .then(response => {
-        //             console.log('Success:', response.data);
-        //             Swal.fire({
-        //                 title: 'Success!',
-        //                 text: 'Product added to wishlist',
-        //                 icon: 'success',
-        //                 confirmButtonText: 'OK'
-        //             });
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             Swal.fire({
-        //                 title: 'Error!',
-        //                 text: 'An error occurred',
-        //                 icon: 'error',
-        //                 confirmButtonText: 'OK'
-        //             });
-        //         });
-        // }
 
 
         function addToWishlist(productId,varientId) {

@@ -145,7 +145,6 @@ const removeOffer = async (req, res) => {
         console.error('Error removing offer:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-    
 };
 
 module.exports = {

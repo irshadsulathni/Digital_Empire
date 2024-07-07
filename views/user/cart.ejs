@@ -101,17 +101,19 @@
                                                                 </div><!-- End .product -->
                                                             </td>
                                                             <td class="price-col">
-                                                                $<%= element.productId.varientId.variantPrice %>
+                                                                $<%= element.productId.varientId.offerDetails && element.productId.varientId.offerDetails.priceAfterOfferApplied ? element.productId.varientId.offerDetails.priceAfterOfferApplied : element.productId.varientId.variantPrice %>
                                                             </td>
+                                                            
                                                             <td class="quantity-col">
                                                                 <div class="cart-product-quantity">
                                                                     <input id="count<%= element.productId._id %>"
-                                                                           onchange="updateQuantity('<%= element.productId._id %>')"
+                                                                           onchange="updateQuantity('<%= element.productId._id %>', '<%= element.productId.varientId.offerDetails && element.productId.varientId.offerDetails.priceAfterOfferApplied ? element.productId.varientId.offerDetails.priceAfterOfferApplied : element.productId.varientId.variantPrice %>')"
                                                                            type="number" class="form-control"
                                                                            value="<%= element.quantity %>" min="1" max="<%= element.productId.varientId.variantQuantity %>"
                                                                            step="1" data-decimals="0" required>
-                                                                </div><!-- End .cart-product-quantity -->
+                                                                </div>
                                                             </td>
+                                                            
                                                             <td class="total-col" id="productTotal<%= element.productId._id %>">
                                                                 <%= element.subTotal %>
                                                             </td>
@@ -273,53 +275,54 @@
 
 
     <script>
-         function updateQuantity(productId) {
-            const count = document.getElementById(`count${productId}`).value;
-            updateCount(productId, count);
-        }
+         function updateQuantity(productId, price) {
+    const count = document.getElementById(`count${productId}`).value;
+    updateCount(productId, count, price);
+}
 
-        function updateCount(id, count) {
+function updateCount(id, count, price) {
+    const countInput = document.getElementById(`count${id}`);
+    const currentValue = parseInt(countInput.value);
+    const maxAllowed = 5;
 
-            const countInput = document.getElementById(`count${id}`);
-            const currentValue = parseInt(countInput.value);
-            const maxAllowed = 5;
+    if (maxAllowed <= currentValue) {
+        Swal.fire({
+            title: 'Limit Reached',
+            text: 'You can add a maximum of ' + maxAllowed + ' items to your cart.',
+            icon: 'warning',
+            customClass: {
+                popup: 'custom-swal-background'
+            },
+            confirmButtonText: 'OK'
+        });
+        return; // Return early to prevent sending the fetch request
+    }
 
-            if (maxAllowed <= currentValue) {
-                Swal.fire({
-                    title: 'Limit Reached',
-                    text: 'You can add a maximum of ' + maxAllowed + ' items to your cart.',
-                    icon: 'warning',
-                    customClass: {
-                        popup: 'custom-swal-background'
-                    },
-                    confirmButtonText: 'OK'
-                });
+    fetch('/updateCount', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: id,
+            count: count,
+            price: price // Include the price in the request body
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
             }
-
-            fetch('/updateCount', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    productId: id,
-                    count: count
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById(`productTotal${id}`).textContent = data.total;
-                    document.getElementById(`cartTotal`).textContent = data.cartTotal;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById(`productTotal${id}`).textContent = data.total;
+            document.getElementById(`cartTotal`).textContent = data.cartTotal;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 
         

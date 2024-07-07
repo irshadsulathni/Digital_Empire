@@ -36,7 +36,7 @@ const addTowishlist = async (req, res) => {
                 userId: userId,
                 products: [{
                     productId: productId,
-                    varientId: varientId  // Include varientId here
+                    varientId: varientId  
                 }]
             });
         } else {
@@ -45,7 +45,7 @@ const addTowishlist = async (req, res) => {
             if (productExists) {
                 return res.status(400).json({ error: 'Product already in wishlist' });
             } else {
-                wishlist.products.push({ productId: productId, varientId: varientId }); // Include varientId here
+                wishlist.products.push({ productId: productId, varientId: varientId }); 
             }
         }
 

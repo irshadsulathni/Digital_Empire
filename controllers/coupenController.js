@@ -135,9 +135,6 @@ const applyCoupen = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Coupon already used' });
         }
 
-        coupon.usersList.push({ userId: userId, coupenUsed: true });
-        await coupon.save();
-
         const discount = coupon.amount;
         const newCartTotal = cartTotal - discount;
 

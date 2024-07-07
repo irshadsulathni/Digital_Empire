@@ -36,8 +36,8 @@ const loadcart = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const { productId, quantity, subtotal } = req.body;
-
         const userId = req.session.user_id;
+
         if (!userId) {
             return res.redirect('/user/signUp');
         }
@@ -54,10 +54,10 @@ const addToCart = async (req, res) => {
                 }]
             });
         } else {
-            const productIndex = cart.product.findIndex(item => item.productId.toString() === productId);
-            if (productIndex !== -1) {
-                cart.product[productIndex].quantity += quantity;
-                cart.product[productIndex].subTotal += subtotal;
+            const productExists = cart.product.some(item => item.productId.toString() === productId);
+
+            if (productExists) {
+                return res.json({ message: 'Item already in cart', alreadyInCart: true });
             } else {
                 cart.product.push({
                     productId: productId,
@@ -72,45 +72,54 @@ const addToCart = async (req, res) => {
 
         await cart.save();
 
-        return res.json({ message: 'Item added to cart successfully' });
+        return res.json({ message: 'Item added to cart successfully', alreadyInCart: false });
     } catch (error) {
         console.error('Error adding item to cart:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
 
-const updateqQuantity = async (req, res)=>{
+const updateqQuantity = async (req, res) => {
     try {
-        const userId = req.session.user_id
-        const { productId,count } = req.body;
+        const userId = req.session.user_id;
+        const { productId, count } = req.body;
         let total;
-        const cartData = await Cart.findOne({userId:userId}).populate({
+        
+        const cartData = await Cart.findOne({ userId: userId }).populate({
             path: 'product.productId',
             populate: {
                 path: 'varientId'
             }
         });
 
-        cartData.product.forEach( async(element)=>{
-            if(element.productId._id == productId ){                
+        cartData.product.forEach(async (element) => {
+            if (element.productId._id.toString() === productId) {
                 element.quantity = count;
-                element.subTotal = element.productId.varientId.variantPrice * element.quantity
+                
+                const variant = element.productId.varientId;
+                const price = variant.offerDetails && variant.offerDetails.priceAfterOfferApplied 
+                    ? variant.offerDetails.priceAfterOfferApplied 
+                    : variant.variantPrice;
+                
+                element.subTotal = price * element.quantity;
                 total = element.subTotal;
             }
-        })
+        });
 
-        const cartTotal = cartData.product.reduce((total,product)=> total + product.subTotal ,0 );
+        const cartTotal = cartData.product.reduce((total, product) => total + product.subTotal, 0);
 
-        cartData.cartTotal  = cartTotal;
+        cartData.cartTotal = cartTotal;
 
-        await cartData.save()
+        await cartData.save();
 
-        return res.status(200).json({success:'success',total,cartTotal})
+        return res.status(200).json({ success: 'success', total, cartTotal });
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ error: 'An error occurred' });
     }
-}
+};
+
 
 const deleteCartItem = async (req, res) => {
     try {

@@ -7,7 +7,7 @@ const { model } = require("mongoose");
 const { findOne, populate } = require("../models/userModel");
 const Return = require('../models/returnOrder');
 const Wallet = require('../models/walletModel');
-const Coupen = require('../models/counterModel');
+const Coupen = require('../models/coupenModel');
 const PDFDocument = require('pdfkit');
 const fs = require('fs')
 const path = require('path');
@@ -199,7 +199,13 @@ const orders = async (req, res) => {
             }
         }
 
-        const { selectedAddress, paymentMethod } = req.body;
+        const { selectedAddress, paymentMethod,couponCode } = req.body;
+
+        const coupon = await Coupen.findOne({coupenCode:couponCode})
+
+        coupon.usersList.push({userId:userId,coupenUsed:true})
+        await coupon.save();
+    
         const products = Array.isArray(cartData.product) ? cartData.product : [];
 
         // Retrieve the discount from the session if applied

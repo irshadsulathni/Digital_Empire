@@ -267,9 +267,16 @@
                                                        <% } %>
                                                             <br>
 
-                                                            <div class="product-price">₹<%=
-                                                                    productData.varientId.variantPrice %>
+                                                            <div class="product-price">
+                                                                <% if (productData.varientId.offerApplied) { %>
+                                                                    <span class="new-price">₹ <%= productData.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %></span>
+                                                                    <span class="old-price">₹ <%= productData.varientId.variantPrice.toFixed(2) %></span>
+                                                                <% } else { %>
+                                                                    ₹ <%= productData.varientId.variantPrice.toFixed(2) %>
+                                                                <% } %>
                                                             </div><!-- End .product-price -->
+
+
 
                                                             <div class="product-content">
                                                                 <p>
@@ -320,15 +327,14 @@
 
                                                             <div class="product-details-action">
                                                                 <button class="btn-product btn-cart"
-                                                                    id="add-to-cart-btn" <% if
-                                                                    (productData.varientId.variantQuantity <=0) { %>
-                                                                    disabled <% } %>
-                                                                        onclick="addToCart('<%=
-                                                                            productData.varientId.variantPrice %>', '<%=
-                                                                                productData._id %>')">
-                                                                                <span id="cart-btn-text">add to
-                                                                                    cart</span>
+                                                                        id="add-to-cart-btn"
+                                                                        <% if (productData.varientId.variantQuantity <= 0) { %>
+                                                                            disabled
+                                                                        <% } %>
+                                                                        onclick="addToCart('<%= productData.varientId.variantPrice %>', '<%= productData._id %>', '<%= productData.varientId.offerDetails.priceAfterOfferApplied %>')">
+                                                                    <span id="cart-btn-text">add to cart</span>
                                                                 </button>
+
 
 
 
@@ -974,29 +980,39 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <script>
-        function addToCart(variantPrice, productId) {
+        function addToCart(variantPrice, productId, offerPrice) {
+            const variantPriceNum = variantPrice ? Number(variantPrice) : 0;
+            const offerPriceNum = offerPrice ? Number(offerPrice) : 0;
+            const price = offerPriceNum !== 0 ? offerPriceNum : variantPriceNum;
+            const qty = 1;
+            const subtotal = qty * price;
 
-            const price = Number(variantPrice);
-            const qty = 1; // Set the quantity to 1 for simplicity
-            const subtotal = qty * price; // Calculate subtotal
-
-            // Send a POST request using Axios
             axios.post('/cart', {
                 productId: productId,
                 quantity: qty,
                 subtotal: subtotal
             })
-                .then(function (success) {
-                    window.location.href = '/cart';
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
-        }
+            .then(function (response) {
+                const { message, alreadyInCart } = response.data;
 
-        function isProductAdded(productId) {
-            return false;
-        }
+                if (alreadyInCart) {
+                    // Show SweetAlert indicating the item is already in the cart
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already in Cart',
+                        text: 'This item is already in your cart.',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    // Redirect to cart page after successful addition
+                    window.location.href = '/cart';
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+            
+  }
     </script>
 
 

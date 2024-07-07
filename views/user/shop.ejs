@@ -121,9 +121,16 @@
                                                     </div><!-- End .product-action -->
                         
                                                     <div class="product-action action-icon-top">
-                                                        <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>','<%= element._id %>')" class="btn-product btn-cart">
-                                                            <span>add to cart</span>
-                                                        </a>
+                                                        <% if (element.varientId.variantQuantity <= 0) { %>
+                                                            <a href="#" class="btn-product btn-cart disabled" onclick="event.preventDefault();">
+                                                                <span>Out of Stock</span>
+                                                            </a>
+                                                        <% } else { %>
+                                                            <a href="#" onclick="addToCart('<%= element.varientId.variantPrice %>', '<%= element._id %>', '<%= element.varientId.offerDetails.priceAfterOfferApplied %>')" class="btn-product btn-cart">
+                                                                <span>add to cart</span>
+                                                            </a>
+                                                        <% } %>
+                                                        
                                                         <!-- <a href="popup/quickView.html" class="btn-product btn-quickview" title="Quick view"><span>quick view</span></a> -->
                                                         <!-- <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a> -->
                                                     </div><!-- End .product-action -->
@@ -707,8 +714,6 @@
 
 
         function addToWishlist(productId,varientId) {
-            console.log('productId',productId);
-            console.log('varientId',varientId);
             axios.post('/addTowishlist', { 
                 productId: productId,
                 varientId:varientId 
@@ -755,28 +760,39 @@
 
 
         //for add to Cart
+        function addToCart(variantPrice, productId, offerPrice) {
+            const variantPriceNum = variantPrice ? Number(variantPrice) : 0;
+            const offerPriceNum = offerPrice ? Number(offerPrice) : 0;
+            const price = offerPriceNum !== 0 ? offerPriceNum : variantPriceNum;
+            const qty = 1;
+            const subtotal = qty * price;
 
-        function addToCart(variantPrice, productId) {
-            console.log('price',variantPrice);
-            console.log('id', productId);
-        const price = Number(variantPrice);
-        const qty = 1; // Set the quantity to 1 for simplicity
-        const subtotal = qty * price; // Calculate subtotal
+            axios.post('/cart', {
+                productId: productId,
+                quantity: qty,
+                subtotal: subtotal
+            })
+            .then(function (response) {
+                const { message, alreadyInCart } = response.data;
 
-        // Send a POST request using Axios
-        axios.post('/cart', {
-            productId: productId,
-            quantity: qty,
-            subtotal: subtotal
-        })
-            .then(function (success) {
-                window.location.href = '/cart';
+                if (alreadyInCart) {
+                    // Show SweetAlert indicating the item is already in the cart
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already in Cart',
+                        text: 'This item is already in your cart.',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    // Redirect to cart page after successful addition
+                    window.location.href = '/cart';
+                }
             })
             .catch(function (error) {
                 console.error('Error:', error);
             });
-        }
-
+            
+  }
 
     </script>
 

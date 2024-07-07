@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const Wallet = require('../models/walletModel');
 const { error } = require('console');
 const { note } = require('pdfkit');
+const Coupen = require('../models/coupenModel')
 
 var instance = new Razorpay({
     key_id: process.env.KEY_ID,
@@ -110,8 +111,11 @@ const createOrder = async (req, res) => {
             }
         }
 
-        const { selectedAddress, paymentMethod } = req.body.orderData;
+        const { selectedAddress, paymentMethod,couponCode } = req.body.orderData;
         const products = Array.isArray(cartData.product) ? cartData.product : [];
+
+        const coupon = await Coupen.findOne({ coupenCode:couponCode })
+        
 
         let counter = await Counter.findById("orderNumber");
         if (!counter) {
@@ -143,6 +147,10 @@ const createOrder = async (req, res) => {
 
         const orderData = await newOrder.save();
 
+        coupon.usersList.push({userId:userId, coupenUsed:true})
+
+        await coupon.save()
+
         res.status(200).json({ orderData, razorpayOrder });
 
     } catch (error) {
@@ -161,7 +169,7 @@ const paymentFailed = async (req, res) => {
             order.paymentStatus = false;
             await order.save();
 
-            // Delete the cart items for the user
+
             await Cart.deleteOne({ userId: order.userId });
 
             res.status(200).send('Order status updated to Payment Pending and cart cleared');
@@ -233,7 +241,7 @@ const verifyOrder = async (req, res) => {
 const createWalletOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const { selectedAddress, paymentMethod } = req.body;
+        const { selectedAddress, paymentMethod, couponCode } = req.body;
 
         // Fetch user's wallet
         const wallet = await Wallet.findOne({ userId });
@@ -261,6 +269,11 @@ const createWalletOrder = async (req, res) => {
         wallet.balance -= orderTotal;
         wallet.history.push({ type: 'debit', amount: orderTotal, description: 'Order Payment' });
         await wallet.save();
+
+        const coupon = await Coupen.findOne({ coupenCode:couponCode })
+        coupon.usersList.push({userId:userId, coupenUsed:true})
+
+        await coupon.save()
 
         // Increment order number from the counter
         let counter = await Counter.findById("orderNumber");
@@ -308,7 +321,6 @@ const createWalletOrder = async (req, res) => {
         }
         await Cart.deleteOne({ userId });
 
-        // Clear discount from session after order is placed
         delete req.session.discount;
 
         res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id });

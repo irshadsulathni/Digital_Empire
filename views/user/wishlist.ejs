@@ -99,11 +99,16 @@
                                             </td>
                                             <td class="price-col">
                                                 <% if (product.varientId) { %>
-                                                    <%= product.varientId.variantPrice %>
+                                                    <% if (product.varientId.offerApplied && product.varientId.offerDetails.priceAfterOfferApplied) { %>
+                                                        ₹ <%= product.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %>
+                                                    <% } else { %>
+                                                        ₹ <%= product.varientId.variantPrice.toFixed(2) %>
+                                                    <% } %>
                                                 <% } else { %>
                                                     <p>Price Not Available</p>
                                                 <% } %>
                                             </td>
+                                            
                                             <% if (product.varientId) { %>
                                                 <% if (product.varientId.variantQuantity > 0) { %>
                                                     <td class="stock-col"><span class="in-stock">In stock</span></td>
@@ -175,25 +180,39 @@
 </body>
 
 <script>
-    function addToCart(variantPrice, productId) {
-        const price = Number(variantPrice);
-        const qty = 1; // Set the quantity to 1 for simplicity
-        const subtotal = qty * price; // Calculate subtotal
+    function addToCart(variantPrice, productId, offerPrice) {
+            const variantPriceNum = variantPrice ? Number(variantPrice) : 0;
+            const offerPriceNum = offerPrice ? Number(offerPrice) : 0;
+            const price = offerPriceNum !== 0 ? offerPriceNum : variantPriceNum;
+            const qty = 1;
+            const subtotal = qty * price;
 
-        // Send a POST request using Axios
-        axios.post('/cart', {
-            productId: productId,
-            quantity: qty,
-            subtotal: subtotal
-        })
-            .then(function (success) {
-                window.location.href = '/cart';
+            axios.post('/cart', {
+                productId: productId,
+                quantity: qty,
+                subtotal: subtotal
+            })
+            .then(function (response) {
+                const { message, alreadyInCart } = response.data;
+
+                if (alreadyInCart) {
+                    // Show SweetAlert indicating the item is already in the cart
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already in Cart',
+                        text: 'This item is already in your cart.',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    // Redirect to cart page after successful addition
+                    window.location.href = '/cart';
+                }
             })
             .catch(function (error) {
                 console.error('Error:', error);
             });
-    }
-
+            
+  }
     function removeWishlistItem(element) {
         const productId = element.closest('button').getAttribute('data-product-id');
         Swal.fire({

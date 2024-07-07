@@ -49,6 +49,45 @@
             color: orange;
             font-weight: bold;
         }
+                .inventory-message {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .inventory-message.urgent {
+            color: #d9534f; /* Bootstrap danger color */
+            background-color: #f2dede; /* Bootstrap danger background color */
+            border: 1px solid #ebccd1; /* Bootstrap danger border color */
+        }
+
+        .inventory-message.warning {
+            color: #f0ad4e; /* Bootstrap warning color */
+            background-color: #fcf8e3; /* Bootstrap warning background color */
+            border: 1px solid #faebcc; /* Bootstrap warning border color */
+        }
+
+        .product-label.label-out {
+            color: #fff;
+            background-color: #d9534f; /* Bootstrap danger color */
+            padding: 8px 15px;
+            font-size: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .product-label {
+            font-size: 12px;
+            padding: 5px 10px;
+            margin: 5px 0;
+            display: inline-block;
+            border-radius: 3px;
+            color: #fff;
+        }
+
     </style>
 </head>
 
@@ -188,15 +227,15 @@
                     </ol>
 
                     <nav class="product-pager ml-auto" aria-label="Product">
-                        <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous" tabindex="-1">
+                        <!-- <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous" tabindex="-1">
                             <i class="icon-angle-left"></i>
                             <span>Prev</span>
                         </a>
 
                         <a class="product-pager-link product-pager-next" href="#" aria-label="Next" tabindex="-1">
-                            <span>Next</span>
+                            <!-- <span>Next</span> --
                             <i class="icon-angle-right"></i>
-                        </a>
+                        </a> -->
                     </nav><!-- End .pager-nav -->
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
@@ -253,18 +292,16 @@
                                         <%= productData.productName%>
                                     </h1><!-- End .product-title -->
 
-                                    <% if (productData.varientId.variantQuantity >0 &&
-                                        productData.varientId.variantQuantity <=5) { %>
-                                            <p class="inventory-message urgent">Only <%=
-                                                    productData.varientId.variantQuantity %> left</p>
-                                            <% } else if (productData.varientId.variantQuantity>= 6 &&
-                                                productData.varientId.variantQuantity <= 10) { %>
-                                                    <p class="inventory-message warning">Only a few more left</p>
-                                                    <% } else if(productData.varientId.variantQuantity <=0){ %>
-                                                        <p class="inventory-message urgent">Out of Stock</p>
-                                                        <% }else if(!productData.varientId.variantQuantity){ %>
-                                                            <h1>hello</h1>
-                                                       <% } %>
+                                    <% if (productData.varientId.variantQuantity > 0 && productData.varientId.variantQuantity <= 5) { %>
+                                        <p class="inventory-message urgent">Only <%= productData.varientId.variantQuantity %> left</p>
+                                    <% } else if (productData.varientId.variantQuantity >= 6 && productData.varientId.variantQuantity <= 10) { %>
+                                        <p class="inventory-message warning">Only a few more left</p>
+                                    <% } else if (productData.varientId.variantQuantity <= 0) { %>
+                                        <span class="product-label label-out">Out of Stock</span>
+                                    <% } else if (!productData.varientId.variantQuantity) { %>
+                                        <h1>hello</h1>
+                                    <% } %>
+                                    
                                                             <br>
 
                                                             <div class="product-price">
@@ -341,7 +378,7 @@
 
 
                                                                 <div class="details-action-wrapper">
-                                                                    <a href="#" class="btn-product btn-wishlist"
+                                                                    <a href="#" onclick="addToWishlist('<%= productData._id %>','<%= productData.varientId._id %>')" class="btn-product btn-wishlist"
                                                                         title="Wishlist"><span>Add to
                                                                             Wishlist</span></a>
                                                                 </div><!-- End .details-action-wrapper -->
@@ -1013,6 +1050,53 @@
             });
             
   }
+
+
+  function addToWishlist(productId,varientId) {
+            axios.post('/addTowishlist', { 
+                productId: productId,
+                varientId:varientId 
+            })
+            
+                .then(response => {
+                    console.log('Success:', response.data);
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Product added to wishlist',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    let errorMessage = 'An error occurred';
+                    let alertConfig = {
+                        title: 'Oops...',
+                        text: errorMessage,
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    };
+
+                    if (error.response && error.response.data && error.response.data.error) {
+                        // User-specific error
+                        errorMessage = error.response.data.error;
+                        alertConfig.text = errorMessage;
+                    } else if (error.message) {
+                        // System error
+                        errorMessage = error.message;
+                        alertConfig = {
+                            title: 'System Error',
+                            text: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        };
+                    }
+
+                    Swal.fire(alertConfig);
+                });
+        }
+
     </script>
 
 

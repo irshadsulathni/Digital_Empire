@@ -245,14 +245,13 @@ const blockOrUnblockUser = async (req, res) => {
         const userId = req.body.userId;
         
 
-        // Validate and convert userId to ObjectId if necessary
-        if (!mongo.Types.ObjectId.isValid(userId)) {
+        if (!userId) {
             return res.status(400).json({ message: 'Invalid user ID' });
         }
-        const userIdObject = new mongo.Types.ObjectId(userId);
+        const userIdObject = userId;
 
-        // Find the user to check the current status
         const user = await User.findById(userIdObject);
+
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -272,24 +271,47 @@ const blockOrUnblockUser = async (req, res) => {
 
 const salesReport = async (req, res) => {
     try {
-        const orderData = await Order.find().populate('userId').populate('selectedAddress');
+        const firstPage = 10;
+        const currentPage = parseInt(req.query.page) || 1;
+        const startPage = (currentPage - 1) * firstPage;
 
-        const deliveredOrders = await Order.find({ status: 'Delivered' }).populate('userId').populate('selectedAddress');
+        const orderData = await Order.find()
+            .populate('userId')
+            .populate('selectedAddress')
+            .sort({ _id: -1 })
+            .skip(startPage)
+            .limit(firstPage);
+
+        const deliveredOrders = await Order.find({ status: 'Delivered' })
+            .populate('userId')
+            .populate('selectedAddress');
 
         let totalOrderAmount = 0;
         let totalDiscount = 0;
-
         deliveredOrders.forEach(order => {
             totalOrderAmount += order.orderTotal;
             totalDiscount += order.discount;
         });
-        
-        res.render('admin/salesReport', { activeStaticsMessage:'active', orderData, deliveredOrders, totalOrderAmount, totalDiscount });
+
+        const count = await Order.countDocuments({});
+
+        const totalPage = Math.ceil(count / firstPage);
+
+        res.render('admin/salesReport', {
+            activeStaticsMessage: 'active',
+            orderData,
+            deliveredOrders,
+            totalOrderAmount,
+            totalDiscount,
+            totalPage,
+            currentPage
+        });
     } catch (error) {
         console.error('Error fetching sales report data:', error);
         res.status(500).send('Internal Server Error');
     }
 }
+
 
 const salesReportFilter = async (req, res) => {
     try {

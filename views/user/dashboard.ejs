@@ -598,7 +598,11 @@
                                                                                     <% } %>
                                                                                 </td>
                                                                                 <td>
-                                                                                    $<%= product.productId && product.productId.varientId ? product.productId.varientId.variantPrice : '' %>
+                                                                                    <% if (product.productId.varientId.offerApplied == true) { %>
+                                                                                        ₹<%= product.productId && product.productId.varientId.offerDetails ? product.productId.varientId.offerDetails.priceAfterOfferApplied : '' %>
+                                                                                    <% } else{ %>
+                                                                                        ₹<%= product.productId && product.productId.varientId ? product.productId.varientId.variantPrice : '' %>
+                                                                                   <% } %>
                                                                                 </td>
                                                                             </tr>
                                                                         <% }) %>

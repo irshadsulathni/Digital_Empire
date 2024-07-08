@@ -12,6 +12,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs')
 const path = require('path');
 const pdfMake = require('pdfmake')
+const easyinvoice = require('easyinvoice');
 
 
 const loadOrder = async (req, res) => {
@@ -452,10 +453,6 @@ const downloadInvoice = async (req, res) => {
             return `${day}/${month}/${year}`;
         };
 
-        const totalPrice = order.product.reduce((sum, product) => sum + product.quantity * product.productId.varientId.variantPrice, 0);
-        const discount = order.discount || 0;
-        const finalTotal = totalPrice - discount;
-
         const docDefinition = {
             content: [
                 {
@@ -495,7 +492,8 @@ const downloadInvoice = async (req, res) => {
                         body: [
                             ['Product Name', 'Quantity', 'Price (₹)', 'Subtotal (₹)'],
                             ...order.product.map(product => {
-                                const productPrice = product.productId.varientId.variantPrice;
+                                const variant = product.productId.varientId;
+                                const productPrice = variant.offerApplied ? variant.offerDetails.priceAfterOfferApplied : variant.variantPrice;
                                 const subtotal = product.quantity * productPrice;
                                 return [
                                     product.productId.productName,
@@ -504,9 +502,9 @@ const downloadInvoice = async (req, res) => {
                                     `₹${subtotal.toFixed(2)}`
                                 ];
                             }),
-                            [{ text: 'Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${totalPrice.toFixed(2)}`],
-                            [{ text: 'Discount', colSpan: 3, alignment: 'right' }, {}, {}, `₹${discount.toFixed(2)}`],
-                            [{ text: 'Final Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${finalTotal.toFixed(2)}`]
+                            [{ text: 'Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${(order.orderTotal + order.discount).toFixed(2)}`],
+                            [{ text: 'Discount', colSpan: 3, alignment: 'right' }, {}, {}, `₹${order.discount.toFixed(2)}`],
+                            [{ text: 'Final Total', colSpan: 3, alignment: 'right' }, {}, {}, `₹${order.orderTotal.toFixed(2)}`]
                         ]
                     },
                     layout: {
@@ -588,6 +586,7 @@ const downloadInvoice = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
 
 
 module.exports = {

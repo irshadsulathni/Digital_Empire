@@ -111,11 +111,15 @@ const createOrder = async (req, res) => {
             }
         }
 
-        const { selectedAddress, paymentMethod,couponCode } = req.body.orderData;
+        const { selectedAddress, paymentMethod, couponCode } = req.body.orderData;
         const products = Array.isArray(cartData.product) ? cartData.product : [];
 
-        const coupon = await Coupen.findOne({ coupenCode:couponCode })
-        
+        const coupon = await Coupen.findOne({ coupenCode: couponCode });
+
+        if (coupon) {
+            coupon.usersList.push({ userId: userId, coupenUsed: true });
+            await coupon.save();
+        }
 
         let counter = await Counter.findById("orderNumber");
         if (!counter) {
@@ -147,10 +151,6 @@ const createOrder = async (req, res) => {
 
         const orderData = await newOrder.save();
 
-        coupon.usersList.push({userId:userId, coupenUsed:true})
-
-        await coupon.save()
-
         res.status(200).json({ orderData, razorpayOrder });
 
     } catch (error) {
@@ -158,6 +158,7 @@ const createOrder = async (req, res) => {
         res.status(500).json({ error: 'Something went wrong on our end. Please try again later.' });
     }
 };
+
 
 const paymentFailed = async (req, res) => {
     try {
@@ -270,10 +271,12 @@ const createWalletOrder = async (req, res) => {
         wallet.history.push({ type: 'debit', amount: orderTotal, description: 'Order Payment' });
         await wallet.save();
 
-        const coupon = await Coupen.findOne({ coupenCode:couponCode })
-        coupon.usersList.push({userId:userId, coupenUsed:true})
+        const coupon = await Coupen.findOne({ coupenCode: couponCode });
 
-        await coupon.save()
+        if (coupon) {
+            coupon.usersList.push({ userId: userId, coupenUsed: true });
+            await coupon.save();
+        }
 
         // Increment order number from the counter
         let counter = await Counter.findById("orderNumber");

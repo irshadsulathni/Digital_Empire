@@ -205,6 +205,11 @@
         .text-center span {
             color: #007bff;
         }
+        .text-bold {
+        font-weight: bold;
+        color: black; /* Optional: Add color to differentiate the offer price */
+        }
+
     </style>
 </head>
 
@@ -233,7 +238,11 @@
                             <div class="card-text mb-4"><strong>Payment Method:</strong> <%= element.paymentMethod %></div>
                             <div class="card-text mb-4"><strong>Status:</strong> <span class="badge <%= element.status %>"><%= element.status %></span></div>
                             <div class="card-text mb-4"><strong>Order Total:</strong> <%= element.orderTotal %></div>
-                            <div class="card-text mb-4"><strong>Discount:</strong> <%= element.discount %></div>
+                            <% if (element.discount) { %>
+                                <div class="card-text mb-4"><strong>Discount:</strong> <%= element.discount %></div>
+                            <% } else { %>
+
+                           <% } %>
                             <a href="/downloadInvoice/<%= element._id %>" class="btn btn-primary btn-block mt-4">Download Invoice</a>
                         </div>
                     </div>
@@ -245,7 +254,13 @@
                             <% element.product.forEach(product => { %>
                             <div class="product-item">
                                 <h4><%= product.productId.productName %></h4>
-                                <p><strong>Price:</strong> <%= product.productId.varientId.variantPrice %></p>
+                                <p><strong>Price:</strong>
+                                    <% if (product.productId.varientId.offerApplied) { %>
+                                        <span class="text-bold">₹ <%= product.productId.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %></span>
+                                    <% } else { %>
+                                        ₹ <%= product.productId.varientId.variantPrice.toFixed(2) %>
+                                    <% } %>
+                                </p>
                                 <p><strong>Quantity:</strong> <%= product.quantity %></p>
                             </div>
                             <% }) %>

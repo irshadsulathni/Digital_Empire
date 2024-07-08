@@ -18,7 +18,7 @@ var instance = new Razorpay({
   });
 
 
-const loadCheckOut = async (req, res) => {
+  const loadCheckOut = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const cartData = await Cart.findOne({ userId: userId })
@@ -29,16 +29,27 @@ const loadCheckOut = async (req, res) => {
                 }
             });
 
-            // if(cartData.product.length === 0){
-            //     return res.redirect('/cart')
-            //     // return res.status(200).json({ error: 'No Item in the cart' });
-            // }
+        const couponData = await Coupen.find({}).lean(); // Use lean() for better performance
+        const userData = await User.findOne({ _id: userId });
+
+        couponData.forEach(coupon => {
+            if (!Array.isArray(coupon.usersList)) {
+                coupon.usersList = [];
+            }
+            coupon.usersList.forEach(userCoupon => {
+                if (!userCoupon.userId) {
+                    userCoupon.userId = null;
+                }
+            });
+        });
+
         const addressData = await Address.find({ userId: userId });
-        res.render('user/checkout', { addressData, cartData })
+        res.render('user/checkout', { addressData, cartData, coupons: couponData, userData });
     } catch (error) {
         console.log(error);
     }
 }
+
 
 const loadsuccessPage = async (req, res) => {
     try {

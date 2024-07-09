@@ -14,7 +14,11 @@ const orderController = require('../controllers/orderController');
 const wishlistController = require('../controllers/wishlistController');
 const coupenController = require('../controllers/coupenController')
 
-user_route.use(session({secret:process.env.SESSION_SCECRET}));
+user_route.use(session({
+    secret:process.env.SESSION_SCECRET,
+    resave: false,          
+    saveUninitialized: false
+}));
 user_route.use(passport.initialize());
 user_route.use(passport.session());
 

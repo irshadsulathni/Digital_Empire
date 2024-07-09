@@ -156,9 +156,7 @@
                                                 <% } %>
                                                 <td><%= element.orderTotal %></td>
                                                 <td><span class="badge <%= element.status %>"><%= element.status %></span></td>
-                                                <td><%= element.timeStamp.getDate() %> -
-                                                    <%= element.timeStamp.getMonth()+1 %> -
-                                                    <%= element.timeStamp.getFullYear() %> %></td>
+                                                <td><%= element.timeStamp.toDateString() %></td>
                                                 <td><%= element.paymentMethod %> </td>
                                 
                                                 <td class="text">

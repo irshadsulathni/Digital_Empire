@@ -13,6 +13,8 @@ const fs = require('fs')
 const path = require('path');
 const pdfMake = require('pdfmake')
 const easyinvoice = require('easyinvoice');
+const Razorpay = require('razorpay');
+
 
 
 const loadOrder = async (req, res) => {
@@ -587,6 +589,59 @@ const downloadInvoice = async (req, res) => {
     }
 };
 
+const razorpay = new Razorpay({
+    key_id: process.env.KEY_ID, // Use environment variable for key ID
+    key_secret: process.env.KEY_SECRET // Use environment variable for key secret
+});
+
+// add money to the wallet using razorpay
+const addMoney = async(req, res)=>{
+    try {
+        const { amount } = req.body;
+        console.log(amount);
+        const options = {
+            amount: amount * 100, // Convert amount to paise (multiply by 100)
+            currency: 'INR',
+            receipt: `receipt_${Date.now()}`
+        };
+
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    } catch (error) {
+        console.error('Error creating Razorpay order:', error);
+        res.status(500).json({ message: 'Error creating Razorpay order' });
+    }
+}
+
+const updateWallet = async(req, res)=>{
+    try {
+
+        const userId = req.session.user_id;
+
+        const { amount, paymentId } = req.body;
+
+        let wallet = await Wallet.findOne({ userId });
+
+        if (!wallet) {
+            wallet = new Wallet({ userId });
+        }
+
+        wallet.balance += amount;
+        wallet.history.push({
+            type: 'credit',
+            amount,
+            description: `Added to wallet (Payment ID: ${paymentId})`
+        });
+
+
+        await wallet.save();
+
+        res.json({ success: true, balance: wallet.balance });
+    } catch (error) {
+        console.error('Error updating wallet:', error);
+        res.status(500).json({ success: false, message: 'Error updating wallet' });
+    }
+}
 
 
 module.exports = {
@@ -599,5 +654,7 @@ module.exports = {
     loadReturnOrder,
     acceptReturn,
     denyReturn,
-    downloadInvoice
+    downloadInvoice,
+    addMoney,
+    updateWallet
 };

@@ -384,6 +384,7 @@ const loadAuth = (req, res) => {
     }
 
 }
+
 const successGoogleLogin = async (req, res) => {
     try {
         if (!req.body) {

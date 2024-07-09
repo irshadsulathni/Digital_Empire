@@ -333,7 +333,6 @@
                 padding: 15px;
             }
         }
-
         .wallet-balance {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -385,14 +384,6 @@
     border: none;
 }
 
-.wallet-balance {
-    margin-top: 20px;
-}
-
-.wallet-balance {
-    margin-top: 20px;
-}
-
 .transactions {
     list-style: none;
     padding: 0;
@@ -431,6 +422,31 @@
 .transaction-date {
     margin-left: auto;
     color: #555;
+}
+
+#add-amount-form {
+    display: flex;
+    gap: 10px;
+}
+
+#add-amount-form input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#add-amount-form button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#add-amount-form button:hover {
+    background-color: #45a049;
 }
 
 
@@ -680,40 +696,49 @@
                                         </div>
 
                                         <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-                                            <div class="wallet-balance">
-                                                <% if (walletData && walletData.balance != null) { %>
-                                                    <h3>My Wallet</h3>
-                                                    <div class="balance-info">
-                                                        <span class="balance-label">Current Balance:</span>
-                                                        <span class="balance-amount">₹ <%= walletData.balance %></span>
-                                                    </div>
-                                                    <div class="transaction-history">
-                                                        <h4>Transaction History</h4>
-                                                        <% if (walletData.history && walletData.history.length > 0) { %>
-                                                            <ul class="transactions">
-                                                                <% walletData.history.forEach(function(transaction) { %>
-                                                                    <li>
-                                                                        <span class="transaction-type <%= transaction.type %>">
-                                                                            <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
-                                                                        </span>
-                                                                        <span class="transaction-amount <%= transaction.type === 'debit' ? 'debit-amount' : 'credit-amount' %>">
-                                                                            <%= transaction.type === 'debit' ? '-' : '+' %> ₹<%= transaction.amount %>
-                                                                        </span>
-                                                                        <span class="transaction-date">
-                                                                            <%= new Date(transaction.timestamp).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
-                                                                        </span>
-                                                                    </li>
-                                                                <% }); %>
-                                                            </ul>
-                                                        <% } else { %>
-                                                            <p>No transactions found.</p>
-                                                        <% } %>
-                                                    </div>
-                                                <% } else { %>
-                                                    <p>No Wallet</p>
-                                                <% } %>
+                                            <div class="wallet-container">
+                                                <div class="wallet-add-amount">
+                                                    <form id="add-amount-form">
+                                                        <input type="tel" id="amount" name="amount" placeholder="Enter amount" required>
+                                                        <button type="submit">Add Amount</button>
+                                                    </form>
+                                                </div>
+                                                <div class="wallet-balance">
+                                                    <% if (walletData && walletData.balance != null) { %>
+                                                        <h3>My Wallet</h3>
+                                                        <div class="balance-info">
+                                                            <span class="balance-label">Current Balance:</span>
+                                                            <span class="balance-amount">₹ <%= walletData.balance %></span>
+                                                        </div>
+                                                        <div class="transaction-history">
+                                                            <h4>Transaction History</h4>
+                                                            <% if (walletData.history && walletData.history.length > 0) { %>
+                                                                <ul class="transactions">
+                                                                    <% walletData.history.forEach(function(transaction) { %>
+                                                                        <li class="transaction-item">
+                                                                            <span class="transaction-type <%= transaction.type %>">
+                                                                                <%= transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1) %>
+                                                                            </span>
+                                                                            <span class="transaction-amount <%= transaction.type === 'debit' ? 'debit-amount' : 'credit-amount' %>">
+                                                                                <%= transaction.type === 'debit' ? '-' : '+' %> ₹<%= transaction.amount %>
+                                                                            </span>
+                                                                            <span class="transaction-date">
+                                                                                <%= new Date(transaction.timestamp).toLocaleString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) %>
+                                                                            </span>
+                                                                        </li>
+                                                                    <% }); %>
+                                                                </ul>
+                                                            <% } else { %>
+                                                                <p>No transactions found.</p>
+                                                            <% } %>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <p>No Wallet</p>
+                                                    <% } %>
+                                                </div>
                                             </div>
                                         </div><!-- .End .tab-pane -->
+                                        
 
 
 
@@ -1317,6 +1342,89 @@
             });
     }
         </script>
+
+<script>
+    document.getElementById('add-amount-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const amount = document.getElementById('amount').value;
+
+        // Create order on the server
+        const response = await fetch('/addMoney', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ amount })
+        });
+
+        console.log(amount);
+
+        const orderData = await response.json();
+
+        // Open Razorpay Checkout
+        const options = {
+            key: 'rzp_test_ADhVz53VKpu01p',
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: 'Your Website',
+            description: 'Wallet Top-up',
+            order_id: orderData.id,
+            handler: function (response) {
+                // Handle successful payment here (e.g., update wallet balance)
+                fetch('/updateWallet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: 'USER_ID', // Replace with the actual user ID
+                        amount: orderData.amount / 100, // Convert back to original amount
+                        paymentId: response.razorpay_payment_id
+                    })
+                }).then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Wallet Updated',
+                            text: `₹${amount} added to your wallet!`,
+                        }).then(() => {
+                            // Optionally reload the page or update the wallet balance display
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed to Update Wallet',
+                            text: 'An error occurred while updating your wallet balance.',
+                        });
+                    }
+                }).catch(error => {
+                    console.error('Error updating wallet balance:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating your wallet balance.',
+                    });
+                });
+            },
+            prefill: {
+                name: 'User Name',
+                email: 'user@example.com',
+                contact: '9999999999'
+            },
+            theme: {
+                color: '#3399cc'
+            }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+    });
+</script>
+
+
 </body>
 
 

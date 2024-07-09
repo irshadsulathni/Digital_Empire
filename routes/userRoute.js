@@ -123,5 +123,9 @@ user_route.post('/paymentFailed', auth.isLogin , checkOutController.paymentFaile
 user_route.post('/retryPaymentOrder', auth.isLogin ,checkOutController.retryPaymentOrder)
 user_route.post('/createWalletOrder', auth.isLogin, checkOutController.createWalletOrder);
 
+// adding money to the wallet
+
+user_route.post('/addMoney', auth.isLogin, orderController.addMoney)
+user_route.post('/updateWallet', auth.isLogin, orderController.updateWallet)
 
 module.exports = user_route;

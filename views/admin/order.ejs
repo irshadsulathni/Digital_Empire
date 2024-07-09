@@ -16,43 +16,52 @@
         <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
 
         <style>
-            .badge {
-                padding: 3px 6px;
-                border-radius: 3px;
-                display: inline-block;
-                font-size: 0.75rem;
-                line-height: 1;
-                background-color: #6c757d;
-                color: #ffffff;
-            }
-        
-            .badge.Pending {
-                background-color: #ffc107;
-                color: #000000;
-            }
-        
-            .badge.Shipped {
-                background-color: #17a2b8;
-                color: #ffffff;
-            }
-        
-            .badge.Delivered {
-                background-color: #28a745;
-                color: #ffffff;
-            }
-        
-            .badge.Canceled {
-                background-color: #dc3545;
-                color: #ffffff;
-            }
-        
-            .badge.RefundAccepted {
-                background-color: #6610f2;
-                color: #ffffff;
-            }
-            .badge.Confirmed {
+             /* Define badge styles */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        /* Styles for different status types */
+        .badge.Pending {
+            background-color: #ffc107;
+            /* Warning color for pending */
+            color: #000000;
+            /* Text color */
+        }
+
+        .badge.Shipped {
+            background-color: #17a2b8;
+            color: #ffffff;
+            /* Text color */
+        }
+
+        .badge.Delivered {
+            background-color: #28a745;
+            /* Success color for delivered */
+            color: #ffffff;
+            /* Text color */
+        }
+
+        .badge.Canceled {
+            background-color: #dc3545;
+            /* Danger color for canceled */
+            color: #ffffff;
+            /* Text color */
+        }
+
+        .badge.Confirmed {
             background-color: #8bc34a;
             color: #ffffff;
+        }
+        .badge.Accepted {
+            background-color: #8bc34a;
+            color: #ffff;
+        }
+
+        .badge.Denied {
+            background-color: rgb(230, 2, 2);
+            color: #ffff;
         }
         </style>
         

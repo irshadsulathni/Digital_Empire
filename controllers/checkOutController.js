@@ -13,8 +13,8 @@ const { note } = require('pdfkit');
 const Coupen = require('../models/coupenModel')
 
 var instance = new Razorpay({
-    key_id: process.env.KEY_ID,
-    key_secret: process.env.KEY_SECRET,
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZRORPAY_KEY_SECRET,
   });
 
 
@@ -154,13 +154,27 @@ const createOrder = async (req, res) => {
             selectedAddress,
             paymentMethod,
             orderNumber: counter.seq,
-            status: 'Confirmed',
+            status: 'Payment Pending',
             paymentStatus: false,
             timeStamp: new Date(),
             razorpayOrderId: razorpayOrder.id
         });
 
         const orderData = await newOrder.save();
+
+        for (const item of products) {
+            await Variant.updateOne(
+                { _id: item.productId.varientId },
+                { $inc: { variantQuantity: -item.quantity } }
+            );
+
+            await Product.updateOne(
+                { _id: item.productId._id },
+                { $inc: { count: item.quantity } }
+            );
+        }
+
+        await Cart.deleteOne({ userId })
 
         res.status(200).json({ orderData, razorpayOrder });
 
@@ -226,15 +240,15 @@ const verifyOrder = async (req, res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-        const hmac = crypto.createHmac('sha256', process.env.KEY_SECRET);
+        const hmac = crypto.createHmac('sha256', process.env.RAZRORPAY_KEY_SECRET);
         hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
         const generatedSignature = hmac.digest('hex');
 
         if (generatedSignature === razorpay_signature) {
-            // Update the payment status to true
+
             const updateOrder = await Order.updateOne(
                 { razorpayOrderId: razorpay_order_id },
-                { $set: { paymentStatus: true } }
+                { $set: { paymentStatus: true, status:'Confirmed' } }
             );
             const orderId = await Order.findOne({razorpayOrderId:razorpay_order_id})
 

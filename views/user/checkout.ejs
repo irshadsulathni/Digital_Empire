@@ -262,36 +262,38 @@
                                                 <div class="row">
                                                     <% if (coupons.length > 0) { %>
                                                         <% coupons.forEach(function(coupon) { %>
-                                                            <div class="col-md-6 mb-4">
-                                                                <div class="card h-100">
-                                                                    <div class="card-body">
-                                                                        <h5 class="card-title text-center">
-                                                                            <%= coupon.name %>
-                                                                        </h5>
-                                                                        <ul class="list-unstyled">
-                                                                            <li><strong>Amount:</strong> <%= coupon.amount %></li>
-                                                                            <li><strong>Minimum Purchase Amount:</strong> <%= coupon.minimumAmount %></li>
-                                                                            <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
-                                                                                <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
-                                                                            <% } %>
-                                                                            <li><strong>Expires:</strong>
-                                                                                <% if (coupon.expired) { %>
-                                                                                    <span class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
-                                                                                        <%= coupon.expired.toDateString() %>
-                                                                                    </span>
-                                                                                <% } else { %>
-                                                                                    <span class="text-muted">N/A</span>
+                                                            <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id) && userCoupon.coupenUsed)) { %>
+                                                                <div class="col-md-6 mb-4">
+                                                                    <div class="card h-100">
+                                                                        <div class="card-body">
+                                                                            <h5 class="card-title text-center">
+                                                                                <%= coupon.name %>
+                                                                            </h5>
+                                                                            <ul class="list-unstyled">
+                                                                                <li><strong>Amount:</strong> <%= coupon.amount %></li>
+                                                                                <li><strong>Minimum Purchase Amount:</strong> <%= coupon.minimumAmount %></li>
+                                                                                <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                                    <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
                                                                                 <% } %>
-                                                                            </li>
-                                                                        </ul>
-                                                                        <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
-                                                                            <button class="btn btn-primary btn-sm copy-coupon" data-coupon="<%= coupon.coupenCode %>">Copy Coupon Code</button>
-                                                                        <% } else { %>
-                                                                            <p class="text-muted">Coupon already used</p>
-                                                                        <% } %>
+                                                                                <li><strong>Expires:</strong>
+                                                                                    <% if (coupon.expired) { %>
+                                                                                        <span class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
+                                                                                            <%= coupon.expired.toDateString() %>
+                                                                                        </span>
+                                                                                    <% } else { %>
+                                                                                        <span class="text-muted">N/A</span>
+                                                                                    <% } %>
+                                                                                </li>
+                                                                            </ul>
+                                                                            <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                                <button class="btn btn-primary btn-sm copy-coupon" data-coupon="<%= coupon.coupenCode %>">Copy Coupon Code</button>
+                                                                            <% } else { %>
+                                                                                <p class="text-muted">Coupon already used</p>
+                                                                            <% } %>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            <% } %>
                                                         <% }); %>
                                                     <% } else { %>
                                                         <div class="col-12">
@@ -299,6 +301,7 @@
                                                         </div>
                                                     <% } %>
                                                 </div>
+                                                
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -590,86 +593,86 @@
 
 
         function createRazorpayOrder(orderData) {
-            axios.post('/createOrder', { orderData })
-                .then(response => {
-                    var options = {
-                        "key": "rzp_test_ADhVz53VKpu01p",
-                        "amount": response.data.razorpayOrder.amount,
-                        "currency": "INR",
-                        "name": "Your Company",
-                        "description": "Order Payment",
-                        "image": "https://example.com/your_logo.png",
-                        "order_id": response.data.razorpayOrder.id,
-                        "handler": function (response) {
-                            const paymentData = {
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_signature: response.razorpay_signature
-                            };
-                            axios.post('/verifyPayment', paymentData)
-                                .then(response => {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Success',
-                                        text: 'Payment successful and verified!',
-                                    }).then(() => {
-                                        window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
-                                    });
-                                })
-                                .catch(err => {
-                                    console.error(err);
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Payment verification failed!',
-                                    });
-                                });
-                        },
-                        "prefill": {
-                            "name": "Customer Name",
-                            "email": "customer@example.com",
-                            "contact": "9999999999"
-                        },
-                        "notes": {
-                            "address": "Customer Address"
-                        },
-                        "theme": {
-                            "color": "#F37254"
-                        }
+    axios.post('/createOrder', { orderData })
+        .then(response => {
+            var options = {
+                "key": "rzp_test_ADhVz53VKpu01p",
+                "amount": response.data.razorpayOrder.amount,
+                "currency": "INR",
+                "name": "Your Company",
+                "description": "Order Payment",
+                "image": "https://example.com/your_logo.png",
+                "order_id": response.data.razorpayOrder.id,
+                "handler": function (response) {
+                    const paymentData = {
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature
                     };
-                    var rzp1 = new Razorpay(options);
-
-                    rzp1.on('payment.failed', function (response) {
-                        console.error(response.error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Payment failed. Please try again.'
-                        }).then(() => {
-                            window.location.reload()
-                        });
-
-                        axios.post('/paymentFailed', { orderId: response.error.metadata.order_id })
-                            .then(response => {
-                                console.log('Order status updated to Payment Pending and cart cleared');
-                            })
-                            .catch(err => {
-                                console.error('Failed to update order status:', err);
+                    axios.post('/verifyPayment', paymentData)
+                        .then(response => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Payment successful and verified!',
+                            }).then(() => {
+                                window.location.href = `/loadsuccessPage?orderId=${response.data.orderId}`;
                             });
-                    });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Payment verification failed!',
+                            });
+                        });
+                },
+                "prefill": {
+                    "name": "Customer Name",
+                    "email": "customer@example.com",
+                    "contact": "9999999999"
+                },
+                "notes": {
+                    "address": "Customer Address"
+                },
+                "theme": {
+                    "color": "#F37254"
+                }
+            };
 
-                    rzp1.open();
-                })
-                .catch(error => {
-                    console.error(error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to create order. Please try again.'
-                    });
+            var rzp1 = new Razorpay(options);
+
+            rzp1.on('payment.failed', function (response) {
+                console.error(response.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Payment failed. Redirecting to home page.'
+                }).then(() => {
+                    window.location.href = '/'; // Redirect to home page
                 });
-}
 
+                axios.post('/paymentFailed', { orderId: response.error.metadata.order_id })
+                    .then(response => {
+                        console.log('Order status updated to Payment Pending and cart cleared');
+                    })
+                    .catch(err => {
+                        console.error('Failed to update order status:', err);
+                    });
+            });
+
+            rzp1.open();
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to create order. Please try again.'
+            });
+        });
+}
 
 function placeOrderAxios(orderData) {
     axios.post('/orders', orderData)

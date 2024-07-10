@@ -20,6 +20,7 @@ const addCategories = async (req, res) => {
         const discription = req.body.categoryDescription.trim();
 
         const categoryData = await Category.find({});
+        console.log('here is getting');
 
         if (!name) {
             return res.render('admin/category', { categoryData, message: 'Invalid Name' });
@@ -28,12 +29,12 @@ const addCategories = async (req, res) => {
         } else if (!discription) {
             return res.render('admin/category', { categoryData, message: 'Enter Description' });
         } else {
-            // Check if category already exists
+
             const existCategory = await Category.findOne({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
             if (existCategory) {
                 return res.render('admin/category', { categoryData, message: 'Category already exists' });
             } else {
-                // Create and save new category
+
                 const category = new Category({
                     name,
                     discription
@@ -41,10 +42,8 @@ const addCategories = async (req, res) => {
 
                 await category.save();
 
-                // Fetch updated categories
                 const updatedCategoryData = await Category.find({});
 
-                // Redirect to the category page after saving
                 return res.render('admin/category', { categoryData: updatedCategoryData });
             }
         }

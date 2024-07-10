@@ -6,6 +6,7 @@ const loadaddress = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const userData = await User.findOne({ _id: userId })
+        console.log('userData',userData,'userData');
         res.render('user/address', { userData })
     } catch (error) {
         console.log(error.message)

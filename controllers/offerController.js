@@ -4,7 +4,10 @@ const Variant = require("../models/varientModel")
 
 const loadOffer = async (req, res)=>{
     try {
+        console.log('here  is getting');
         const offerData = await Offer.find({})
+
+        console.log('offerData',offerData,'offerData');
 
         res.render('admin/offer',{activeOfferPage: "Active",offerData})
     } catch (error) {
@@ -43,6 +46,8 @@ const addOffer = async (req, res) => {
         });
 
         await offer.save();
+
+        console.log('offer',offer,'offer');
 
         res.status(200).send({ message: 'Offer created successfully' });
     } catch (error) {

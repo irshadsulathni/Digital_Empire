@@ -210,6 +210,40 @@
         color: black; /* Optional: Add color to differentiate the offer price */
         }
 
+        .order-details .card-body, .product-details .card-body {
+        padding: 1rem;
+    }
+    .order-details .card-body h2 {
+        font-size: 1.5rem;
+    }
+    .address h4 {
+        font-size: 1.2rem;
+    }
+    .product-item img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    .badge.pending {
+        background-color: #f0ad4e;
+    }
+    .badge.processing {
+        background-color: #5bc0de;
+    }
+    .badge.shipped {
+        background-color: #0275d8;
+    }
+    .badge.delivered {
+        background-color: #5cb85c;
+    }
+    .badge.canceled {
+        background-color: #dc3545;
+            color: #fff;
+    }
+    .badge.confirmed {
+        background-color: #5cb85c;
+    }
+
     </style>
 </head>
 
@@ -229,21 +263,30 @@
                             <div class="card-text mb-4">
                                 <strong>Address:</strong>
                                 <div class="address">
-                                    <h2><%= element.selectedAddress.fullName %></h2>
+                                    <h4><%= element.selectedAddress.fullName %></h4>
                                     <p><%= element.selectedAddress.addressLine1 %></p>
                                     <p><%= element.selectedAddress.phoneNumber %></p>
                                     <p><%= element.selectedAddress.city %>, <%= element.selectedAddress.state %>, <%= element.selectedAddress.country %></p>
                                 </div>
                             </div>
-                            <div class="card-text mb-4"><strong>Payment Method:</strong> <%= element.paymentMethod %></div>
-                            <div class="card-text mb-4"><strong>Status:</strong> <span class="badge <%= element.status %>"><%= element.status %></span></div>
-                            <div class="card-text mb-4"><strong>Order Total:</strong> <%= element.orderTotal %></div>
+                            <div class="card-text mb-4">
+                                <strong>Payment Method:</strong> <%= element.paymentMethod %>
+                            </div>
+                            <div class="card-text mb-4">
+                                <strong>Status:</strong> 
+                                <span class="badge <%= element.status.toLowerCase() %>"><%= element.status %></span>
+                            </div>
+                            <div class="card-text mb-4">
+                                <strong>Order Total:</strong> <%= element.orderTotal %>
+                            </div>
                             <% if (element.discount) { %>
-                                <div class="card-text mb-4"><strong>Discount:</strong> <%= element.discount %></div>
-                            <% } else { %>
-
-                           <% } %>
-                            <a href="/downloadInvoice/<%= element._id %>" class="btn btn-primary btn-block mt-4">Download Invoice</a>
+                                <div class="card-text mb-4">
+                                    <strong>Discount:</strong> <%= element.discount %>
+                                </div>
+                            <% } %>
+                            <% if (element.status == 'Delivered') { %>
+                                <a href="/downloadInvoice/<%= element._id %>" class="btn btn-primary btn-block mt-4">Download Invoice</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -252,7 +295,8 @@
                         <div class="card-body">
                             <h3 class="card-title">Products:</h3>
                             <% element.product.forEach(product => { %>
-                            <div class="product-item">
+                            <div class="product-item mb-3">
+                                <img src="<%= product.productId.productImage[0] %>" alt="<%= product.productId.productName %>" class="img-fluid mb-2" style="width: 100px; height: auto;">
                                 <h4><%= product.productId.productName %></h4>
                                 <p><strong>Price:</strong>
                                     <% if (product.productId.varientId.offerApplied) { %>
@@ -272,7 +316,6 @@
             <% }) %>
         </div>
     </div>
-
     <%- include('../layouts/pageFooter') %>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.0/toastify.min.js"></script>

@@ -590,8 +590,8 @@ const downloadInvoice = async (req, res) => {
 };
 
 const razorpay = new Razorpay({
-    key_id: process.env.KEY_ID, // Use environment variable for key ID
-    key_secret: process.env.KEY_SECRET // Use environment variable for key secret
+    key_id: process.env.RAZORPAY_KEY_ID, // Use environment variable for key ID
+    key_secret: process.env.RAZRORPAY_KEY_SECRET // Use environment variable for key secret
 });
 
 // add money to the wallet using razorpay
@@ -604,6 +604,7 @@ const addMoney = async(req, res)=>{
             currency: 'INR',
             receipt: `receipt_${Date.now()}`
         };
+        console.log('options',options);
 
         const order = await razorpay.orders.create(options);
         res.json(order);
@@ -633,8 +634,11 @@ const updateWallet = async(req, res)=>{
             description: `Added to wallet (Payment ID: ${paymentId})`
         });
 
+        console.log('here here is getting');
 
         await wallet.save();
+
+        console.log('walet', wallet);
 
         res.json({ success: true, balance: wallet.balance });
     } catch (error) {

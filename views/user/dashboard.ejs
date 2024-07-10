@@ -588,53 +588,26 @@
                                                     <h3 style="width: 100%; text-align: center;">Order Details</h3>
                                                     <% if (orderData.length > 0) { %>
                                                         <% orderData.forEach(element => { %>
-                                                            <div class="order-details" style="width: calc(50% - 20px); margin-bottom: 20px;">
+                                                            <a href="/orderTracking?orderId=<%= element._id %>" class="order-details" style="width: calc(100%); margin-bottom: 20px; display: block; text-decoration: none; color: inherit;">
                                                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                                                     <p><strong>Date:</strong> <%= new Date(element.timeStamp).toDateString() %></p>
                                                                     <div class="status-badge">
                                                                         <span class="badge <%= element.status %>"><%= element.status %></span>
                                                                     </div>
                                                                 </div>
-                                                                <h6>Order #<%= element.orderNumber %></h6>
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>Product</th>
-                                                                            <th>Price</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <% element.product.forEach(product => { %>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <% if (product.productId) { %>
-                                                                                        <%= product.productId.productName %>
-                                                                                    <% } else { %>
-                                                                                        Product ID not available
-                                                                                    <% } %>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <% if (product.productId.varientId.offerApplied == true) { %>
-                                                                                        ₹<%= product.productId && product.productId.varientId.offerDetails ? product.productId.varientId.offerDetails.priceAfterOfferApplied : '' %>
-                                                                                    <% } else{ %>
-                                                                                        ₹<%= product.productId && product.productId.varientId ? product.productId.varientId.variantPrice : '' %>
-                                                                                   <% } %>
-                                                                                </td>
-                                                                            </tr>
-                                                                        <% }) %>
-                                                                    </tbody>
-                                                                </table>
-                                                                <p><strong>SubTotal:</strong> $<%= element.orderTotal %></p>
-                                                                <a href="/orderTracking?orderId=<%= element._id %>" class="btn btn-primary">View Details</a>
+                                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                                    <h6>Order #<%= element.orderNumber %></h6>
+                                                                    <span style="font-size: 1.5em;">&gt;</span> <!-- Arrow mark -->
+                                                                </div>
                                                                 <% if (element.status === 'Payment Pending') { %>
-                                                                    <button class="btn btn-warning" onclick="retryPayment('<%= element._id %>')">Retry Payment</button>
+                                                                    <button class="btn btn-warning" onclick="event.preventDefault(); retryPayment('<%= element._id %>');">Retry Payment</button>
                                                                 <% } %>
                                                                 <% if (element.status !== 'Canceled' && element.status !== 'Delivered' && element.status !== 'Payment Pending' && element.status !== 'Refund' && element.status !== 'Return Processing' && element.status !== 'Refund Accepted') { %>
-                                                                    <button class="btn btn-danger" onclick="cancelOrder('<%= element._id %>')">Cancel Order</button>
+                                                                    <button class="btn btn-danger" onclick="event.preventDefault(); cancelOrder('<%= element._id %>');">Cancel Order</button>
                                                                 <% } else if (element.status === 'Delivered') { %>
-                                                                    <button class="btn btn-danger" onclick="openModal('<%= element._id %>')">Return Order</button>
+                                                                    <button class="btn btn-danger" onclick="event.preventDefault(); openModal('<%= element._id %>');">Return Order</button>
                                                                 <% } %>
-                                                            </div>
+                                                            </a>
                                                         <% }) %>
                                                     <% } else { %>
                                                         <p style="width: 100%; text-align: center;">No orders have been made yet.</p>
@@ -644,54 +617,57 @@
                                             </div>
                                         </div>
                                         
+                                        
+                                        
 
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
                                             aria-labelledby="tab-downloads-link">
                                             <div class="container coupon-container">
                                                 <h3 class="text-start mb-4" style="padding-left: 35rem;">Available
                                                     Coupons</h3>
-                                                <div class="row justify-content-start">
-                                                    <% if (coupons.length > 0) { %>
-                                                        <% coupons.forEach(function(coupon) { %>
-                                                            <div class="col-6 mb-4 w-50">
-                                                                <div class="card h-100 w-75">
-                                                                    <div class="card-body">
-                                                                        <h5 class="card-title">
-                                                                            <%= coupon.name %>
-                                                                        </h5>
-                                                                        <ul class="list-unstyled">
-                                                                            <li><strong>Amount:</strong> <%= coupon.amount %></li>
-                                                                            <li><strong>Minimum Purchase Amount:</strong> <%= coupon.minimumAmount %></li> <!-- Add this line -->
-                                                                            <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
-                                                                                <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
-                                                                            <% } %>
-                                                                            <li><strong>Expires:</strong> 
-                                                                                <% if (coupon.expired) { %>
-                                                                                    <span class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
-                                                                                        <%= coupon.expired.toDateString() %>
-                                                                                    </span>
+                                                    <div class="row justify-content-start">
+                                                        <% if (coupons.length > 0) { %>
+                                                            <% coupons.forEach(function(coupon) { %>
+                                                                <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id) && userCoupon.coupenUsed)) { %>
+                                                                    <div class="col-6 mb-4 w-50">
+                                                                        <div class="card h-100 w-75">
+                                                                            <div class="card-body">
+                                                                                <h5 class="card-title">
+                                                                                    <%= coupon.name %>
+                                                                                </h5>
+                                                                                <ul class="list-unstyled">
+                                                                                    <li><strong>Amount:</strong> <%= coupon.amount %></li>
+                                                                                    <li><strong>Minimum Purchase Amount:</strong> <%= coupon.minimumAmount %></li>
+                                                                                    <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                                        <li><strong>Coupon Code:</strong> <%= coupon.coupenCode %></li>
+                                                                                    <% } %>
+                                                                                    <li><strong>Expires:</strong> 
+                                                                                        <% if (coupon.expired) { %>
+                                                                                            <span class="coupon-expiry <%= coupon.expired < new Date() ? 'expired' : '' %>">
+                                                                                                <%= coupon.expired.toDateString() %>
+                                                                                            </span>
+                                                                                        <% } else { %>
+                                                                                            <span class="text-muted">N/A</span>
+                                                                                        <% } %>
+                                                                                    </li>
+                                                                                </ul>
+                                                                                <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
+                                                                                    <button class="btn btn-primary btn-sm copy-coupon" data-coupon="<%= coupon.coupenCode %>">Copy Coupon Code</button>
                                                                                 <% } else { %>
-                                                                                    <span class="text-muted">N/A</span>
+                                                                                    <p class="text-muted">Coupon already used</p>
                                                                                 <% } %>
-                                                                            </li>
-                                                                        </ul>
-                                                                        <% if (!coupon.usersList.some(userCoupon => userCoupon.userId.equals(userData._id))) { %>
-                                                                            <button class="btn btn-primary btn-sm copy-coupon" data-coupon="<%= coupon.coupenCode %>">Copy Coupon Code</button>
-                                                                        <% } else { %>
-                                                                            <p class="text-muted">Coupon already used</p>
-                                                                        <% } %>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
-                                                                    
-                                                                </div>
+                                                                <% } %>
+                                                            <% }); %>
+                                                        <% } else { %>
+                                                            <div class="col-12">
+                                                                <p class="text-center">No coupons available at the moment.</p>
                                                             </div>
-                                                        <% }); %>
-                                                    <% } else { %>
-                                                        <div class="col-12">
-                                                            <p class="text-center" style="padding-left: 40rem;">No coupons available at the moment.</p>
-                                                        </div>
-                                                    <% } %>
-
-                                                </div>
+                                                        <% } %>
+                                                    </div>
+                                                    
                                             </div>
                                         </div>
 

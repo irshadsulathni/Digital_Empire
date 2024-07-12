@@ -11,9 +11,34 @@
 
     <link rel="icon" href="/userLoginAssets/images/new-icon.png" type="icon/png">
 
+        <!-- FontAwesome for the eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <!-- Main css -->
     <link rel="stylesheet" href="/userLoginAssets/css/style.css">
     <!-- Include SweetAlert CDN link -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<style>
+
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-container input {
+    width: 100%;
+    padding-right: 40px; /* Adjust padding to avoid overlap with icon */
+}
+
+.input-container .toggle-password {
+    position: absolute;
+    right: 10px; /* Adjust position */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+
+</style>
 <body>

@@ -1,7 +1,31 @@
 
 
-<!-- JS -->
+
 <script src="/userLoginAssets/vendor/jquery/jquery.min.js"></script>
 <script src="/userLoginAssets/js/main.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePasswordPass = document.getElementById('toggle-password-pass');
+        const togglePasswordRePass = document.getElementById('toggle-password-re_pass');
+        const passwordInput = document.getElementById('pass');
+        const rePasswordInput = document.getElementById('re_pass');
+
+        togglePasswordPass.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        togglePasswordRePass.addEventListener('click', function () {
+            const type = rePasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            rePasswordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
+
+
+
 </body>
 </html>

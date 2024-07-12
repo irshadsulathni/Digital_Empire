@@ -13,7 +13,7 @@ passport.deserializeUser((user, done)=>{
 passport.use(new googleStrategy({
     clientID:process.env.CLEINT_ID,
     clientSecret:process.env.CLEINT_SCERET,
-    callbackURL:'http://localhost:3000/auth/google/callback',
+    callbackURL:'https://irshadsulthani.shop/auth/google/callback',
     passReqToCallback:true
 },
 function(request, accessToken, refreshToken, profile, done){

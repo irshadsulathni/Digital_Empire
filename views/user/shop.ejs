@@ -743,6 +743,7 @@ function sortProducts() {
             const price = offerPriceNum !== 0 ? offerPriceNum : variantPriceNum;
             const qty = 1;
             const subtotal = qty * price;
+            
 
             axios.post('/cart', {
                 productId: productId,

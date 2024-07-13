@@ -189,7 +189,7 @@
                     <div class="card-body">
                         <article class="itemlist">
                             <div class="row">
-                                <% productData.forEach((element, index)=> { %>
+                                <% productData.forEach((element, index) => { %>
                                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                                         <div class="card card-product-grid">
                                             <div class="img-wrap">
@@ -215,27 +215,22 @@
                                                 <% } %>
                                             </div>
                                             
-                                            
-                                            
                                             <div class="info-wrap">
                                                 <a class="title" data-bs-toggle="modal" data-bs-target="#variantModal"
-                                                    onclick="updateModal('<%= JSON.stringify(variantData[index]) %>')">
+                                                    onclick="updateModal('<%= JSON.stringify(variant) %>')">
                                                     <%= element.productName %>
                                                 </a>
-                                                <% if (variantData[index]) { %>
-                                                    <% if (variantData[index].offerApplied && variantData[index].offerDetails && typeof variantData[index].offerDetails.priceAfterOfferApplied === 'number') { %>
-                                                        <div class="price mt-1">₹<%= variantData[index].offerDetails.priceAfterOfferApplied.toFixed(2) %></div>
+                                                <% if (variant) { %>
+                                                    <% if (variant.offerApplied && variant.offerDetails && typeof variant.offerDetails.priceAfterOfferApplied === 'number') { %>
+                                                        <div class="price mt-1">₹<%= variant.offerDetails.priceAfterOfferApplied.toFixed(2) %></div>
                                                     <% } else { %>
-                                                        <div class="price mt-1">₹<%= variantData[index].variantPrice.toFixed(2) %></div>
+                                                        <div class="price mt-1">₹<%= variant.variantPrice.toFixed(2) %></div>
                                                     <% } %>
-                                                    <div class="price mt-1">💻<%= variantData[index].variantQuantity %></div>
+                                                    <div class="price mt-1">💻<%= variant.variantQuantity %></div>
                                                 <% } else { %>
                                                     <div class="price mt-1">Price Unavailable</div>
                                                     <div class="price mt-1">Quantity Unavailable</div>
                                                 <% } %>
-                                                
-                                                
-                                                
                                             </div>
                                             <div class="card-footer p-0">
                                                 <a href="/admin/editProduct?productId=<%= element._id %>"
@@ -243,24 +238,24 @@
                                                 <% if (element.list) { %>
                                                     <a href="#" class="btn btn-sm btn-list rounded m-1"
                                                         style="background-color: darkred;"
-                                                        onclick="listorUnlistOfProduct('<%= element._id %>', false)">!
-                                                        Hide</a>
-                                                    <% } else { %>
-                                                        <a href="#" class="btn btn-sm btn-list rounded m-1"
-                                                            style="background-color: red;"
-                                                            onclick="listorUnlistOfProduct('<%= element._id %>', true)">Hide</a>
-                                                        <% } %>
-                                                            <a href="#" class="btn btn-sm rounded m-1"
-                                                                style="background-color: red;"
-                                                                onclick="confirmDelete('<%= element._id %>', '<%= variantData[index]._id %>')">Delete</a>
+                                                        onclick="listorUnlistOfProduct('<%= element._id %>', false)">Hide</a>
+                                                <% } else { %>
+                                                    <a href="#" class="btn btn-sm btn-list rounded m-1"
+                                                        style="background-color: red;"
+                                                        onclick="listorUnlistOfProduct('<%= element._id %>', true)">Show</a>
+                                                <% } %>
+                                                <a href="#" class="btn btn-sm rounded m-1"
+                                                    style="background-color: red;"
+                                                    onclick="confirmDelete('<%= element._id %>', '<%= variant ? variant._id : null %>')">Delete</a>
                                             </div>
                                         </div>
                                     </div>
-                                    <% }); %>
+                                <% }); %>
                             </div>
                         </article>
                     </div>
                 </div>
+                
 
                 <div class="pagination-area mt-30 mb-50">
                     <nav aria-label="Page navigation example">

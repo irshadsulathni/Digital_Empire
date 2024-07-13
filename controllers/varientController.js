@@ -72,6 +72,8 @@ const loadEditVarient = async (req, res) =>{
         
         const varientId = req.query.varientId;
 
+        console.log('varientId',varientId);
+
         const varientData = await Varient.findById(varientId);
 
         res.render('admin/editVarient',{varientData})

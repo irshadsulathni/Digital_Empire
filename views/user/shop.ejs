@@ -145,15 +145,16 @@
                                                         <% if (element.varientId.offerApplied) { %>
                                                             <span class="new-price">₹ <%= element.varientId.offerDetails.priceAfterOfferApplied.toFixed(2) %></span>
                                                             <span class="old-price">₹ <%= element.varientId.variantPrice.toFixed(2) %></span>
+                                                            <span class="offer-name"><%= element.varientId.offerId %></span>
                                                         <% } else { %>
                                                             ₹ <%= element.varientId.variantPrice.toFixed(2) %>
                                                         <% } %>
                                                     </div><!-- End .product-price -->
                                                     <div class="ratings-container">
-                                                        <div class="ratings">
-                                                            <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
+                                                        <div class="">
+                                                            <!-- <div class="ratings-val" style="width: 80%;"></div>End .ratings-val -->
                                                         </div><!-- End .ratings -->
-                                                        <span class="ratings-text">( 11 Reviews )</span>
+                                                        <!-- <span class="ratings-text">( 11 Reviews )</span> -->
                                                     </div><!-- End .rating-container -->
                                                 </div><!-- End .product-body -->
                                             </div><!-- End .product -->

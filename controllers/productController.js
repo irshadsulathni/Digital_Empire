@@ -28,26 +28,23 @@ const Offer = require('../models/offerModel')
 
 const loadProduct = async (req, res) => {
     try {
-
         const firstPage = 4;
-
         const currentPage = parseInt(req.query.page) || 1;
-
         const startPage = (currentPage - 1) * firstPage;
-        const productData = await Product.find({}).skip(startPage).limit(firstPage).sort({ _id:-1 });
-        const variantData = await Variant.find({}).skip(startPage).limit(firstPage);
+
+        const productData = await Product.find({}).skip(startPage).limit(firstPage).sort({ _id: -1 });
+        const variantData = await Variant.find({ productId: { $in: productData.map(product => product._id) } }).sort({ _id: -1 });
 
         const count = await Product.countDocuments({});
-
         const totalPage = Math.ceil(count / firstPage);
-        const offerData = await Offer.find({})
+        const offerData = await Offer.find({});
 
-        res.render('admin/product', { variantData, productData, activeProductMessage: 'active', totalPage, currentPage,offerData })
-
+        res.render('admin/product', { variantData, productData, activeProductMessage: 'active', totalPage, currentPage, offerData });
     } catch (error) {
         console.log(error.message);
     }
-}
+};
+
 
 
 

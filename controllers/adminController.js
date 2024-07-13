@@ -224,21 +224,24 @@ const adminLogout = async (req, res) => {
 
 // for load user list in admin side
 
-const loadUserList = async (req,res)=>{
+const loadUserList = async (req, res) => {
     try {
         const firstPage = 8;
         const currentPage = parseInt(req.query.page) || 1;
         const startPage = (currentPage - 1) * firstPage;
-        const count = await User.countDocuments({}).skip(startPage).limit(firstPage)
-        const totalPage = Math.ceil(count / firstPage)
 
-        const users = await User.find({});
-        res.render('admin/userList',{users, activeUserListMessage:'active', totalPage , currentPage})
-      } catch (error) {
+        const count = await User.countDocuments({});
+        const totalPage = Math.ceil(count / firstPage);
+
+        const users = await User.find({}).skip(startPage).limit(firstPage);
+
+        res.render('admin/userList', { users, activeUserListMessage: 'active', totalPage, currentPage });
+    } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error fetching users' }); // Handle errors with JSON response
-      }
+        res.status(500).json({ message: 'Error fetching users' });
+    }
 }
+
 // Controller function to block or unblock user
 const blockOrUnblockUser = async (req, res) => {
     try {

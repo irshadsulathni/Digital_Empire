@@ -72,17 +72,26 @@
                                 <div class="col-lg-9">
                                     <table class="table table-cart table-mobile">
                                         <thead>
-                                            <tr>
+                                            <% if (!cartData || !cartData.product || cartData.product.length === 0) { %>
+                                              <tr>
+                                                <td colspan="5">
+                                                  <p>No item in the Cart</p>
+                                                </td>
+                                              </tr>
+                                            <% } else { %>
+                                              <tr>
                                                 <th>Product</th>
                                                 <th>Price</th>
                                                 <th>Quantity</th>
                                                 <th>Total</th>
                                                 <th></th>
-                                            </tr>
-                                        </thead>
+                                              </tr>
+                                            <% } %>
+                                          </thead>
+                                          
 
                                         <tbody>
-                                            <% if(cartData !== 'Nothing') { %>
+                                            <% if(cartData && cartData !== 'Nothing' && cartData.product) { %>
                                                 <% cartData.product.forEach(element => { %>
                                                     <% if (element.productId) { %>
                                                         <tr>
@@ -223,9 +232,10 @@
                                                 <tr class="summary-total">
                                                     <td>Total:</td>
                                                     <td id="cartTotal">
-                                                        <%= cartData.cartTotal %>
+                                                        <%= cartData && cartData.cartTotal ? cartData.cartTotal : '0.00' %>
                                                     </td>
                                                 </tr><!-- End .summary-total -->
+                                                
                                             </tbody>
                                         </table><!-- End .table table-summary -->
 

@@ -34,7 +34,7 @@ const loadProduct = async (req, res) => {
         const currentPage = parseInt(req.query.page) || 1;
 
         const startPage = (currentPage - 1) * firstPage;
-        const productData = await Product.find({}).skip(startPage).limit(firstPage);
+        const productData = await Product.find({}).skip(startPage).limit(firstPage).sort({ _id:-1 });
         const variantData = await Variant.find({}).skip(startPage).limit(firstPage);
 
         const count = await Product.countDocuments({});

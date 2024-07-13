@@ -40,6 +40,10 @@ const variantSchema = new mongoose.Schema({
         default: false 
     },
     offerDetails: {
+        offerId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'Offer'
+        },
         priceAfterOfferApplied: {
             type: Number,
             default: 0

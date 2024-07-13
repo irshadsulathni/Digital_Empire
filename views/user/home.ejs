@@ -45,7 +45,7 @@
                                 <div class="header-dropdown-link">
                                     <a href="/wishlist" class="wishlist-link">
                                         <i class="icon-heart-o"></i>
-                                        <span class="wishlist-count">3</span>
+                                        <span class="wishlist-count"><%= wishlistCount %></span>
                                         <span class="wishlist-txt">Wishlist</span>
                                     </a>
                     
@@ -58,18 +58,15 @@
                                         <a href="/cart" class="dropdown-toggle"  
                                             aria-haspopup="true" aria-expanded="false" data-display="static">
                                             <i class="icon-shopping-cart"></i>
-                                            <span class="cart-count">2</span>
+                                            <span class="cart-count"><%= cartCount %></span>
                                             <span class="cart-txt">Cart</span>
                                         </a>
-                    
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <!-- Cart dropdown content -->
-                                        </div><!-- End .dropdown-menu -->
                                     </div><!-- End .cart-dropdown -->
                                 </div>
                             <% } %>
                         <% } %>
                     </div><!-- End .header-right -->
+                    
                     
                     
                     
@@ -208,16 +205,16 @@
 
                 <div class="cat-blocks-container">
                     <div class="row">
-                        <% if (Array.isArray(productData)) { %>
-                            <% productData.forEach(element => { %>
-                                <div class="col-6 col-sm-4 col-lg-2">
-                                    <a href="/shop" class="cat-block">
+                        <% if (Array.isArray(productData1) && productData1.length > 0) { %>
+                            <% productData1.forEach(element => { %>
+                                <div class="col-6 col-sm-8 col-lg-6">
+                                    <a href="productPage?productId=<%= element._id %>" class="cat-block">
                                         <figure>
                                             <span>
-                                                <img src="<%= productData.productImage[1] %>" alt="Category image">
+                                                <img src="<%= element.productImage[0] %>" alt="Category image">
                                             </span>
                                         </figure>
-                                        <h3 class="cat-block-title">Computer & Laptop</h3><!-- End .cat-block-title -->
+                                        <h3 class="cat-block-title"><%= element.productCategory.name %></h3><!-- End .cat-block-title -->
                                     </a>
                                 </div><!-- End .col-sm-4 col-lg-2 -->
                             <% }) %>
@@ -226,61 +223,90 @@
                         <% } %>
                     </div><!-- End .row -->
                 </div><!-- End .cat-blocks-container -->
+                
             </div><!-- End .container -->
 
             <div class="mb-2"></div><!-- End .mb-2 -->
 
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="banner banner-overlay">
-                            <a href="#">
-                                <img src="/userAssets/images/demos/demo-13/banners/banner-1.jpg" alt="Banner">
-                            </a>
-
-                            <div class="banner-content">
-                                <h4 class="banner-subtitle text-white"><a href="#">Weekend Sale</a></h4>
-                                <!-- End .banner-subtitle -->
-                                <h3 class="banner-title text-white"><a href="#">Lighting <br>& Accessories <br><span>25%
-                                            off</span></a></h3><!-- End .banner-title -->
-                                <a href="#" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-lg-3 -->
-
-                    <div class="col-sm-6 col-lg-3 order-lg-last">
-                        <div class="banner banner-overlay">
-                            <a href="#">
-                                <img src="/userAssets/images/demos/demo-13/banners/banner-3.jpg" alt="Banner">
-                            </a>
-
-                            <div class="banner-content">
-                                <h4 class="banner-subtitle text-white"><a href="#">Smart Offer</a></h4>
-                                <!-- End .banner-subtitle -->
-                                <h3 class="banner-title text-white"><a href="#">Anniversary <br>Special <br><span>15%
-                                            off</span></a></h3><!-- End .banner-title -->
-                                <a href="#" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-lg-3 -->
-
+                    <!-- First offer banner -->
+                    <% if (offerAppliedProducts.length >= 1) { %>
+                        <% const firstProduct = offerAppliedProducts[0]; %>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="banner banner-overlay">
+                                <a href="#">
+                                    <img src="/userAssets/images/banners/macBanner.jpg" alt="Banner">
+                                </a>
+            
+                                <div class="banner-content">
+                                    <h4 class="banner-subtitle text-white"><a href="#"><%= firstProduct.productId.productName %></a></h4>
+                                    <!-- Assuming product name is available, replace with appropriate field -->
+                                    <h3 class="banner-title text-white">
+                                        <a><%= firstProduct.productId.productName %> <br>
+                                            <% if (firstProduct.offerApplied) { %>
+                                                <span><%= firstProduct.offerDetails.offerPercentage %>% off</span>
+                                            <% } %>
+                                        </a>
+                                    </h3>
+                                    <!-- End .banner-title -->
+                                    <a href="productPage?productId=<%= firstProduct.productId._id %>" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
+                        </div><!-- End .col-lg-3 -->
+                    <% } %>
+            
+                    <!-- Second offer banner -->
+                    <% if (offerAppliedProducts.length >= 2) { %>
+                        <% const secondProduct = offerAppliedProducts[1]; %>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="banner banner-overlay">
+                                <a href="#">
+                                    <img src="/userAssets/images/banners/mac1.jpg" alt="Banner">
+                                </a>
+            
+                                <div class="banner-content">
+                                    <h4 class="banner-subtitle text-white"><a href="#"><%= secondProduct.productId.productName %></a></h4>
+                                    <!-- Assuming product name is available, replace with appropriate field -->
+                                    <h3 class="banner-title text-white">
+                                        <a ><%= secondProduct.productId.productName %> <br>
+                                            <% if (secondProduct.offerApplied) { %>
+                                                <span><%= secondProduct.offerDetails.offerPercentage %>% off</span>
+                                            <% } %>
+                                        </a>
+                                    </h3>
+                                    <!-- End .banner-title -->
+                                    <a href="productPage?productId=<%= secondProduct.productId._id %>" class="banner-link">Shop Now <i class="icon-long-arrow-right"></i></a>
+                                </div><!-- End .banner-content -->
+                            </div><!-- End .banner -->
+                        </div><!-- End .col-lg-3 -->
+                    <% } %>
+            
+                    <!-- Static banner without offer -->
                     <div class="col-lg-6">
                         <div class="banner banner-overlay">
                             <a href="#">
-                                <img src="/userAssets/images/demos/demo-13/banners/banner-2.jpg" alt="Banner">
+                                <img src="/userAssets/images/banners/big2.jpg" style="height: 27.5rem;" alt="Banner">
                             </a>
-
+                    
                             <div class="banner-content">
-                                <h4 class="banner-subtitle text-white d-none d-sm-block"><a href="#">Amazing Value</a>
-                                </h4><!-- End .banner-subtitle -->
-                                <h3 class="banner-title text-white"><a href="#">Clothes Trending <br>Spring Collection
-                                        2019 <br><span>from $12,99</span></a></h3><!-- End .banner-title -->
-                                <a href="#" class="banner-link">Discover Now <i class="icon-long-arrow-right"></i></a>
+                                <h4 class="banner-subtitle text-white d-none d-sm-block"><a href="#"><%= topSellingProduct.productName %></a></h4>
+                                <h3 class="banner-title text-white">
+                                    <a href="#"><%= topSellingProduct.productName %> <br>
+                                        <% if (topSellingProduct.count > 0) { %>
+                                            <span>Best Seller</span>
+                                        <% } %>
+                                    </a>
+                                </h3><!-- End .banner-title -->
+                                <a href="productPage?productId=<%= topSellingProduct._id %>" class="banner-link">Discover Now <i class="icon-long-arrow-right"></i></a>
                             </div><!-- End .banner-content -->
                         </div><!-- End .banner -->
                     </div><!-- End .col-lg-6 -->
                 </div><!-- End .row -->
             </div><!-- End .container -->
+            
+
+            
 
             <div class="mb-3"></div><!-- End .mb-3 -->
 
@@ -290,7 +316,7 @@
 
             <div class="mb-3"></div><!-- End .mb-3 -->
 
-            <div class="container">
+            <!-- <div class="container">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="banner banner-overlay banner-overlay-light">
@@ -300,14 +326,14 @@
 
                             <div class="banner-content">
                                 <h4 class="banner-subtitle d-none d-sm-block"><a href="#">Spring Sale is Coming</a></h4>
-                                <!-- End .banner-subtitle -->
+                                <!-- End .banner-subtitle --
                                 <h3 class="banner-title"><a href="#">All Smart Watches <br>Discount <br><span
-                                            class="text-primary">15% off</span></a></h3><!-- End .banner-title -->
+                                            class="text-primary">15% off</span></a></h3><!-- End .banner-title --
                                 <a href="#" class="banner-link banner-link-dark">Discover Now <i
                                         class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-lg-6 -->
+                            </div><!-- End .banner-content --
+                        </div><!-- End .banner --
+                    </div><!-- End .col-lg-6 --
 
                     <div class="col-lg-6">
                         <div class="banner banner-overlay">
@@ -317,15 +343,15 @@
 
                             <div class="banner-content">
                                 <h4 class="banner-subtitle text-white  d-none d-sm-block"><a href="#">Amazing Value</a>
-                                </h4><!-- End .banner-subtitle -->
+                                </h4><!-- End .banner-subtitle --
                                 <h3 class="banner-title text-white"><a href="#">Headphones Trending <br>JBL Harman
-                                        <br><span>from $59,99</span></a></h3><!-- End .banner-title -->
+                                        <br><span>from $59,99</span></a></h3><!-- End .banner-title --
                                 <a href="#" class="banner-link">Discover Now <i class="icon-long-arrow-right"></i></a>
-                            </div><!-- End .banner-content -->
-                        </div><!-- End .banner -->
-                    </div><!-- End .col-lg-6 -->
-                </div><!-- End .row -->
-            </div><!-- End .container -->
+                            </div><!-- End .banner-content --
+                        </div><!-- End .banner --
+                    </div><!-- End .col-lg-6 --
+                </div><!-- End .row --
+            </div>End .container -->
 
             <div class="mb-1"></div><!-- End .mb-1 -->
 

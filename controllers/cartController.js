@@ -17,20 +17,19 @@ const loadcart = async (req, res) => {
                 }
             });
 
-        let cartCount = 0;
-        if (cart && cart.product) {
-            cartCount = cart.product.length;
+        if (!cart) {
+            return res.render('user/cart', { cartData: null, cartCount: 0 });
         }
 
-        if (!cart) {
-            return res.render('user/cart', { cartData: 'Nothing', cartCount });
-        }
+        const cartCount = cart.product ? cart.product.length : 0;
+
         res.render('user/cart', { cartData: cart, cartCount: cartCount });
     } catch (error) {
         console.error('Error loading cart:', error);
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 const addToCart = async (req, res) => {

@@ -351,7 +351,8 @@
     font-size: 2rem;
     line-height: 1.25;
     letter-spacing: -.025em;
-    margin-bottom: .5rem
+    margin-bottom: .5rem;
+    padding-top: 20px
 }
 
 .banner-title span {

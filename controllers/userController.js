@@ -12,6 +12,7 @@ const Order = require('../models/orderModel');
 const Coupen  = require ('../models/coupenModel');
 const Wallet = require('../models/walletModel');
 const Offer = require('../models/offerModel')
+const Wishlist = require('../models/wishlistModal')
 
 
 // Password Hashing for security & threating from Hackers
@@ -60,11 +61,25 @@ const load404 = async (req, res) => {
 
 const loadHome = async (req, res) => {
     try {
-        const userId = req.session.user_id; // Assuming user_id is stored in the session
-        const userData = await User.findOne({ _id: userId }); // Fetch user data based on userId
-        const productData = await Product.findOne({ list: false }); // Fetch product data where list is false
-        const categoryData = await Category.findOne({ list: false }); // Fetch category data where list is false
-        const variantData = await Variant.find({}); // Fetch all variants
+        const userId = req.session.user_id; 
+        const userData = await User.findOne({ _id: userId }); 
+        
+        const productData = await Product.findOne({ list: false });
+
+        const productData1 = await Product.find({ list: false }).populate('productCategory').limit(4);
+
+        const offerAppliedProducts = await Variant.find({ offerApplied: true })
+            .populate({
+                path: 'productId',
+                populate: {
+                    path: 'productCategory'
+                }
+            });
+
+        const topSellingProduct = await Product.findOne({ list: false }).sort({ count: -1 })    
+
+        const categoryData = await Category.findOne({ list: false }); 
+        const variantData = await Variant.find({}); 
 
         const cartData = await Cart.findOne({ userId: userId })
             .populate({
@@ -72,20 +87,34 @@ const loadHome = async (req, res) => {
                 populate: {
                     path: 'varientId'
                 }
-            }); // Fetch cart data for the user and populate products with variants
+            });
+        let cartCount = cartData ? cartData.product.length : 0;
+
+        const wishlistData = await Wishlist.findOne({ userId: userId })
+            .populate({
+                path: 'products.productId'
+            });
+        let wishlistCount = wishlistData ? wishlistData.products.length : 0;
 
         res.render('user/home', {
-            userData: userData,
+            userData: userData || null,
             productData: productData,
+            productData1: productData1,
+            offerAppliedProducts: offerAppliedProducts,
+            topSellingProduct:topSellingProduct,
             categoryData: categoryData,
             variantData: variantData,
-            cartData: cartData
+            cartData: cartData || null,
+            cartCount: cartCount,
+            wishlistCount: wishlistCount
         });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Error loading home page');
     }
 };
+
+
 
 
 // Load Company about page

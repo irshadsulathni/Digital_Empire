@@ -357,6 +357,8 @@ const salesReportFilter = async (req, res) => {
 
 
 
+
+
 const adminLoad404 = async (req, res) =>{
     try {
         res.render('admin/admin404')

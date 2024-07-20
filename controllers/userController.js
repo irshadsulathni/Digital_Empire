@@ -420,17 +420,46 @@ const successGoogleLogin = async (req, res) => {
             return res.render('user/404');
         }
 
-        const { given_name, email, googleId } = req.user; // Assuming googleId is available in req.user
+        const { given_name, email, googleId } = req.user || {}; // Safeguard if req.user is undefined
 
+        if (!email) {
+            return res.render('user/404'); // Handle case where email is not provided
+        }
+
+        let userData;
+        let userId;
         const existingUser = await User.findOne({ email });
 
-        const productData = await Product.findOne({ list: false }); // Fetch product data where list is false
-        const categoryData = await Category.findOne({ list: false }); // Fetch category data where list is false
-        const variantData = await Variant.find({}); // Fetch all variants
+        if (existingUser) {
+            userData = existingUser;
+            userId = existingUser._id;
+            req.session.user_id = userId;
+        } else {
+            const newUser = new User({
+                name: given_name,
+                email,
+                googleId: googleId ? googleId : null, // Set googleId only if available
+                is_verified: 1 // Assuming user is verified upon Google login
+            });
+            await newUser.save();
+            userData = newUser;
+            userId = newUser._id;
+            req.session.user_id = userId;
+        }
 
-        // Assuming userId is derived from session
-        const userId = req.session.user_id;
-
+        // Fetching all the necessary data
+        const productData = await Product.findOne({ list: false });
+        const productData1 = await Product.find({ list: false }).populate('productCategory').limit(4);
+        const offerAppliedProducts = await Variant.find({ offerApplied: true })
+            .populate({
+                path: 'productId',
+                populate: {
+                    path: 'productCategory'
+                }
+            });
+        const topSellingProduct = await Product.findOne({ list: false }).sort({ count: -1 });
+        const categoryData = await Category.findOne({ list: false });
+        const variantData = await Variant.find({});
         const cartData = await Cart.findOne({ userId })
             .populate({
                 path: 'product.productId',
@@ -438,44 +467,35 @@ const successGoogleLogin = async (req, res) => {
                     path: 'varientId'
                 }
             });
-
-        if (existingUser) {
-            req.session.user_id = existingUser._id;
-            return res.render('user/home', { 
-                userData: existingUser, 
-                productData, 
-                categoryData, 
-                variantData, 
-                cartData, 
-                isGoogleUser: !!googleId // Check if googleId exists
+        const wishlistData = await Wishlist.findOne({ userId })
+            .populate({
+                path: 'products.productId'
             });
-        }
 
-        const newUser = new User({
-            name: given_name,
-            email,
-            googleId:true,
-            is_verified: 1 // Assuming user is verified upon Google login
-        });
+        let cartCount = cartData ? cartData.product.length : 0;
+        let wishlistCount = wishlistData ? wishlistData.products.length : 0;
 
-        await newUser.save();
-
-        req.session.user_id = newUser._id;
-
-        res.render('user/home', { 
-            userData: newUser, 
-            productData, 
-            categoryData, 
-            variantData, 
-            cartData, 
-            isGoogleUser: true 
+        // Rendering the home page with all data
+        res.render('user/home', {
+            userData: userData || null,
+            productData: productData,
+            productData1: productData1,
+            offerAppliedProducts: offerAppliedProducts,
+            topSellingProduct: topSellingProduct,
+            categoryData: categoryData,
+            variantData: variantData,
+            cartData: cartData || null,
+            cartCount: cartCount,
+            wishlistCount: wishlistCount,
+            isGoogleUser: !!googleId // Check if googleId exists
         });
 
     } catch (error) {
-        console.error('Error saving user:', error);
+        console.error('Error handling Google login:', error);
         res.render('user/404');
     }
 };
+
 
 
 

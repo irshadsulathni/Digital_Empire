@@ -10,10 +10,15 @@ passport.deserializeUser((user, done)=>{
     done(null, user)
 });
 
+const isProduction = process.env.NODE_ENV === 'production'
+const callbackURL = isProduction 
+    ? 'https://irshadsulthani.shop/auth/google/callback'
+    : 'http://localhost:3000/auth/google/callback';
+
 passport.use(new googleStrategy({
     clientID:process.env.CLEINT_ID,
     clientSecret:process.env.CLEINT_SCERET,
-    callbackURL:'https://irshadsulthani.shop/auth/google/callback',
+    callbackURL:callbackURL,
     passReqToCallback:true
 },
 function(request, accessToken, refreshToken, profile, done){

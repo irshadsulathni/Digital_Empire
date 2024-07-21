@@ -78,6 +78,15 @@
                         <div class="col-md-3">
                             <form id="offerForm" method="post">
                                 <div class="mb-4">
+                                    <label for="offerType" class="form-label">Type</label>
+                                    <select class="form-control" id="offerType" name="offerType" required>
+                                        <option value="" disabled selected>Select Type</option>
+                                        <option value="product">Product</option>
+                                        <option value="category">Category</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-4">
                                     <label for="offerName" class="form-label">Name</label>
                                     <input type="text" placeholder="Type here" class="form-control" id="offerName" name="offerName" required />
                                 </div>
@@ -94,14 +103,16 @@
                                 </div>
                             </form>
                         </div>
+                        
                         <div class="col-md-9">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <% if (offerData.length === 0) { %>
-                                        <p style="text-align: center;">No Coupon Created</p>
+                                        <p style="text-align: center;">No Offer Created</p>
                                     <% } else { %>
                                     <thead>
                                         <tr>
+                                            <th>Type</th>
                                             <th>Name</th>
                                             <th>Percentage</th>
                                             <th>Expired</th>
@@ -114,6 +125,7 @@
                                       
                                             <% offerData.forEach((offer) => { %>
                                                 <tr>
+                                                    <td><%= offer.type %></td>
                                                     <td><%= offer.name %></td>
                                                     <td><%= offer.percentage %></td>
                                                     <td><%= offer.expireDate.getDate()%>/
@@ -164,11 +176,13 @@
         
         document.getElementById('offerForm').addEventListener('submit', function(event) {
             event.preventDefault();
+            const offerType = document.getElementById('offerType').value.trim();
             const offerName = document.getElementById('offerName').value.trim();
             const percentage = document.getElementById('percentage').value.trim();
             const offerExpired = document.getElementById('offerExpired').value.trim();
+            console.log('offerType',offerType);
             
-            if (!offerName || !percentage || !offerExpired) {
+            if (!offerName || !percentage || !offerExpired || !offerType) {
                 Toastify({
                     text: "Please fill out all fields",
                     duration: 3000,
@@ -199,7 +213,8 @@
                 body: JSON.stringify({
                     offerName,
                     percentage,
-                    offerExpired
+                    offerExpired,
+                    offerType
                 })
             })
             .then(response => response.json())

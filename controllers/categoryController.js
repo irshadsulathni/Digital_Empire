@@ -1,15 +1,52 @@
 const mongoose = require('mongoose');
 const Category = require('../models/categoryModel');
 const { options } = require('../routes/userRoute');
+const Variant = require('../models/varientModel')
+const Product = require('../models/productModel')
 
 
 const loadCategories = async (req, res) => {
     try {
-        const categoryData = await Category.find({});
-        
-        res.render('admin/category', { categoryData, activeCategeryMessage: 'active' })
+        // Step 1: Fetch categories
+        const categories = await Category.find({});
+
+        // Step 2: Fetch products for these categories
+        const categoryIds = categories.map(category => category._id);
+        const products = await Product.find({ productCategory: { $in: categoryIds } }).select('_id productCategory');
+
+        // Step 3: Fetch variants for these products
+        const productIds = products.map(product => product._id);
+        const variants = await Variant.find({ productId: { $in: productIds } }).select('productId offerApplied');
+
+        // Step 4: Determine offer status for each category
+        const offerStatusMap = {};
+        categories.forEach(category => {
+            offerStatusMap[category._id] = false; // Default to false
+        });
+
+        variants.forEach(variant => {
+            if (variant.offerApplied) {
+                const product = products.find(product => product._id.equals(variant.productId));
+                if (product) {
+                    offerStatusMap[product.productCategory] = true;
+                }
+            }
+        });
+
+        // Step 5: Combine category data with offerApplied status
+        const categoryData = categories.map(category => ({
+            ...category.toObject(),
+            offerApplied: offerStatusMap[category._id] || false
+        }));
+
+        // Render the view with combined data
+        res.render('admin/category', {
+            categoryData,
+            activeCategeryMessage: 'active'
+        });
     } catch (error) {
         console.log(error.message);
+        res.status(500).send('Internal Server Error');
     }
 };
 // for adding categery

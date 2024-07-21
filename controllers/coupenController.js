@@ -56,6 +56,10 @@ const addCoupen = async (req, res) => {
         if (!minAmount || isNaN(minAmount) || minAmount <= 0) {
             return res.status(400).json({ message: 'Coupon amount should be a positive number.' });
         }
+        
+        if(minAmount <= coupenAmount){
+            return res.status(400).json({ message:'the min amount and coupen amount same please select large amout' })
+        }
 
         const currentDate = new Date().toISOString().split('T')[0];
         if (!coupenExpired || new Date(coupenExpired) < new Date(currentDate)) {

@@ -590,8 +590,8 @@ const downloadInvoice = async (req, res) => {
 };
 
 const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID, // Use environment variable for key ID
-    key_secret: process.env.RAZRORPAY_KEY_SECRET // Use environment variable for key secret
+    key_id: process.env.RAZORPAY_KEY_ID, 
+    key_secret: process.env.RAZRORPAY_KEY_SECRET 
 });
 
 // add money to the wallet using razorpay

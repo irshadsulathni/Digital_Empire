@@ -223,6 +223,12 @@
                     return;
                 }
         
+                if (Number(minAmount) <= Number(coupenAmount)) {
+                    showErrorToast("Please use a different amount. The coupon amount should be less than the minimum amount.");
+                    return;
+                }
+
+
                 const currentDate = new Date().toISOString().split('T')[0];
                 if (coupenExpired < currentDate) {
                     showErrorToast("Coupon expiration date should not be in the past.");

@@ -17,6 +17,9 @@
     <link href="/adminAssets/css/main.css?v=1.1" rel="stylesheet" type="text/css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="dark">
@@ -110,67 +113,53 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% for(let i=0 ; i<categoryData.length;i++){ %>
-                                                <!-- <td class="text-center">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="" />
-                                                    </div>
-                                                </td> -->
-                                                <td>
-                                                    <%= i+1 %>
-                                                </td>
-                                                <td>
-                                                    <%= categoryData[i].name %>
-                                                </td>
-                                                <td>
-                                                    <%= categoryData[i].discription %>
-                                                </td>
-                                                <!-- <td>
-                                                    <%= categoryData[i].createdAt.getDate() %> -
-                                                        <%= categoryData[i].createdAt.getMonth()+1 %> -
-                                                            <%= categoryData[i].createdAt.getFullYear() %>
-                                                </td> -->
+                                            <% for(let i = 0; i < categoryData.length; i++) { %>
+                                            <tr>
+                                                <td><%= i + 1 %></td>
+                                                <td><%= categoryData[i].name %></td>
+                                                <td><%= categoryData[i].discription %></td>
                                                 <td>
                                                     <% if (!categoryData[i].list) { %>
-                                                        <span class="r-150 badge rounded-pill alert-success">
-                                                            Active
-                                                        </span>
-                                                        <% } else { %>
-                                                            <span class="badge rounded-pill alert-danger">
-                                                                Deactive
-                                                            </span>
-                                                            <% } %>
+                                                    <span class="r-150 badge rounded-pill alert-success">Active</span>
+                                                    <% } else { %>
+                                                    <span class="badge rounded-pill alert-danger">Deactive</span>
+                                                    <% } %>
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="">
-                                                        <a href="#" data-bs-toggle="dropdown"
-                                                            class="btn btn-light rounded btn-sm font-sm"> <i
-                                                                class="material-icons md-more_horiz"></i> </a>
+                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm">
+                                                            <i class="material-icons md-more_horiz"></i>
+                                                        </a>
                                                         <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">View detail</a>
+                                                            <!-- Toggle Offer -->
+                                                            <a class="dropdown-item" href="#" onclick="toggleOffer('<%= categoryData[i]._id %>', '<%= categoryData[i].offerApplied %>')">
+                                                                <span id="offerStatus-<%= categoryData[i]._id %>">
+                                                                    <%= categoryData[i].offerApplied ? 'Remove offer' : 'Apply offer' %>
+                                                                </span>
+                                                            </a>
+                                                            
+                                                            <!-- List/Unlist -->
                                                             <div class="">
                                                                 <% if (categoryData[i].list) { %>
-                                                                    <a class="dropdown-item"
-                                                                        onclick="listOrUnlist('<%= categoryData[i]._id %>', true)">List</a>
-                                                                    <% } else { %>
-                                                                        <a class="dropdown-item"
-                                                                            onclick="listOrUnlist('<%= categoryData[i]._id %>', false)">UnList</a>
-                                                                        <% } %>
+                                                                <a class="dropdown-item" onclick="listOrUnlist('<%= categoryData[i]._id %>', true)">List</a>
+                                                                <% } else { %>
+                                                                <a class="dropdown-item" onclick="listOrUnlist('<%= categoryData[i]._id %>', false)">UnList</a>
+                                                                <% } %>
                                                             </div>
-                                                            <a class="dropdown-item"
-                            
-                                                                
-                                                                id="edit"
-                                                                href="/admin/editCategory?categoryId=<%= categoryData[i]._id %>" >
-                                                                Edit Category </a>
+                                                            
+                                                            <!-- Edit Category -->
+                                                            <a class="dropdown-item" id="edit" href="/admin/editCategory?categoryId=<%= categoryData[i]._id %>">Edit Category</a>
+                                                            
+                                                            <!-- Delete Category -->
                                                             <a class="dropdown-item text-danger" href="/admin/category/deleteCategory?categoryId=<%= categoryData[i]._id %>">Delete</a>
                                                         </div>
                                                     </div>
                                                     <!-- dropdown //end -->
                                                 </td>
-                                                </tr>
-                                                <% } %>
+                                            </tr>
+                                            <% } %>
                                         </tbody>
+                                        
                                     </table>
                                 </div>
                             </div>
@@ -186,15 +175,28 @@
             <footer class="main-footer font-xs">
             </footer>
         </main>
-        <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
-        <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
-        <script src="/adminAssets/js/vendors/select2.min.js"></script>
-        <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
-        <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
-        <!-- Main Script -->
-        <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
-        <script>
-            async function listOrUnlist(categoryId, list) {
+    <script src="/adminAssets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/adminAssets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/adminAssets/js/vendors/select2.min.js"></script>
+    <script src="/adminAssets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/adminAssets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/adminAssets/js/main.js?v=1.1" type="text/javascript"></script>
+    <script>
+        async function listOrUnlist(categoryId, list) {
+            const confirmation = await Swal.fire({
+                title: list ? "List Category" : "Unlist Category",
+                text: list ? "Are you sure you want to list this Category?" : "Are you sure you want to unlist this Category?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
+                customClass: {
+                    popup: 'custom-swal-background'
+                }
+            });
+    
+            if (confirmation.isConfirmed) {
                 try {
                     const response = await fetch('/admin/category/list', {
                         method: 'POST',
@@ -205,70 +207,177 @@
                     });
                     const data = await response.json();
                     if (data) {
+                        await Swal.fire({
+                            title: list ? "Category Listed!" : "Category Unlisted!",
+                            text: list ? "Your category has been successfully listed." : "Your category has been successfully unlisted.",
+                            icon: "success",
+                            customClass: {
+                                popup: 'custom-swal-background'
+                            }
+                        });
                         location.reload();
                     }
-
                 } catch (error) {
                     console.error('Error:', error);
+                    await Swal.fire({
+                        title: "Oops!",
+                        text: "Something went wrong. Please try again later.",
+                        icon: "error",
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        }
+                    });
                 }
             }
-            
-        </script>
-        <script>
-            async function listOrUnlist(categoryId, list) {
-                // Confirm the action with SweetAlert
-                const confirmation = await swal({
-                    title: list ? "List Category" : "Unlist Category",
-                    text: list ? "Are you sure you want to list this Category?" : "Are you sure you want to unlist this Category?",
-                    icon: "warning",
-                    buttons: {
-                        cancel: "Cancel",
-                        confirm: {
-                            text: "Yes",
-                            value: true,
-                            visible: true,
-                            className: "btn-confirm",
-                            closeModal: true
+        }
+    </script>
+    
+    <script>
+        async function toggleOffer(categoryId, offerApplied) {
+            try {
+                // Determine the action based on the offerApplied flag
+                const action = offerApplied === 'true' ? 'remove' : 'apply';
+                const url = action === 'apply' ? '/admin/getOffer' : '/admin/removeOffer';
+                const confirmText = action === 'apply' ? 'Apply offer to category?' : 'Remove offer from category?';
+    
+                console.log('confirmText', confirmText);
+    
+                if (action === 'apply') {
+                    // Fetch available offers only if applying an offer
+                    const offersResponse = await fetch(url, { method: 'GET' });
+    
+                    if (!offersResponse.ok) {
+                        throw new Error('Failed to fetch offers');
+                    }
+    
+                    const offers = await offersResponse.json();
+    
+                    // Show SweetAlert to select an offer
+                    const { value: selectedOfferId } = await Swal.fire({
+                        title: 'Select an Offer',
+                        input: 'select',
+                        inputOptions: Object.fromEntries(
+                            offers
+                                .filter(offer => offer.type === 'category')
+                                .map(offer => [
+                                    offer._id,
+                                    `${offer.name} - ${offer.percentage}% (Expires: ${new Date(offer.expireDate).toLocaleDateString()})`
+                                ])
+                        ),
+                        inputPlaceholder: 'Select an offer',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancel',
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        },
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to select an offer';
+                            }
+                        }
+                    });
+    
+                    if (selectedOfferId) {
+                        // Find the selected offer
+                        const selectedOffer = offers.find(offer => offer._id === selectedOfferId);
+                        const offerName = selectedOffer ? selectedOffer.name : '';
+    
+                        // Confirm apply offer
+                        const confirmAction = await Swal.fire({
+                            title: 'Are you sure?',
+                            text: confirmText,
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Apply',
+                            cancelButtonText: 'Cancel',
+                            customClass: {
+                                popup: 'custom-swal-background'
+                            }
+                        });
+    
+                        if (confirmAction.isConfirmed) {
+                            // Apply selected offer
+                            const response = await fetch('/admin/applyOffer', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ categoryId, offerName }) // Sending offerName and categoryId
+                            });
+    
+                            if (!response.ok) {
+                                throw new Error('Failed to apply offer');
+                            }
+    
+                            // Update offer status text
+                            document.getElementById(`offerStatus-${categoryId}`).innerText = 'Remove offer';
+    
+                            Swal.fire({
+                                title: 'Offer Applied!',
+                                text: 'The offer has been successfully applied.',
+                                icon: 'success',
+                                customClass: {
+                                    popup: 'custom-swal-background'
+                                }
+                            });
                         }
                     }
-                });
-        
-                if (confirmation) {
-                    try {
-                        const response = await fetch('/admin/category/list', {
+                } else {
+                    // Confirm remove offer
+                    const confirmAction = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: confirmText,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Remove',
+                        cancelButtonText: 'Cancel',
+                        customClass: {
+                            popup: 'custom-swal-background'
+                        }
+                    });
+    
+                    if (confirmAction.isConfirmed) {
+                        // Remove offer
+                        const response = await fetch('/admin/removeOffer', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ categoryId, list })
+                            body: JSON.stringify({ categoryId })
                         });
-                        const data = await response.json()
-                        if (data) {
-                            if (list) {
-                                // Show success message for listing
-                                swal("Category Listed!", "Your category has been successfully listed.", "success")
-                                    .then(() => {
-                                        // Reload the page after the success message is closed
-                                        location.reload();
-                                    });
-                            } else {
-                                // Show success message for unlisting
-                                swal("Category Unlisted!", "Your category has been successfully unlisted.", "success")
-                                    .then(() => {
-                                        // Reload the page after the success message is closed
-                                        location.reload();
-                                    });
-                            }
+    
+                        if (!response.ok) {
+                            throw new Error('Failed to remove offer');
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        // Show error message
-                        swal("Oops!", "Something went wrong. Please try again later.", "error");
+    
+                        // Update offer status text
+                        document.getElementById(`offerStatus-${categoryId}`).innerText = 'Apply offer';
+    
+                        Swal.fire({
+                            title: 'Offer Removed!',
+                            text: 'The offer has been successfully removed.',
+                            icon: 'success',
+                            customClass: {
+                                popup: 'custom-swal-background'
+                            }
+                        });
                     }
                 }
+            } catch (error) {
+                console.error(`Error ${offerApplied === 'true' ? 'removing' : 'applying'} offer:`, error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: `Failed to ${offerApplied === 'true' ? 'remove' : 'apply'} offer!`,
+                    customClass: {
+                        popup: 'custom-swal-background'
+                    }
+                });
             }
-        </script>
-        
+        }
+    </script>
+    
+
 </body>
 
 </html>

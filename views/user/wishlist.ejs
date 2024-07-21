@@ -64,13 +64,20 @@
                     <div class="container">
                         <table class="table table-wishlist table-mobile">
                             <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Stock Status</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
+                                <% if (wishlistData && Array.isArray(wishlistData.products) && wishlistData.products.length > 0) { %>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Stock Status</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                <% } else { %>
+                                    <tr>
+                                        <td class="text-center" colspan="5">No items in wishlist.</td>
+                                    </tr>
+                               <% } %>
+                               
                             </thead>
 
                             <tbody>
@@ -137,10 +144,6 @@
                                             </td>
                                         </tr>
                                     <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="5">No items in wishlist.</td>
-                                    </tr>
                                 <% } %>
                             </tbody>
                             

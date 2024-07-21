@@ -457,25 +457,29 @@
                 const data = await response.json();
     
                 const { value: offerName } = await Swal.fire({
-                    title: 'Select an Offer',
-                    input: 'select',
-                    inputOptions: Object.fromEntries(data.map(offer => [
-                        offer.name,
+                title: 'Select an Offer',
+                input: 'select',
+                inputOptions: Object.fromEntries(data
+                    .filter(offer => offer.type === 'product')
+                    .map(offer => [
+                        offer.name, // Assuming offer._id is the unique identifier
                         `${offer.name} - ${offer.percentage}% (Expires: ${new Date(offer.expireDate).toLocaleDateString()})`
-                    ])),
-                    inputPlaceholder: 'Select an offer',
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    customClass: {
-                        popup: 'custom-swal-background'
-                    },
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'You need to select an offer';
-                        }
+                    ])
+                ),
+                inputPlaceholder: 'Select an offer',
+                showCancelButton: true, // Add this to show the cancel button
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'custom-swal-background'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to select an offer';
                     }
-                });
-    
+                }
+            });
+
+
                 if (offerName) {
                     const confirmApply = await Swal.fire({
                         title: `Apply ${offerName}?`,

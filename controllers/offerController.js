@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Offer = require('../models/offerModel');
 const Variant = require("../models/varientModel")
+const Product = require('../models/productModel')
 
 const loadOffer = async (req, res)=>{
     try {
@@ -17,7 +18,9 @@ const loadOffer = async (req, res)=>{
 
 const addOffer = async (req, res) => {
     try {
-        const { offerName, percentage, offerExpired } = req.body;
+        const { offerName, percentage, offerExpired,offerType } = req.body;
+
+        console.log('offerType',offerType);
 
         const existOfferName = await Offer.findOne({name:offerName})
 
@@ -40,6 +43,7 @@ const addOffer = async (req, res) => {
 
         // creating the offer
         const offer = new Offer({ 
+            type:offerType,
             name: offerName, 
             percentage: percentage, 
             expireDate: offerExpired
@@ -84,40 +88,65 @@ const getOffer = async (req, res)=>{
 
 const applyOffer = async (req, res) => {
     try {
-        const { offerName, productId } = req.body;
+        const { offerName, productId, categoryId } = req.body;
 
-        console.log(req.body);
+        console.log('hy hello');
 
         const offer = await Offer.findOne({ name: offerName });
         if (!offer) {
             return res.status(404).json({ error: 'Offer not found' });
         }
 
-        const variants = await Variant.find({ productId });
+        if (productId) {
+            // Apply offer to product variants
+            const variants = await Variant.find({ productId });
 
-        for (const variant of variants) {
-            if (variant.offerApplied) {
-                continue;
+            for (const variant of variants) {
+                if (variant.offerApplied) continue;
+
+                const discountAmount = variant.variantPrice * (offer.percentage / 100);
+                const priceAfterOffer = variant.variantPrice - discountAmount;
+
+                variant.offerApplied = true;
+                variant.offerDetails = {
+                    offerId: offer._id,
+                    priceAfterOfferApplied: priceAfterOffer,
+                    offerPercentage: offer.percentage
+                };
+
+                await variant.save();
             }
 
-            const discountAmount = variant.variantPrice * (offer.percentage / 100);
-            const priceAfterOffer = variant.variantPrice - discountAmount;
+            offer.offerUsed.push({ productId });
+        } else if (categoryId) {
+            console.log('categoryId',categoryId);
+            const products = await Product.find({ productCategory: categoryId });
+            for (const product of products) {
+                const variants = await Variant.find({ productId: product._id });
+                for (const variant of variants) {
+                    if (variant.offerApplied) continue;
 
-            variant.offerApplied = true;
-            variant.offerDetails = {
-                priceAfterOfferApplied: priceAfterOffer,
-                offerPercentage: offer.percentage
-            };
+                    const discountAmount = variant.variantPrice * (offer.percentage / 100);
+                    const priceAfterOffer = variant.variantPrice - discountAmount;
 
-            console.log('variant.offerDetails',variant.offerDetails,'variant.offerDetails');
+                    variant.offerApplied = true;
+                    variant.offerDetails = {
+                        offerId: offer._id,
+                        priceAfterOfferApplied: priceAfterOffer,
+                        offerPercentage: offer.percentage
+                    };
 
-            await variant.save();
+                    await variant.save();
+                }
+            }
+
+            offer.offerUsed.push({ categoryId });
+        } else {
+            return res.status(400).json({ error: 'Invalid parameters' });
         }
 
-        offer.offerUsed.push({ productId });
         await offer.save();
-
-        return res.status(200).json({ message: 'Offer Applied' });
+        return res.status(200).json({ message: 'Offer Applied Successfully' });
     } catch (error) {
         console.error('Error applying offer:', error);
         res.status(500).json({ error: 'Server Error' });
@@ -126,31 +155,68 @@ const applyOffer = async (req, res) => {
 
 const removeOffer = async (req, res) => {
     try {
-        const { productId } = req.body;
+        const { productId, categoryId } = req.body;
 
-        console.log(req.body);
+        console.log('here here its here',categoryId);
 
-        const variants = await Variant.find({ productId, offerApplied: true });
-
-        for (const variant of variants) {
-            variant.offerApplied = false;
-            variant.offerDetails = {
-                priceAfterOfferApplied: 0,
-                offerPercentage: 0
-            };
-            await variant.save();
+        // Ensure at least one identifier is provided
+        if (!productId && !categoryId) {
+            return res.status(400).json({ error: 'Product ID or Category ID must be provided' });
         }
 
-        await Offer.updateMany({ 'offerUsed.productId': productId }, {
-            $pull: { offerUsed: { productId: productId } }
+        // Find the offer related to the given productId or categoryId
+        const offer = await Offer.findOne({
+            'offerUsed.productId': productId,
+            'offerUsed.categoryId': categoryId
         });
 
-        res.status(200).json({ message: 'Offer removed successfully' });
+        if (!offer) {
+            return res.status(404).json({ error: 'Offer not found' });
+        }
+
+        if (productId) {
+            // Remove offer from product variants
+            const variants = await Variant.find({ productId });
+            for (const variant of variants) {
+                if (variant.offerApplied) {
+                    variant.offerApplied = false;
+                    variant.offerDetails = {};
+
+                    await variant.save();
+                }
+            }
+
+            offer.offerUsed = offer.offerUsed.filter(used => used.productId.toString() !== productId.toString());
+        }
+
+        if (categoryId) {
+            // Remove offer from products and their variants
+            const products = await Product.find({ productCategory: categoryId });
+            for (const product of products) {
+                const variants = await Variant.find({ productId: product._id });
+                for (const variant of variants) {
+                    if (variant.offerApplied) {
+                        variant.offerApplied = false;
+                        variant.offerDetails = {};
+
+                        await variant.save();
+                    }
+                }
+            }
+
+            offer.offerUsed = offer.offerUsed.filter(used => used.categoryId.toString() !== categoryId.toString());
+        }
+
+        // Save the updated offer document
+        await offer.save();
+        return res.status(200).json({ message: 'Offer Removed Successfully' });
+
     } catch (error) {
         console.error('Error removing offer:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'Server Error' });
     }
 };
+
 
 module.exports = {
     loadOffer,

@@ -438,7 +438,7 @@ const successGoogleLogin = async (req, res) => {
             const newUser = new User({
                 name: given_name,
                 email,
-                googleId: googleId ? googleId : null, // Set googleId only if available
+                googleId: true, // Set googleId only if available
                 is_verified: 1 // Assuming user is verified upon Google login
             });
             await newUser.save();

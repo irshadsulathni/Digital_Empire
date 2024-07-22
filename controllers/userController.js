@@ -302,14 +302,18 @@ const logout = async (req, res) => {
 const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 8;
+        const skip = (page - 1) * pageSize;
+
         const orderData = await Order.find({ userId }).populate({
             path: 'product.productId',
             populate: {
                 path: 'varientId'
             }
-        }).sort({_id:-1});
-        const couponData = await Coupen.find({}).lean(); // Use lean() for better performance
+        }).sort({ _id: -1 });
 
+        const couponData = await Coupen.find({}).lean();
         couponData.forEach(coupon => {
             if (!Array.isArray(coupon.usersList)) {
                 coupon.usersList = [];
@@ -321,13 +325,15 @@ const loadDashBoard = async (req, res) => {
             });
         });
 
-
         const userData = await User.findOne({ _id: userId });
         const addressData = await Address.find({ userId });
         const walletData = await Wallet.findOne({ userId }).lean();
-        
+
         if (walletData && walletData.history) {
+            const totalTransactions = walletData.history.length;
             walletData.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            walletData.history = walletData.history.slice(skip, skip + pageSize);
+            walletData.totalTransactions = totalTransactions;
         }
 
         res.render('user/dashboard', { 
@@ -336,6 +342,8 @@ const loadDashBoard = async (req, res) => {
             orderData, 
             coupons: couponData, 
             walletData,
+            page,
+            pageSize,
             isGoogleUser: userData && userData.googleId ? true : false 
         });
     } catch (error) {

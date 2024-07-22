@@ -333,7 +333,16 @@
                 padding: 15px;
             }
         }
-        .wallet-balance {
+        .wallet-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.wallet-add-amount {
+    margin-bottom: 20px;
+}
+
+.wallet-balance {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     padding: 20px;
@@ -344,10 +353,12 @@
     margin-top: 0;
     font-size: 24px;
     color: #333;
+    text-align: center;
 }
 
 .balance-info {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 .balance-label {
@@ -360,28 +371,14 @@
     color: #27ae60;
 }
 
-.actions {
-    display: flex;
-    justify-content: space-between;
+.transaction-history {
     margin-top: 20px;
 }
 
-.btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: #fff;
-    border: none;
+.transaction-history h4 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 .transactions {
@@ -389,19 +386,29 @@
     padding: 0;
 }
 
-.transactions li {
-    margin-bottom: 10px;
+.transaction-item {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
 .transaction-type {
-    width: 100px; /* Set equal width */
+    width: 100px;
     padding: 5px 10px;
     border-radius: 5px;
     text-align: center;
     color: #fff;
-    background-color: green; /* Default background color for transaction type */
+    background-color: #28a745;
+}
+
+.transaction-amount {
+    font-weight: bold;
+}
+
+.transaction-date {
+    color: #555;
 }
 
 .debit {
@@ -410,23 +417,18 @@
 
 .credit {
     background-color: #28a745;
-    color: #000; /* Black text for visibility on white background */
 }
 
 .cancellation {
     background-color: #ffc107;
-    color: #000; /* Black text for visibility on white background */
-}
-
-.transaction-amount,
-.transaction-date {
-    margin-left: auto;
-    color: #555;
+    color: #000;
 }
 
 #add-amount-form {
     display: flex;
     gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 #add-amount-form input {
@@ -449,8 +451,32 @@
     background-color: #45a049;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
 
-    </style>
+.pagination button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-weight: bold;
+}
+ </style>
 
 </head>
 
@@ -510,7 +536,7 @@
                                         <li class="nav-item">
                                             <a class="nav-link" id="tab-account-link" data-toggle="tab"
                                                 href="#tab-account" role="tab" aria-controls="tab-account"
-                                                aria-selected="false">Account Details</a>
+                                                aria-selected="false">Wallet</a>
                                         </li>
                                         <li class="nav-item">
                                             <a type="button" class="nav-link" id="logoutButton">Sign Out</a>
@@ -580,8 +606,6 @@
                                                 </form>
                                             <% } %>
                                         </div><!-- .End .tab-pane -->
-                                        
-
                                         <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
                                             <div id="order-container" style="width: 100%; margin: 0 55px;">
                                                 <div class="container order-container" style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;">
@@ -616,10 +640,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
-                                        
-
                                         <div class="tab-pane fade" id="tab-downloads" role="tabpanel"
                                             aria-labelledby="tab-downloads-link">
                                             <div class="container coupon-container">
@@ -670,7 +690,6 @@
                                                     
                                             </div>
                                         </div>
-
                                         <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
                                             <div class="wallet-container">
                                                 <div class="wallet-add-amount">
@@ -679,7 +698,7 @@
                                                         <button type="submit">Add Amount</button>
                                                     </form>
                                                 </div>
-                                                <div class="wallet-balance">
+                                                <div class="wallet-balance text-center">
                                                     <% if (walletData && walletData.balance != null) { %>
                                                         <h3>My Wallet</h3>
                                                         <div class="balance-info">
@@ -689,7 +708,7 @@
                                                         <div class="transaction-history">
                                                             <h4>Transaction History</h4>
                                                             <% if (walletData.history && walletData.history.length > 0) { %>
-                                                                <ul class="transactions">
+                                                                <ul class="transactions" id="transactions">
                                                                     <% walletData.history.forEach(function(transaction) { %>
                                                                         <li class="transaction-item">
                                                                             <span class="transaction-type <%= transaction.type %>">
@@ -704,6 +723,11 @@
                                                                         </li>
                                                                     <% }); %>
                                                                 </ul>
+                                                                <div class="pagination">
+                                                                    <button id="prevPage" <%= page <= 1 ? 'disabled' : '' %>>Previous</button>
+                                                                    <span>Page <%= page %> of <%= Math.ceil(walletData.totalTransactions / pageSize) %></span>
+                                                                    <button id="nextPage" <%= page >= Math.ceil(walletData.totalTransactions / pageSize) ? 'disabled' : '' %>>Next</button>
+                                                                </div>
                                                             <% } else { %>
                                                                 <p>No transactions found.</p>
                                                             <% } %>
@@ -713,14 +737,8 @@
                                                     <% } %>
                                                 </div>
                                             </div>
-                                        </div><!-- .End .tab-pane -->
+                                        </div>
                                         
-
-
-
-
-
-
                                         <div class="tab-pane fade" id="tab-address" role="tabpanel"
                                             aria-labelledby="tab-address-link">
                                             <p>The following addresses will be used on the checkout page by default.</p>
@@ -1230,6 +1248,45 @@
             }
         </script>
 
+
+<script>
+    document.getElementById('prevPage').addEventListener('click', function() {
+        const page = parseInt('<%= page %>', 10) - 1;
+        const pageSize = parseInt('<%= pageSize %>', 10);
+        fetchTransactions(page, pageSize);
+    });
+
+    document.getElementById('nextPage').addEventListener('click', function() {
+        const page = parseInt('<%= page %>', 10) + 1;
+        const pageSize = parseInt('<%= pageSize %>', 10);
+        fetchTransactions(page, pageSize);
+    });
+
+    function fetchTransactions(page, pageSize) {
+        fetch(`/dashboard?page=${page}&pageSize=${pageSize}`)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                document.getElementById('transactions').innerHTML = doc.getElementById('transactions').innerHTML;
+                document.querySelector('.pagination').innerHTML = doc.querySelector('.pagination').innerHTML;
+
+                // Reattach event listeners after DOM update
+                document.getElementById('prevPage').addEventListener('click', function() {
+                    const page = parseInt('<%= page %>', 10) - 1;
+                    const pageSize = parseInt('<%= pageSize %>', 10);
+                    fetchTransactions(page, pageSize);
+                });
+
+                document.getElementById('nextPage').addEventListener('click', function() {
+                    const page = parseInt('<%= page %>', 10) + 1;
+                    const pageSize = parseInt('<%= pageSize %>', 10);
+                    fetchTransactions(page, pageSize);
+                });
+            })
+            .catch(error => console.error('Error fetching transactions:', error));
+    }
+</script>
 
 
 <!-- this for retryPayment from the razorpay -->

@@ -303,7 +303,7 @@ const loadDashBoard = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const page = parseInt(req.query.page) || 1;
-        const pageSize = parseInt(req.query.pageSize) || 6;
+        const pageSize = parseInt(req.query.pageSize) || 8;
         const skip = (page - 1) * pageSize;
 
         const orderData = await Order.find({ userId }).populate({

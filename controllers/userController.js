@@ -336,6 +336,8 @@ const loadDashBoard = async (req, res) => {
             walletData.totalTransactions = totalTransactions;
         }
 
+        
+
         res.render('user/dashboard', { 
             userData, 
             addressData, 

@@ -336,7 +336,7 @@ const loadDashBoard = async (req, res) => {
             orderData, 
             coupons: couponData, 
             walletData,
-            isGoogleUser: userData && userData.googleId ? true : false // Check if user has googleId
+            isGoogleUser: userData && userData.googleId ? true : false 
         });
     } catch (error) {
         console.error('Error loading dashboard:', error);
@@ -438,13 +438,14 @@ const successGoogleLogin = async (req, res) => {
             const newUser = new User({
                 name: given_name,
                 email,
-                googleId: true, // Set googleId only if available
-                is_verified: 1 // Assuming user is verified upon Google login
+                googleId: true, 
+                is_verified: 1 
             });
             await newUser.save();
             userData = newUser;
             userId = newUser._id;
             req.session.user_id = userId;
+            console.log('req.session.user_id',req.session.user_id);
         }
 
         // Fetching all the necessary data
@@ -487,7 +488,7 @@ const successGoogleLogin = async (req, res) => {
             cartData: cartData || null,
             cartCount: cartCount,
             wishlistCount: wishlistCount,
-            isGoogleUser: !!googleId // Check if googleId exists
+            isGoogleUser: !!googleId
         });
 
     } catch (error) {

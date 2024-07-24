@@ -199,8 +199,6 @@ const addUser = async (req, res) => {
                     referralCode,
                 });
 
-                console.log('req.body.referralCode', req.body.referralCode);
-
                 if (req.body.referralCode) {
                     const referralBonus = req.body.referralCode === 'SPECIALCODE' ? 5000 : 3000;
                     console.log('referralBonus', referralBonus);

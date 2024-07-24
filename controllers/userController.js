@@ -209,7 +209,7 @@ const addUser = async (req, res) => {
                         if (walletReferringUser) {
                             walletReferringUser.balance += referralBonus;
                             walletReferringUser.history.push({
-                                type: 'Credit',
+                                type: 'Bonus',
                                 amount: referralBonus,
                                 description: 'Referral bonus from referring user',
                             });
@@ -219,7 +219,7 @@ const addUser = async (req, res) => {
                                 userId: referringUser._id,
                                 balance: referralBonus,
                                 history: [{
-                                    type: 'Credit',
+                                    type: 'Bonus',
                                     amount: referralBonus,
                                     description: 'Referral bonus from referring user',
                                 }],
@@ -234,7 +234,7 @@ const addUser = async (req, res) => {
                     if (walletNewUser) {
                         walletNewUser.balance += referralBonus;
                         walletNewUser.history.push({
-                            type: 'Credit',
+                            type: 'Bonus',
                             amount: referralBonus,
                             description: 'Referral bonus for new user',
                         });
@@ -244,7 +244,7 @@ const addUser = async (req, res) => {
                             userId: user._id,
                             balance: referralBonus,
                             history: [{
-                                type: 'Credit',
+                                type: 'Bonus',
                                 amount: referralBonus,
                                 description: 'Referral bonus for new user',
                             }],

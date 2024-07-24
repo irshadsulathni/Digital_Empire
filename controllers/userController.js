@@ -154,85 +154,125 @@ const loadSignUp = async (req, res) => {
 }
 
 // Save User Data after Validation
+const generateReferralCode = () => {
+    return Math.random().toString(36).substr(2, 9).toUpperCase();
+};
+
+console.log('generateReferralCode', generateReferralCode);
+
 const addUser = async (req, res) => {
     try {
         const email = req.body.email;
-        const existingUser = await User.findOne({ email: email })
+        const existingUser = await User.findOne({ email: email });
+
         if (existingUser) {
-            res.render('user/signIn', { message: 'The Email already existed' })
+            res.render('user/signIn', { message: 'The Email already existed' });
         } else {
             const spassword = await securePassword(req.body.password);
-            if (req.body.name == "") {
-                res.render('user/signIn', { message: 'Please Enter a Name' });
-            }
-            else if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(req.body.email)) {
-                res.render('user/signIn', { message: 'Invalid Email, Only lowercase letters are allowed' });
-            }
-            else if (req.body.name.length <= 3) {
-                res.render('user/signIn', { message: 'Name want at least 4 Letter' })
-            }
-            else if (req.body.email == '') {
-                res.render('user/signIn', { message: 'Invalid Email, Please give correct email Id' });
-            }
-            else if (req.body.mobile.trim() == '') {
-                res.render('user/signIn', { message: 'Enter a Valid Mobile Number' })
-            }
-            else if (req.body.mobile.length != 10) {
-                res.render('user/signIn', { message: 'Number want 10' });
-            }
-            else if (req.body.password.length <= 8) {
-                res.render('user/signIn', { message: 'Invalid Password, Password Minimum want 8 letters' });
-            }
-            else if (!/[A-Z]/.test(req.body.password)) {
-                res.render('user/signIn', { message: 'Invalid Password, Atleast want one Uppercase' });
-            }
-            else if (!/[a-z]/.test(req.body.password)) {
-                res.render('user/signIn', { message: 'Invalid Password, Atleast want one Lowercase' });
-            }
-            else if (!/[!@#$%^&*()-_=+{};:,<.>]/.test(req.body.password)) {
-                res.render('user/signIn', { message: 'Invalid Password, Atleast want one Special Character' });
-            }
 
-            else if (req.body.re_password !== req.body.password) {
-                res.render('user/signIn', { message: 'Password is not Match' });
-            }
-            else if (req.body.mobile == '') {
-                res.render('user/signIn', { message: 'Invalid Mobile Number, Please Provide Valid Number' });
-            }
-            else {
+            if (!req.body.name) {
+                res.render('user/signIn', { message: 'Please Enter a Name' });
+            } else if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(req.body.email)) {
+                res.render('user/signIn', { message: 'Invalid Email, Only lowercase letters are allowed' });
+            } else if (req.body.name.length <= 3) {
+                res.render('user/signIn', { message: 'Name must be at least 4 letters' });
+            } else if (req.body.email === '') {
+                res.render('user/signIn', { message: 'Invalid Email, Please provide a correct email ID' });
+            } else if (req.body.mobile.trim() === '' || req.body.mobile.length !== 10) {
+                res.render('user/signIn', { message: 'Enter a valid Mobile Number with 10 digits' });
+            } else if (req.body.password.length <= 8) {
+                res.render('user/signIn', { message: 'Invalid Password, Password must be at least 8 letters' });
+            } else if (!/[A-Z]/.test(req.body.password) || !/[a-z]/.test(req.body.password) || !/[!@#$%^&*()-_=+{};:,<.>]/.test(req.body.password)) {
+                res.render('user/signIn', { message: 'Invalid Password, It must include at least one uppercase letter, one lowercase letter, and one special character' });
+            } else if (req.body.re_password !== req.body.password) {
+                res.render('user/signIn', { message: 'Passwords do not match' });
+            } else {
+                const referralCode = generateReferralCode();
+                console.log('referralCode referralCode', referralCode);
                 const user = new User({
                     name: req.body.name,
                     email: req.body.email,
                     mobile: req.body.mobile,
                     password: spassword,
                     is_verified: 0,
-                    is_blocked: false
+                    is_blocked: 0,
+                    referralCode,
                 });
 
+                console.log('req.body.referralCode', req.body.referralCode);
+
+                if (req.body.referralCode) {
+                    const referralBonus = req.body.referralCode === 'SPECIALCODE' ? 5000 : 3000;
+                    console.log('referralBonus', referralBonus);
+                    const referringUser = await User.findOne({ referralCode: req.body.referralCode });
+                    console.log('referringUser', referringUser);
+
+                    if (referringUser) {
+                        const walletReferringUser = await Wallet.findOne({ userId: referringUser._id });
+                        if (walletReferringUser) {
+                            walletReferringUser.balance += referralBonus;
+                            walletReferringUser.history.push({
+                                type: 'Credit',
+                                amount: referralBonus,
+                                description: 'Referral bonus from referring user',
+                            });
+                            await walletReferringUser.save();
+                        } else {
+                            const newWalletReferringUser = new Wallet({
+                                userId: referringUser._id,
+                                balance: referralBonus,
+                                history: [{
+                                    type: 'Credit',
+                                    amount: referralBonus,
+                                    description: 'Referral bonus from referring user',
+                                }],
+                            });
+                            await newWalletReferringUser.save();
+                        }
+                    }
+
+                    // Add bonus to the new user
+                    const walletNewUser = await Wallet.findOne({ userId: user._id });
+                    console.log('walletNewUser', walletNewUser);
+                    if (walletNewUser) {
+                        walletNewUser.balance += referralBonus;
+                        walletNewUser.history.push({
+                            type: 'Credit',
+                            amount: referralBonus,
+                            description: 'Referral bonus for new user',
+                        });
+                        await walletNewUser.save();
+                    } else {
+                        const newWalletNewUser = new Wallet({
+                            userId: user._id,
+                            balance: referralBonus,
+                            history: [{
+                                type: 'Credit',
+                                amount: referralBonus,
+                                description: 'Referral bonus for new user',
+                            }],
+                        });
+                        await newWalletNewUser.save();
+                    }
+                }
+
                 req.session.userData = user;
-                const otp = Otp.sendOtp(req.body.email)
+                const otp = Otp.sendOtp(req.body.email);
                 const otp1 = new OTP({
                     email: req.session.userData.email,
-                    otp: otp
-                })
+                    otp: otp,
+                });
                 await otp1.save();
-                req.session.otp = otp
-                res.render('user/otpVerify')
-
-                // if (req.session.userData) {
-                //     // I changed home page in here for rendering the otp page
-                //     res.render('user/otpVerify', { message: 'Send Mail in your email id, Please enter the OTP' })
-                // }
-                // else{
-                //     res.render('user/signIn', {message:'Your registration is failed'})
-                // }
+                req.session.otp = otp;
+                res.render('user/otpVerify');
             }
         }
-
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
     }
-}
+};
+
+
 
 //its for Sign Up for user. Thos who completed the registration
 const verifyLogin = async (req, res) => {
@@ -344,14 +384,14 @@ const loadDashBoard = async (req, res) => {
             walletData,
             page,
             pageSize,
-            isGoogleUser: userData && userData.googleId ? true : false 
+            isGoogleUser: userData && userData.googleId ? true : false,
+            referralCode: userData.referralCode
         });
     } catch (error) {
         console.error('Error loading dashboard:', error);
         res.render('user/404');
     }
 };
-
 
 
 

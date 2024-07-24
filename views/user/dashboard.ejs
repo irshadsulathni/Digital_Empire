@@ -551,7 +551,7 @@
                                                     <%= userData.name %>
                                                 </span>
                                             </p>
-                                
+                                        
                                             <% if (isGoogleUser) { %>
                                                 <!-- Special content for Google users -->
                                                 <div class="google-user-section">
@@ -574,38 +574,46 @@
                                                         <div class="col-sm-6">
                                                             <label>Full Name </label>
                                                             <input type="text" value="<%= userData.name %>" class="form-control" required>
-                                                        </div><!-- End .col-sm-6 -->
+                                                        </div>
                                                         <div class="col-sm-6">
                                                             <label>Phone</label>
                                                             <input type="text" value="<%= userData.mobile %>" class="form-control" required>
                                                         </div>
-                                                    </div><!-- End .row -->
-                                
+                                                    </div>
+                                        
                                                     <label>Current password (leave blank to leave unchanged)</label>
                                                     <div class="password-container">
                                                         <input id="current-password" type="password" class="form-control">
                                                         <i class="fa fa-eye eye-icon" onclick="togglePassword('current-password')"></i>
                                                     </div>
-                                
+                                        
                                                     <label>New password (leave blank to leave unchanged)</label>
                                                     <div class="password-container">
                                                         <input id="new-password" type="password" class="form-control">
                                                         <i class="fa fa-eye eye-icon" onclick="togglePassword('new-password')"></i>
                                                     </div>
-                                
+                                        
                                                     <label>Confirm new password</label>
                                                     <div class="password-container">
                                                         <input id="confirm-password" type="password" class="form-control mb-2">
                                                         <i class="fa fa-eye eye-icon" onclick="togglePassword('confirm-password')"></i>
                                                     </div>
-                                
+                                        
                                                     <button type="submit" class="btn btn-outline-primary-2">
                                                         <span>SAVE CHANGES</span>
                                                         <i class="icon-long-arrow-right"></i>
                                                     </button>
                                                 </form>
                                             <% } %>
-                                        </div><!-- .End .tab-pane -->
+                                        
+                                            <!-- Referral Link Section -->
+                                            <div class="referral-section">
+                                                <h3>Share Your Referral Code</h3>
+                                                <p>Your referral code: <strong><%= referralCode %></strong></p>
+                                                <p>Share this link to invite friends: <a href="/signup?referral=<%= referralCode %>" target="_blank">Invite Friends</a></p>
+                                            </div>
+                                        </div>
+                                        
                                         <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
                                             <div id="order-container" style="width: 100%; margin: 0 55px;">
                                                 <div class="container order-container" style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;">

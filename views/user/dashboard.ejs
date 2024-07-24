@@ -606,18 +606,20 @@
                                                 </form>
                                             <% } %>
                                         
-                                            <!-- Referral Link Section -->
-                                            <div class="referral-section">
-                                                <h3>Share Your Referral Code</h3>
-                                                <p>Your referral code: <strong><%= referralCode %></strong></p>
-                                                <p>Share this link to invite friends:</p>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" id="combined-referral" value="<%= baseUrl %>/signin?referralCode=<%= referralCode %>" readonly>
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-outline-secondary" type="button" onclick="copyCombinedReferral()">Copy Referral Info</button>
+                                            <% if (referralCode) { %>
+                                                <div class="referral-section">
+                                                    <h3>Share Your Referral Code</h3>
+                                                    <p>Your referral code: <strong><%= referralCode %></strong></p>
+                                                    <p>Share this link to invite friends:</p>
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" id="combined-referral" value="<%= baseUrl %>/signin?referralCode=<%= referralCode %>" readonly>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-secondary" type="button" onclick="copyCombinedReferral()">Copy Referral Info</button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            <% } %>
+                                            
                                         </div>
                                         
                                         <!-- SweetAlert JS -->

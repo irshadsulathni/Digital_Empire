@@ -189,18 +189,13 @@ const verifyLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         
-
         const adminData = await Admin.findOne({ email: email });
 
-        if (adminData) {
-            const passwordMatch = bcrypt.compare(password, adminData.password);
+        if (password === adminData.password) {
 
-            if (passwordMatch) {
-                req.session.admin_id = adminData._id;
-                res.redirect('/admin/adminHome');
-            } else {
-                res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
-            }
+            req.session.admin_id = adminData._id;
+            res.redirect('/admin/adminHome'); 
+
         } else {
             res.render('admin/adminLogin', { message: 'Email and Password is incorrect' });
         }

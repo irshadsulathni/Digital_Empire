@@ -10,7 +10,7 @@ passport.deserializeUser((user, done)=>{
     done(null, user)
 });
 
-const isProduction = process.env.NODE_ENV === 'testing'
+const isProduction = process.env.NODE_ENV === 'production'
 const callbackURL = isProduction 
     ? 'https://irshadsulthani.shop/auth/google/callback'
     : 'http://localhost:3000/auth/google/callback';

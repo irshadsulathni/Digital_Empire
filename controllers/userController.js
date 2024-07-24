@@ -158,7 +158,6 @@ const generateReferralCode = () => {
     return Math.random().toString(36).substr(2, 9).toUpperCase();
 };
 
-console.log('generateReferralCode', generateReferralCode);
 
 const addUser = async (req, res) => {
     try {
@@ -374,6 +373,8 @@ const loadDashBoard = async (req, res) => {
             walletData.totalTransactions = totalTransactions;
         }
 
+        const baseUrl = req.protocol + '://' + req.get('host');
+
         res.render('user/dashboard', { 
             userData, 
             addressData, 
@@ -383,7 +384,8 @@ const loadDashBoard = async (req, res) => {
             page,
             pageSize,
             isGoogleUser: userData && userData.googleId ? true : false,
-            referralCode: userData.referralCode
+            referralCode: userData.referralCode,
+            baseUrl
         });
     } catch (error) {
         console.error('Error loading dashboard:', error);

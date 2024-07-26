@@ -186,7 +186,6 @@ const removeOffer = async (req, res) => {
                 }
             }
 
-            
             offer.offerUsed = offer.offerUsed.filter(used => used.productId.toString() !== productId.toString());
         }
 

@@ -139,6 +139,7 @@ const applyOffer = async (req, res) => {
                     await variant.save();
                 }
             }
+            
 
             offer.offerUsed.push({ categoryId });
         } else {

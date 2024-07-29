@@ -146,7 +146,6 @@ const applyOffer = async (req, res) => {
         }
 
         await offer.save();
-        
         return res.status(200).json({ message: 'Offer Applied Successfully' });
     } catch (error) {
         console.error('Error applying offer:', error);

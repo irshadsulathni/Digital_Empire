@@ -625,7 +625,6 @@ const loadHowShop = async (req, res) => {
         res.render('user/howShop')
     } catch (error) {
         console.log(error.message)
-        
     }
 }
 

@@ -627,7 +627,6 @@ const loadHowShop = async (req, res) => {
         console.log(error.message)
     }
 }
-
 const passwordUpdate = async (req, res) => {
     try {
         const { currentPassword, newPassword, confirmPassword } = req.body;

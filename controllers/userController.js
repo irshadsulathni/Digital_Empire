@@ -628,7 +628,6 @@ const loadHowShop = async (req, res) => {
     }
 }
 
-
 const passwordUpdate = async (req, res) => {
     try {
         const { currentPassword, newPassword, confirmPassword } = req.body;
